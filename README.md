@@ -24,15 +24,20 @@ WeatherFit/
 
 
 # ❌ main에서 직접 push 금지!
+```
 git checkout main
 git push origin main  # ❌ 금지!
+```
 
 # ✅ dev에서 작업 후 PR 생성
+```
 git checkout dev
 git pull origin dev
 git checkout -b feature-branch
+```
 
 # 코드 수정 후...
+```
 git add .
 git commit -m "새로운 기능 추가"
 git push origin feature-branch  # 이후 GitHub에서 PR 생성
