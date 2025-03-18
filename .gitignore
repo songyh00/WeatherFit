@@ -1,0 +1,35 @@
+# ✅ 공통적으로 필요 없는 파일들
+.DS_Store  # macOS에서 생성되는 시스템 파일
+Thumbs.db  # Windows에서 생성되는 시스템 파일
+*.log      # 로그 파일 제외
+node_modules/  # npm 패키지 폴더 (프론트엔드)
+dist/       # 빌드된 결과물 (Vite 등)
+out/        # IntelliJ & Eclipse 빌드 폴더
+.vscode/    # VS Code 설정 폴더 (팀원 중 VS Code 사용할 경우)
+
+# ✅ IntelliJ IDEA 관련 파일들
+.idea/
+*.iml
+*.iws
+
+# ✅ Eclipse 관련 파일들
+.classpath
+.project
+.settings/
+
+# ✅ Java (Spring Boot) 관련
+target/  # Maven & Gradle 빌드 폴더
+*.jar  # 생성된 JAR 파일 제외
+*.war  # 생성된 WAR 파일 제외
+
+# ✅ 환경 변수 파일 (보안상 제외)
+.env
+*.env.local
+src/main/resources/application.properties
+src/main/resources/application.yml
+
+# ✅ OS별 불필요한 파일
+# macOS 관련
+__MACOSX/
+# Windows 관련
+$RECYCLE.BIN/
