@@ -38,12 +38,14 @@ git commit -m "새로운 기능 추가"
 git push origin feature-branch  # 이후 GitHub에서 PR 생성
 ```
 
-🛠️ 기술 스택
-Backend: Spring Boot, MySQL, AWS (예정)
-Frontend: React (Vite), Tailwind CSS
-Deployment: AWS S3 + CloudFront (예정)
+## 🛠️ 기술 스택  
+- **Backend:** Spring Boot, MySQL, AWS (예정)  
+- **Frontend:** React (Vite), Tailwind CSS  
+- **Deployment:** AWS S3 + CloudFront (예정)  
 
-📜 라이선스
-이 프로젝트는 MIT License를 따릅니다.
+---
+
+## 📜 라이선스  
+📜 이 프로젝트는 `MIT License`를 따릅니다.  
 
 ---
