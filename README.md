@@ -31,6 +31,7 @@ git push origin main  # ❌ 금지!
 git checkout dev
 git pull origin dev
 git checkout -b feature-branch
+
 # 코드 수정 후...
 git add .
 git commit -m "새로운 기능 추가"
