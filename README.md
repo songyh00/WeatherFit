@@ -7,7 +7,7 @@ Spring Boot 백엔드 & React 프론트엔드를 기반으로 개발 중입니�
 ---
 
 ## 🚀 프로젝트 구조
-```
+```sh
 WeatherFit/
 ├── WeatherFitBackend/ # Spring Boot 백엔드
 ├── WeatherFitFrontend/ # React 프론트엔드
@@ -23,21 +23,17 @@ WeatherFit/
 3. `dev` 브랜치에서 개발 후, 코드 리뷰를 거쳐 `main`으로 병합
 4. PR 승인 후 **관리자(팀 리더)만 `main` 브랜치에 병합 가능**
 
-## ❌ main에서 직접 push 금지! ❌
-```
+```sh
+# ❌ main에서 직접 push 금지!
 git checkout main
-git push origin main
-```
+git push origin main  # ❌ 금지!
 
-## ✅ dev에서 작업 후 PR 생성
-```
+# ✅ dev에서 작업 후 PR 생성
 git checkout dev
 git pull origin dev
 git checkout -b feature-branch
-```
 
-## 코드 수정 후...
-```
+# 코드 수정 후...
 git add .
 git commit -m "새로운 기능 추가"
 git push origin feature-branch  # 이후 GitHub에서 PR 생성
