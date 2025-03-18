@@ -28,8 +28,8 @@ git push origin feature-branch
 ```
 
 ### ✅ 4. PR 생성 후 리뷰 요청
-GitHub에서 feature-branch → dev로 Pull Request(PR) 생성
-팀원들의 코드 리뷰를 거쳐 병합
+- GitHub에서 feature-branch → dev로 Pull Request(PR) 생성
+- 팀원들의 코드 리뷰를 거쳐 병합
 
 ---
 
