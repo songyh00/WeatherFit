@@ -46,6 +46,6 @@ git push origin feature-branch  # 이후 GitHub에서 PR 생성
 ---
 
 ## 📜 라이선스  
-📜 이 프로젝트는 `MIT License`를 따릅니다.  
+이 프로젝트는 `MIT License`를 따릅니다.  
 
 ---
