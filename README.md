@@ -7,13 +7,13 @@ Spring Boot 백엔드 & React 프론트엔드를 기반으로 개발 중입니�
 ---
 
 ## 🚀 프로젝트 구조
-
+```
 WeatherFit/
 ├── WeatherFitBackend/ # Spring Boot 백엔드
 ├── WeatherFitFrontend/ # React 프론트엔드
 ├── .gitignore # 공통 .gitignore 파일
 └── README.md # 프로젝트 소개
-
+```
 ---
 
 ## 🚨 Git 규칙 (⚠️ `main` 브랜치에서 직접 `push` 금지!)
