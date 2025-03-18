@@ -47,13 +47,3 @@ Deployment: AWS S3 + CloudFront (예정)
 이 프로젝트는 MIT License를 따릅니다.
 
 ---
-
-### **📌 README.md 추가 후 `main` 브랜치에 푸시하기**
-📍 **터미널에서 실행:**
-```sh
-cd WeatherFit
-echo "# WeatherFit" >> README.md  # README 파일 생성 (없다면)
-git add README.md
-git commit -m "Added README for main branch"
-git push origin main
-```
