@@ -23,20 +23,20 @@ WeatherFit/
 4. PR 승인 후 **관리자(팀 리더)만 `main` 브랜치에 병합 가능**
 
 
-# ❌ main에서 직접 push 금지!
+## ❌ main에서 직접 push 금지! ❌
 ```
 git checkout main
-git push origin main  # ❌ 금지!
+git push origin main
 ```
 
-# ✅ dev에서 작업 후 PR 생성
+## ✅ dev에서 작업 후 PR 생성
 ```
 git checkout dev
 git pull origin dev
 git checkout -b feature-branch
 ```
 
-# 코드 수정 후...
+## 코드 수정 후...
 ```
 git add .
 git commit -m "새로운 기능 추가"
