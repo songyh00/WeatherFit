@@ -37,15 +37,15 @@ GitHub에서 feature-branch → dev로 Pull Request(PR) 생성
 1. dev 브랜치는 실행 가능한 코드만 유지 (작업 중인 코드는 feature 브랜치에서 진행)
 2. .env, application.properties 등 민감한 파일을 Git에 올리지 않도록 주의
 3. 커밋 메시지는 명확하게 작성
-  fix: 로그인 버그 수정
-  feat: 사용자 프로필 페이지 추가
-  chore: 코드 리팩토링
+  - fix: 로그인 버그 수정
+  - feat: 사용자 프로필 페이지 추가
+  - chore: 코드 리팩토링
 
 ---
 
 ## 📌 협업을 위한 체크리스트
- dev 브랜치에서 git pull origin dev로 최신 코드 받아오기
- 새로운 기능 브랜치에서 작업 진행 (feature-branch)
- git push origin feature-branch 후, GitHub에서 PR 생성
- 코드 리뷰 후 병합 (feature-branch → dev)
- dev 브랜치가 안정화되면 main 브랜치로 병합
+- dev 브랜치에서 git pull origin dev로 최신 코드 받아오기
+- 새로운 기능 브랜치에서 작업 진행 (feature-branch)
+- git push origin feature-branch 후, GitHub에서 PR 생성
+- 코드 리뷰 후 병합 (feature-branch → dev)
+- dev 브랜치가 안정화되면 main 브랜치로 병합
