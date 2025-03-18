@@ -18,16 +18,10 @@ WeatherFit/
 ---
 
 ## 🚨 Git 규칙 (⚠️ `main` 브랜치에서 직접 `push` 금지!)
-1. **개발은 `dev` 브랜치에서 진행!**
+1. **개발은 `feature-작업이름` 브랜치에서 진행!**
 2. `main` 브랜치는 **배포용 브랜치**로, **Pull Request(PR)를 통해서만 병합 가능**
-3. `feature-작업이름` 브랜치에서 개발 후 `dev`으로 PR, `dev` 브랜치에서 코드 리뷰를 거쳐 `main`으로 병합
+3. `feature-작업이름` 브랜치에서 개발 후 코드 리뷰를 거쳐 `dev`으로 PR, `dev`가 충분히 안정화되면 `main`으로 병합
 4. PR 승인 후 **관리자(팀 리더)만 `main` 브랜치에 병합 가능**
-
-```sh
-# ❌ main에서 직접 push 금지!
-git checkout main
-git push origin main  # ❌ 금지!
-```
 
 ---
 
