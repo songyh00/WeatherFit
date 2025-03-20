@@ -1,0 +1,13 @@
+{
+  "name": "weatherfit",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "frontend": "cd WeatherFitFrontend && npm run dev",
+    "backend": "cd WeatherFitBackend && ./gradlew bootRun",
+    "dev": "concurrently \"npm run frontend\" \"npm run backend\""
+  },
+  "dependencies": {
+    "concurrently": "^7.0.0"
+  }
+}
