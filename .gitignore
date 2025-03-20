@@ -33,3 +33,11 @@ src/main/resources/application.yml
 __MACOSX/
 # Windows 관련
 $RECYCLE.BIN/
+
+# Gradle 캐시 파일 무시
+WeatherFitBackend/.gradle/
+WeatherFitBackend/build/
+
+# Node.js 모듈 및 Vite 캐시 무시
+WeatherFitFrontend/node_modules/
+WeatherFitFrontend/.vite/
