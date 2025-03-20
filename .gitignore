@@ -3,7 +3,7 @@
 Thumbs.db  # Windows에서 생성되는 시스템 파일
 *.log      # 로그 파일 제외
 logs/      # 로그 폴더 전체 제외
-node_modules/  # npm 패키지 폴더 (프론트엔드)
+node_modules/  # 모든 node_modules 폴더 무시 (루트 + 프론트엔드)
 dist/       # 빌드된 결과물 (Vite 등)
 out/        # IntelliJ & Eclipse 빌드 폴더
 .vscode/    # VS Code 설정 폴더 (팀원 중 VS Code 사용할 경우)
@@ -41,5 +41,5 @@ $RECYCLE.BIN/
 WeatherFitBackend/.gradle/
 
 # ✅ Node.js 모듈 및 Vite 캐시 무시
-WeatherFitFrontend/node_modules/
+node_modules/  # 루트와 프론트엔드 node_modules 폴더 무시
 WeatherFitFrontend/.vite/
