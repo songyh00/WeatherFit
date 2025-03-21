@@ -1,10 +1,12 @@
 import React from 'react';
-import HomePage from './pages/HomePage'; // HomePage 컴포넌트 불러오기
+import Header from "./layout/Header";
+import MainPage from "./pages/MainPage.jsx";
 
 function App() {
     return (
         <div>
-            <HomePage />
+            <Header />
+            <MainPage />
         </div>
     );
 }
