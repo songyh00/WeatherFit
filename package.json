@@ -1,7 +1,10 @@
 {
   "name": "weatherfit",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "private": true,
+  "workspaces": [
+    "WeatherFitFrontend"
+  ],
   "scripts": {
     "frontend": "cd WeatherFitFrontend && npm run dev",
     "backend": "cd WeatherFitBackend && ./gradlew bootRun",
