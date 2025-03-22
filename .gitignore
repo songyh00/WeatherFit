@@ -13,6 +13,7 @@ WeatherFitFrontend/.vite/
 dist/       # 빌드된 결과물 (Vite 등)
 out/        # IntelliJ & Eclipse 빌드 폴더
 build/      # 공통 빌드 폴더 제외 (프론트엔드, 백엔드 포함)
+WeatherFitBackend/build/
 
 # ✅ IntelliJ IDEA 관련 파일들
 .idea/
