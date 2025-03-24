@@ -4,10 +4,10 @@ import {
     HeaderNav,
     HeaderWrapper,
     MainLogoLink,
-    MainLogoTitle,
     MainMenu,
     MainMenuLink,
     UserActions,
+    UserActionsContainer,
     UserActionsLink
 } from './index.style.js';
 import { Link } from 'react-router-dom';
@@ -21,22 +21,23 @@ const Header = () => {
         // styled 코드들은 src/layout/index.style.js 파일에 있습니다.
         <HeaderWrapper>
             <HeaderContent>
-                <UserActions>
-                    {/* 추후 라우팅 추가 예정 */}
-                    <UserActionsLink to="/">로그인</UserActionsLink> |&nbsp;
-                    <UserActionsLink to="/">회원가입</UserActionsLink> |&nbsp;
-                    <UserActionsLink to="/">마이페이지</UserActionsLink> |&nbsp;
-                    <UserActionsLink to="/">고객센터</UserActionsLink>
+                <UserActionsContainer>
+                    <MainLogoLink to="/">
+                        <img src={logo} alt="WeatherFit Logo" />
+                    </MainLogoLink>
 
-                </UserActions>
+                    <UserActions>
+                        {/* 추후 라우팅 추가 예정 */}
+                        <UserActionsLink to="/">로그인</UserActionsLink>|
+                        <UserActionsLink to="/">회원가입</UserActionsLink>|
+                        <UserActionsLink to="/">&nbsp;마이페이지</UserActionsLink>&nbsp;|
+                        <UserActionsLink to="/">고객센터</UserActionsLink>
+                    </UserActions>
+                </UserActionsContainer>
 
 
                 <HeaderNav>
-                    <MainLogoLink to="/">
-                        {/* MainLogo 컴포넌트와 로고 텍스트 */}
-                        {/* <MainLogo /> */}
-                        <img src={logo} alt="WeatherFit Logo" />
-                    </MainLogoLink>
+
 
                     <MainMenu>
                         {/* 임시 데이터 메뉴 */}
