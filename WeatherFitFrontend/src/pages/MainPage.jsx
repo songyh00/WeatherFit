@@ -7,7 +7,67 @@ import {
 const MainPage = () => {
     return (
         <ContentsWrapper>
-
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
+            <div>123</div>
         </ContentsWrapper>
     );
 }

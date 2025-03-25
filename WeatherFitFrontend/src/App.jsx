@@ -11,13 +11,14 @@ import Login from "./pages/Login.jsx";
 import JoinTheMembership from "./pages/JoinTheMembership.jsx";
 import MyPage from "./pages/MyPage.jsx";
 import CustomerServiceCenter from "./pages/CustomerServiceCenter.jsx";
+import {HeaderBackground} from "./layout/header.style.js";
 
 function App() {
     return (
         <div>
             <BrowserRouter>
                 <Header />
-
+                <HeaderBackground />
                 <Routes>
                     <Route path="/" element={<MainPage />} />
                     <Route path="/Best" element={<Best />} />

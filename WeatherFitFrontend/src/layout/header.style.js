@@ -3,7 +3,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 export const HeaderWrapper = styled.div`
-    
+    background: #fff;
+    z-index: 10;
+    position: relative;
 `;
 
 export const HeaderContent = styled.div`
@@ -63,6 +65,14 @@ export const UserActionsContainer = styled.div`
     justify-content: center;
     align-items: center;
     width: 100%;
+`;
+
+export const HeaderBackground = styled.div`
+    background: #fff;
+    width: 100%;
+    height: 176px;
+    z-index: 9;
+    position: fixed;
 `;
 
 
