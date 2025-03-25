@@ -11,7 +11,7 @@ const Login = () => {
     return (
         <ContentsWrapper>
             <LoginWrapper>
-                123
+                로그인페이지
             </LoginWrapper>
         </ContentsWrapper>
     );

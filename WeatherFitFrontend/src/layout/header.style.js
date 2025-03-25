@@ -9,7 +9,7 @@ export const HeaderWrapper = styled.div`
 `;
 
 export const HeaderContent = styled.div`
-    width: 60%;
+    width: 80%;
     position: fixed;
     left: 50%;
     transform:translate(-50%, 0);

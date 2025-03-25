@@ -4,5 +4,4 @@ import { Link } from 'react-router-dom';
 
 export const LoginWrapper = styled.div`
     
-    
 `;
