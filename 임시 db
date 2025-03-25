@@ -1,5 +1,10 @@
 gitignore에 반드시 DB 추가할 것!
-
+.gitignore:
+*.db
+*.sqlite(
+.sqlite 확장자는 SQLite 데이터베이스 파일을 나타냅니다. SQLite는 서버가 필요 없는 가벼운 파일 기반 데이터베이스로, 주로 애플리케이션에서 간단한 데이터베이스 용도로 사용됩니다.
+***.sqlite**는 Git이 모든 .sqlite 파일을 무시하도록 하는 규칙입니다. 즉, .sqlite 확장자를 가진 파일이 프로젝트 디렉토리 내에 있으면, Git은 이를 버전 관리 목록에서 제외하고 추적하지 않게 됩니다.
+)
 
 
 CREATE TABLE users (
