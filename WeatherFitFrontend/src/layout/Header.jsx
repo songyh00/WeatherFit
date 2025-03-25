@@ -40,7 +40,7 @@ const Header = () => {
                     <MainMenu>
                         {/* 임시 데이터 메뉴 */}
                         <MainMenuLink to="/">BEST</MainMenuLink>
-                        <MainMenuLink to="/">오늘의 날씨</MainMenuLink>
+                        {/*<MainMenuLink to="/">오늘의 날씨</MainMenuLink> <- component로 하나 만들예정*/}
                         <MainMenuLink to="/">추천</MainMenuLink>
                         <MainMenuLink to="/">아우터</MainMenuLink>
                         <MainMenuLink to="/">상의</MainMenuLink>

@@ -3,14 +3,15 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 export const HeaderWrapper = styled.div`
-    position: fixed;
-    left: 50%;
-    transform:translate(-50%, 0);
+    
 `;
 
 export const HeaderContent = styled.div`
     width: 60%;
-    margin: 0 auto;
+
+    position: fixed;
+    left: 50%;
+    transform:translate(-50%, 0);
 `;
 
 export const UserActions = styled.div`
