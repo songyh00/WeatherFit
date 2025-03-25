@@ -1,0 +1,170 @@
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,   -- 회원 ID (자동 증가)
+    username VARCHAR(50) UNIQUE NOT NULL, -- 사용자 이름 (중복 불가)
+    password VARCHAR(255) NOT NULL,       -- 비밀번호 (해시 저장 필요)
+    email VARCHAR(100) UNIQUE NOT NULL,   -- 이메일 (중복 불가)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- 계정 생성 날짜
+);
+CREATE TABLE weather (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    location VARCHAR(100) NOT NULL,  -- 지역명 추가
+    date DATE NOT NULL,
+    time TIME NOT NULL,
+    temperature DECIMAL(5,2) NOT NULL,
+    humidity INT NOT NULL,
+    weather_condition VARCHAR(50) NOT NULL,
+    wind_speed DECIMAL(5,2),
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+CREATE TABLE weather_api_log (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    api_source VARCHAR(100),   -- API 제공 업체
+    temperature DECIMAL(5,2), 
+    humidity INT, 
+    weather_condition VARCHAR(50), 
+    fetched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE clothes (
+    id INT PRIMARY KEY AUTO_INCREMENT,          -- 의류의 고유 식별자
+    category VARCHAR(50),                       -- 의류의 카테고리 (예: 자켓, 티셔츠)
+    name VARCHAR(100),                          -- 의류의 이름
+    temperature_min DECIMAL(5,2),               -- 이 의류가 적합한 최소 온도
+    temperature_max DECIMAL(5,2)                -- 이 의류가 적합한 최대 온도
+);
+CREATE TABLE clothes_recommendations (
+    id INT PRIMARY KEY AUTO_INCREMENT,          -- 고유 식별자
+    user_id INT,                                -- 사용자 ID
+    weather_id INT,                             -- 날씨 ID
+    clothes_id INT,                             -- 추천된 의류의 ID
+    recommended_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 추천된 시간
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, -- 사용자 ID가 삭제될 때 관련 데이터도 삭제
+    FOREIGN KEY (weather_id) REFERENCES weather(id) ON DELETE CASCADE, -- 날씨 ID가 삭제될 때 관련 데이터도 삭제
+    FOREIGN KEY (clothes_id) REFERENCES clothes(id) ON DELETE CASCADE -- 의류 ID가 삭제될 때 관련 데이터도 삭제
+);
+CREATE TABLE posts (
+    id INT PRIMARY KEY AUTO_INCREMENT,          -- 고유 식별자
+    user_id INT,                                -- 작성자 사용자 ID
+    title VARCHAR(255),                         -- 게시글 제목
+    content TEXT,                               -- 게시글 내용
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 게시글 작성 시간
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE -- 사용자 ID가 삭제될 때 관련 데이터도 삭제
+);
+CREATE TABLE comments (
+    id INT PRIMARY KEY AUTO_INCREMENT,          -- 고유 식별자
+    user_id INT,                                -- 댓글을 단 사용자 ID
+    post_id INT,                                -- 댓글이 달린 게시글 ID
+    content TEXT,                               -- 댓글 내용
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 댓글 작성 시간
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, -- 사용자 ID가 삭제될 때 관련 데이터도 삭제
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE -- 게시글 ID가 삭제될 때 관련 데이터도 삭제
+);
+CREATE TABLE likes (
+    id INT PRIMARY KEY AUTO_INCREMENT,          -- 고유 식별자
+    user_id INT,                                -- '좋아요'를 누른 사용자 ID
+    post_id INT,                                -- '좋아요'가 눌린 게시글 ID
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- '좋아요'를 누른 시간
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, -- 사용자 ID가 삭제될 때 관련 데이터도 삭제
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE -- 게시글 ID가 삭제될 때 관련 데이터도 삭제
+);
+
+
+---
+
+
+# 🌤️ 날씨 기반 의류 추천 서비스 - 데이터베이스 설명  
+
+이 프로젝트는 실시간 날씨 데이터를 기반으로 사용자에게 최적의 옷을 추천하는 서비스입니다.  
+데이터베이스는 **회원 관리**와 **날씨 데이터 저장 및 갱신** 기능을 포함하고 있습니다.  
+
+---
+
+## 📌 데이터베이스 테이블 설명  
+
+### 1️⃣ **회원 테이블 (users)**  
+사용자 정보를 저장하는 테이블입니다.  
+비밀번호는 보안을 위해 **해시 암호화(Bcrypt)**를 사용하여 저장합니다.  
+
+#### 🔹 **테이블 구조**  
+sql
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,   -- 회원 고유 ID
+    username VARCHAR(50) UNIQUE NOT NULL, -- 사용자 이름 (중복 불가)
+    password VARCHAR(255) NOT NULL,       -- 비밀번호 (Bcrypt 해시 저장)
+    email VARCHAR(100) UNIQUE NOT NULL,   -- 이메일 (로그인 및 인증용)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- 계정 생성 시간
+);
+🔹 비밀번호 보안 (Bcrypt 사용)
+비밀번호는 평문(Plain Text)으로 저장하면 보안상 위험하므로,
+Bcrypt 해시 알고리즘을 사용하여 암호화한 후 저장합니다.
+
+python
+복사
+편집
+from bcrypt import hashpw, gensalt
+
+password = "user_password123"
+hashed_password = hashpw(password.encode(), gensalt())  # 비밀번호 해싱
+🔹 로그인 시에는 사용자가 입력한 비밀번호와 해시된 비밀번호를 비교하여 인증합니다.
+
+2️⃣ 날씨 테이블 (weather)
+실시간 날씨 데이터를 저장하는 테이블입니다.
+매시간 또는 일정 주기로 외부 API(OpenWeather, 기상청 등)에서 데이터를 가져와 갱신합니다.
+
+🔹 테이블 구조
+sql
+복사
+편집
+CREATE TABLE weather (
+    id INT PRIMARY KEY AUTO_INCREMENT,   -- 날씨 데이터 ID
+    location VARCHAR(100) NOT NULL,      -- 지역명
+    date DATE NOT NULL,                  -- 날짜
+    time TIME NOT NULL,                  -- 시간
+    temperature DECIMAL(5,2) NOT NULL,    -- 기온 (℃)
+    humidity INT NOT NULL,                -- 습도 (%)
+    weather_condition VARCHAR(50) NOT NULL, -- 날씨 상태 (맑음, 흐림, 비 등)
+    wind_speed DECIMAL(5,2),              -- 풍속 (m/s)
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+🔹 날씨 데이터 갱신 방식
+1️⃣ 실시간 데이터 업데이트 (UPDATE 방식)
+매시간 최신 날씨 데이터를 반영 (이전 데이터 덮어쓰기)
+
+실시간 데이터를 유지하면서 스토리지 사용량을 줄임
+
+sql
+복사
+편집
+UPDATE weather 
+SET temperature = ?, humidity = ?, weather_condition = ?, wind_speed = ?, last_updated = NOW()
+WHERE location = ? AND date = CURDATE();
+2️⃣ 과거 데이터 저장 (INSERT 방식)
+과거 데이터를 저장하여 날씨 변화를 분석할 수 있도록 함
+
+sql
+복사
+편집
+INSERT INTO weather (location, date, time, temperature, humidity, weather_condition, wind_speed)
+VALUES (?, CURDATE(), CURTIME(), ?, ?, ?, ?);
+🔹 API 호출 주기 (예: 30분 간격으로 업데이트)
+
+크론잡(Cron) 또는 백그라운드 스케줄러를 활용하여 주기적으로 API를 호출
+
+API 요청 과부하 방지를 위해 캐싱을 적용할 수도 있음
+
+🔥 최적화된 데이터 흐름
+1️⃣ 사용자가 로그인 → users 테이블에서 인증
+2️⃣ 외부 API에서 날씨 데이터를 가져옴
+3️⃣ 날씨 데이터 갱신 (weather 테이블 업데이트/삽입)
+4️⃣ 날씨 데이터 기반으로 적절한 의류 추천 제공
+
+🚀 결론
+회원 테이블 (users) → 사용자 정보를 저장하며, 비밀번호는 반드시 암호화 저장
+
+날씨 테이블 (weather) → 실시간 데이터를 저장하고, 최신 값으로 업데이트 가능
+
+이 데이터베이스 설계를 통해 실시간 날씨 데이터를 활용하여 사용자 맞춤형 의류 추천 서비스를 구현할 수 있습니다! 🔥
+추가 기능이 필요하거나 개선할 사항이 있다면 언제든지 업데이트해주세요. 💡
+
+
+
+
