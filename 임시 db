@@ -1,3 +1,7 @@
+gitignore에 반드시 DB 추가할 것!
+
+
+
 CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,   -- 회원 ID (자동 증가)
     username VARCHAR(50) UNIQUE NOT NULL, -- 사용자 이름 (중복 불가)
