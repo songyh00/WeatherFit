@@ -9,7 +9,7 @@ import {
     UserActions,
     UserActionsContainer,
     UserActionsLink
-} from './index.style.js';
+} from './header.style.js';
 import { Link } from 'react-router-dom';
 import MainLogo from "../components/MainLogo.jsx";
 import logo from "../assets/logo.png";
@@ -18,7 +18,7 @@ import logo from "../assets/logo.png";
 const Header = () => {
     return (
         // styled-components, react-router-dom을 사용하고 있습니다. 의존성 설치를 위해 'npm install'을 실행해주세요.
-        // styled 코드들은 src/layout/index.style.js 파일에 있습니다.
+        // styled 코드들은 src/layout/header.style.js 파일에 있습니다.
         <HeaderWrapper>
             <HeaderContent>
                 <UserActionsContainer>
