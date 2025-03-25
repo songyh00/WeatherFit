@@ -7,7 +7,7 @@ import {
 const Login = () => {
     return (
         <ContentsWrapper>
-            Login 페이지 입니다.
+
         </ContentsWrapper>
     );
 }
