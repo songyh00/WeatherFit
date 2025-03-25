@@ -3,7 +3,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 export const HeaderWrapper = styled.div`
-    //border-bottom: 1px solid #000;
+    position: fixed;
+    left: 50%;
+    transform:translate(-50%, 0);
 `;
 
 export const HeaderContent = styled.div`
@@ -57,10 +59,10 @@ export const MainMenuLink = styled(Link)`
 `;
 
 export const UserActionsContainer = styled.div`
-    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
 `;
 
 

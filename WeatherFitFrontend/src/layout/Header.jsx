@@ -37,8 +37,6 @@ const Header = () => {
 
 
                 <HeaderNav>
-
-
                     <MainMenu>
                         {/* 임시 데이터 메뉴 */}
                         <MainMenuLink to="/">BEST</MainMenuLink>
@@ -48,12 +46,8 @@ const Header = () => {
                         <MainMenuLink to="/">상의</MainMenuLink>
                         <MainMenuLink to="/">바지</MainMenuLink>
                     </MainMenu>
-
                 </HeaderNav>
-
             </HeaderContent>
-
-
         </HeaderWrapper>
     )
 }
