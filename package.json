@@ -7,8 +7,10 @@
   ],
   "scripts": {
     "frontend": "cd WeatherFitFrontend && npm run dev",
-    "backend": "cd WeatherFitBackend && ./gradlew bootRun",
-    "dev": "concurrently \"npm run frontend\" \"npm run backend\""
+    "backend:win": "cd WeatherFitBackend && gradlew.bat bootRun",
+    "backend:unix": "cd WeatherFitBackend && ./gradlew bootRun",
+    "dev": "concurrently \"npm run frontend\" \"npm run backend:win\"",
+    "dev:unix": "concurrently \"npm run frontend\" \"npm run backend:unix\""
   },
   "dependencies": {
     "concurrently": "^7.0.0"
