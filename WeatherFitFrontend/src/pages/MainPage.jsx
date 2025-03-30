@@ -7,7 +7,7 @@ import {
 const MainPage = () => {
     return (
         <ContentsWrapper>
-                123
+            mainPage
         </ContentsWrapper>
     );
 }
