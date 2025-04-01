@@ -99,3 +99,16 @@ git push origin feature-작업이름
 - feature-작업이름 삭제
 - dev 브랜치가 안정화되면 main 브랜치로 병합
 
+---
+
+## 💾 DB 초기화 방법
+
+1. MySQL에서 `weatherfit` 데이터베이스 생성
+
+2. 아래 명령어로 테이블과 초기 데이터를 설정하세요:
+
+```bash
+mysql -u root -p weatherfit < sql/schema.sql
+mysql -u root -p weatherfit < sql/data.sql
+```
+
