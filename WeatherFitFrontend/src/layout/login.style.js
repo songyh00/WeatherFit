@@ -39,7 +39,7 @@ export const LoginInput = styled.input`
 export const LoginButton = styled.button`
     width: 464px;
     padding: 12px 15px;
-    margin: 20px 0 0 0;
+    margin: 13px 0 0 0;
     font-size: 16px;
     border: 2px solid ${(props) => props.borderColor};
     //border-style: none;
