@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
-import {LoginWrapper, LoginSection, LoginInput, LoginButton} from "../layout/login.style.js";
+import {
+    LoginWrapper,
+    LoginSection,
+    LoginInput,
+    LoginButton,
+    LoginTexts,
+    JoinTheMembershipLink
+} from "../layout/login.style.js";
 import { Link } from "react-router-dom";
 import logo from '../assets/logo.png';
+import JoinTheMembership from "./JoinTheMembership.jsx";
 
 
 // 몇월달인지 계산하고 달에 해당하는 계절을 반환하는 함수
@@ -45,13 +53,13 @@ const Login = () => {
             <LoginSection>
                 <LoginInput
                     style={{ marginTop: '20px' }}
-                    type="text"
+                    type="email"
                     borderColor={theme[season].borderColor}
                     bgColor={theme[season].bgColor}
                     focusColor={inputFocused ? theme[season].focusColor : theme[season].borderColor}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
-                    placeholder="아이디를 입력해주세요"
+                    placeholder="이메일을 입력해주세요"
                 />
                 <LoginInput
                     type="password"
@@ -69,8 +77,11 @@ const Login = () => {
                     textColor={theme[season].textColor}
                     hoverBgColor={theme[season].focusColor}
                 >
-                    로그인
+                    Login
                 </LoginButton>
+                <LoginTexts>
+                    <JoinTheMembershipLink to="../JoinTheMembership">아직 회원이 아니신가요? 회원가입</JoinTheMembershipLink>
+                </LoginTexts>
             </LoginSection>
         </LoginWrapper>
     );
