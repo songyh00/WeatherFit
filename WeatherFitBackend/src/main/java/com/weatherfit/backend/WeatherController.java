@@ -1,25 +1,27 @@
 package com.weatherfit.backend;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 
 @RestController
+@RequestMapping("/weather") // API 기본 경로
 @CrossOrigin(origins = "*")
 public class WeatherController {
+
     private final WeatherService weatherService;
 
     public WeatherController(WeatherService weatherService) {
         this.weatherService = weatherService;
     }
 
-    @GetMapping("/weather")
-    public String getWeather(@RequestParam String baseDate,
-                             @RequestParam String baseTime,
-                             @RequestParam String nx,
-                             @RequestParam String ny) {
+    @GetMapping("/get")
+    public String getWeather(
+            @RequestParam(name = "baseDate") String baseDate,
+            @RequestParam(name = "baseTime") String baseTime,
+            @RequestParam(name = "nx") String nx,
+            @RequestParam(name = "ny") String ny
+    ) {
         return weatherService.getWeather(baseDate, baseTime, nx, ny);
     }
 
@@ -27,5 +29,4 @@ public class WeatherController {
     public String hello() {
         return "Hello World";
     }
-
 }
