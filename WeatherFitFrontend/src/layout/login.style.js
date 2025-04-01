@@ -39,7 +39,7 @@ export const LoginInput = styled.input`
 export const LoginButton = styled.button`
     width: 464px;
     padding: 12px 15px;
-    margin: 30px 0 20px 0;
+    margin: 20px 0 0 0;
     font-size: 16px;
     border: 2px solid ${(props) => props.borderColor};
     //border-style: none;
@@ -59,3 +59,18 @@ export const LoginButton = styled.button`
         box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
     }
 `;
+
+export const LoginTexts = styled.div`
+    margin: 5px auto 5px auto;
+    width: 100%;
+    text-align: center; /* 가운데 정렬 */
+`;
+
+export const JoinTheMembershipLink = styled(Link)`
+    font-size: 12px;
+    padding: 0 5px 0 0;
+    text-decoration: none;
+    color: #000;
+    
+`;
+
