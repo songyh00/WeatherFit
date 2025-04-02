@@ -71,5 +71,5 @@ export const JoinTheMembershipLink = styled(Link)`
     padding: 0 5px 0 0;
     text-decoration: none;
     color: #000;
-
 `;
+

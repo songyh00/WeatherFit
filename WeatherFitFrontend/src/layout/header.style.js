@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+
 export const HeaderWrapper = styled.div`
     background: #fff;
     z-index: 10;

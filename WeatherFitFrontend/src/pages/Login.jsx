@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import logo from '../assets/logo.png';
 import { getSeason, theme } from "../components/theme.js"; // ✅ 추가
 
+
 const Login = () => {
     const [season, setSeason] = useState(getSeason());
     const [inputFocused, setInputFocused] = useState(false);
@@ -33,13 +34,13 @@ const Login = () => {
             <LoginSection>
                 <LoginInput
                     style={{ marginTop: '20px' }}
-                    type="text"
+                    type="email"
                     borderColor={theme[season].borderColor}
                     bgColor={theme[season].bgColor}
                     focusColor={inputFocused ? theme[season].focusColor : theme[season].borderColor}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
-                    placeholder="아이디를 입력해주세요"
+                    placeholder="이메일을 입력해주세요"
                 />
                 <LoginInput
                     type="password"
@@ -57,7 +58,7 @@ const Login = () => {
                     textColor={theme[season].textColor}
                     hoverBgColor={theme[season].focusColor}
                 >
-                    로그인
+                    Login
                 </LoginButton>
                 <LoginTexts>
                     <JoinTheMembershipLink to="../JoinTheMembership">아직 회원이 아니신가요? 회원가입</JoinTheMembershipLink>

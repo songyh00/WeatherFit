@@ -1,14 +1,40 @@
 import React from 'react';
 import '../App.css';
 import {
-    ContentsWrapper
-} from "../layout/mainPage.style.js";
+    ContentsWrapper,
+    MainContents,
+    Mainimage,
+    MainContentsLink
+} from "../layout/Best.style.js";
+import logo from "../assets/logo.png";
 
 const Best = () => {
     return (
         <ContentsWrapper>
-            Best 페이지 입니다.
+            <MainContents>
+
+                <Mainimage>
+                    <MainContentsLink to="/">
+                        <img src={logo} alt="WeatherFit Logo" />
+                    </MainContentsLink>
+                </Mainimage>
+
+                <Mainimage>
+                    <MainContentsLink to="/">
+                        <img src={logo} alt="WeatherFit Logo" />
+                    </MainContentsLink>
+                </Mainimage>
+
+                <Mainimage>
+                    <MainContentsLink to="/">
+                        <img src={logo} alt="WeatherFit Logo" />
+                    </MainContentsLink>
+                </Mainimage>
+
+            </MainContents>
         </ContentsWrapper>
+
+
     );
 }
 
