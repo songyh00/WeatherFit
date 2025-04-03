@@ -16,7 +16,7 @@ import { HeaderBackground } from "./layout/header.style.js";
 function Layout() {
     // 로그인 페이지면 헤더와 푸터를 안보이게 하기 위한 코드
     const location = useLocation();
-    const hideHeaderFooter = location.pathname === "/Login";
+    const hideHeaderFooter = location.pathname === "/Login" || location.pathname === "/JoinTheMembership";
 
     return (
         <>
