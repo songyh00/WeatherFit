@@ -12,6 +12,7 @@ import JoinTheMembership from "./pages/JoinTheMembership.jsx";
 import MyPage from "./pages/MyPage.jsx";
 import CustomerServiceCenter from "./pages/CustomerServiceCenter.jsx";
 import { HeaderBackground } from "./layout/header.style.js";
+import Footer from "./layout/Footer.jsx";
 
 function Layout() {
     // 로그인 페이지면 헤더와 푸터를 안보이게 하기 위한 코드
@@ -35,8 +36,7 @@ function Layout() {
                 <Route path="/CustomerServiceCenter" element={<CustomerServiceCenter />} />
             </Routes>
 
-            {/* 푸터 추가 시 여기도 적용 */}
-            {/* {!hideHeaderFooter && <Footer />} */}
+            {!hideHeaderFooter && <Footer />}
         </>
     );
 }
