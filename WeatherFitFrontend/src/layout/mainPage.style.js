@@ -7,26 +7,3 @@ export const ContentsWrapper = styled.div`
     width: 80%;
     margin: 0 auto;
 `;
-
-export const ContentsTitle = styled.div`
-    padding: 40px 20px;
-    text-align: center;
-    > h1 {
-        padding: 40px 80px;
-    }
-`;
-
-export const Mainimage = styled.div`
-    > img{
-        width: 100%;
-        height: 20%;
-    }
-`;
-
-export const ServiceInformation = styled.div`
-    > img{
-        width: 100%;
-        height: 20%;
-    }
-
-`;
