@@ -15,31 +15,31 @@ export const LoginSection = styled.div`
 `;
 
 export const LoginInput = styled.input`
-  width: 430px;
-  padding: 12px 15px;
-  margin: 10px 0 0 0;  
-  font-size: 16px;
-  border: 2px solid ${(props) => props.borderColor};
-  background-color: ${(props) => props.bgColor};
-  border-radius: 8px;
-  transition: 0.3s ease-in-out;
+    width: 430px;
+    padding: 12px 15px;
+    margin: 10px 0 0 0;
+    font-size: 16px;
+    border: 2px solid ${(props) => props.borderColor};
+    background-color: ${(props) => props.bgColor};
+    border-radius: 8px;
+    transition: 0.3s ease-in-out;
 
-  &:focus {
-    border-color: ${(props) => props.focusColor};
-    outline: none;
-    box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
-  }
+    &:focus {
+        border-color: ${(props) => props.focusColor};
+        outline: none;
+        box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+    }
 
-  &::placeholder {
-    color: #aaa;
-    font-style: italic;
-  }
+    &::placeholder {
+        color: #aaa;
+        font-style: italic;
+    }
 `;
 
 export const LoginButton = styled.button`
     width: 464px;
     padding: 12px 15px;
-    margin: 20px 0 0 0;
+    margin: 13px 0 0 0;
     font-size: 16px;
     border: 2px solid ${(props) => props.borderColor};
     //border-style: none;
@@ -71,6 +71,5 @@ export const JoinTheMembershipLink = styled(Link)`
     padding: 0 5px 0 0;
     text-decoration: none;
     color: #000;
-    
 `;
 

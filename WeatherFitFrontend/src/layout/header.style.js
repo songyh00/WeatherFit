@@ -31,6 +31,8 @@ export const HeaderNav = styled.div`
     display: flex;
     align-items: center; /* 가운데 정렬 */
     justify-content: center;
+    border-top : 1px solid darkgrey;
+    box-shadow: 0px 7px 10px rgba(0, 0, 0, 0.1);
 `;
 
 export const UserActionsLink = styled(Link)`
