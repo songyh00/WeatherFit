@@ -1,3 +1,9 @@
+-- weatherfit DB 스키마
+CREATE DATABASE weatherfit;
+USE weatherfit;
+
+
+
 -- clothes 테이블 스키마
 CREATE TABLE clothes (
                          id BIGINT AUTO_INCREMENT PRIMARY KEY,

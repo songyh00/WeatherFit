@@ -32,7 +32,7 @@ public class RecommendController {
     @GetMapping("/outfit")
     public List<OutfitDTO> recommendOutfitSet(
             @RequestParam @NotNull Double temperature,
-            @RequestParam(required = false) String style,   // ★ 스타일은 선택사항
+            @RequestParam(required = false) String style,
             @RequestParam @NotBlank String gender) {
 
         return outfitService.recommendOutfitSet(temperature, style, gender)
