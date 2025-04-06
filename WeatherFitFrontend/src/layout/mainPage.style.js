@@ -20,6 +20,7 @@ export const StyledImage = styled.img`
     max-width: 100%;
     max-height: 100%;
 `;
+
 export const ContentsTitle = styled.div`
     padding: 40px 40px;
     text-align: center;
@@ -47,7 +48,7 @@ export const LeftImage = styled.div`
     img {
         width: 65%;
         height: auto;
-        border-radius: 2PX;
+        border-radius: 2px;
     }
 `;
 
@@ -61,12 +62,12 @@ export const RightText = styled.div`
 
 export const ServiceGrid = styled.div`
     display: grid;
-    grid-template-columns: repeat(4, 1fr); // 가로 2열
+    grid-template-columns: repeat(4, 1fr); // 가로 4열
     gap: 40px;
     margin-top: 50px;
     padding: 0 40px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); // ← 기본 그림자
-    border-top : 1px solid #bfbfbf;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); // 기본 그림자
+    border-top: 1px solid #bfbfbf;
 `;
 
 export const ServiceCard = styled(Link)`
