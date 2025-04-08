@@ -22,7 +22,7 @@ public class RecommendController {
     private final ClothesService clothesService;
 
     /**
-     * [1] 개별 카테고리 추천 (상의, 하의, 아우터)
+     * [1] 개별 카테고리 추천 (아우터, 상의, 하의)
      */
     @GetMapping("/single")
     public List<ClothesDTO> recommendSingleClothes(
@@ -37,7 +37,7 @@ public class RecommendController {
     }
 
     /**
-     * [2] 전체 추천 (상의, 하의, 아우터 각 3장씩 총 9장)
+     * [2] 전체 추천 (아우터, 상의, 하의 각 3장씩 총 9장)
      */
     @GetMapping("/all")
     public Map<String, List<ClothesDTO>> recommendAll(
@@ -65,15 +65,7 @@ public class RecommendController {
     }
 
     /**
-     * [3] 좋아요 클릭 (likeCount 증가)
-     */
-    @PostMapping("/like")
-    public void likeClothes(@RequestParam Long clothesId) {
-        clothesService.increaseLikeCount(clothesId);
-    }
-
-    /**
-     * [4] BEST 추천 (좋아요 많은 옷 추천)
+     * [3] BEST 추천 (아우터, 상의, 하의 각 3장씩 좋아요 많은 옷 추천)
      */
     @GetMapping("/best")
     public Map<String, List<ClothesDTO>> bestClothes(
@@ -98,5 +90,13 @@ public class RecommendController {
                 .toList());
 
         return result;
+    }
+
+    /**
+     * [4] 좋아요 클릭 (likeCount 증가)
+     */
+    @PostMapping("/like")
+    public void likeClothes(@RequestParam Long clothesId) {
+        clothesService.increaseLikeCount(clothesId);
     }
 }
