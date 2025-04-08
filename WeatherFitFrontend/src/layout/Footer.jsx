@@ -1,4 +1,7 @@
 import React from 'react';
+import youtubeIcon from '../assets/icons/youtube.png';
+import kakaoIcon from '../assets/icons/kakao.png';
+import facebookIcon from '../assets/icons/facebook.png';
 import {
     FooterContainer,
     Row,
@@ -39,17 +42,17 @@ const Footer = () => {
                         <FooterList>
                             <FooterItem><FooterLink to="/Best">BEST</FooterLink></FooterItem>
                             <FooterItem><FooterLink to="/Suggestion">추천</FooterLink></FooterItem>
-                            <FooterItem><FooterLink to="/Outerwear">상의</FooterLink></FooterItem>
-                            <FooterItem><FooterLink to="/Consultation">하의</FooterLink></FooterItem>
-                            <FooterItem><FooterLink to="/Pants">신발</FooterLink></FooterItem>
+                            <FooterItem><FooterLink to="/Outerwear">아우터</FooterLink></FooterItem>
+                            <FooterItem><FooterLink to="/Consultation">상의</FooterLink></FooterItem>
+                            <FooterItem><FooterLink to="/Pants">하의</FooterLink></FooterItem>
                         </FooterList>
                     </FooterCol>
                     <FooterCol>
                         <h4>Contact</h4>
                         <SocialLinks>
-                            <SocialLink href="#"><i className="fab fa-facebook-f"></i></SocialLink>
-                            <SocialLink href="#"><i className="fab fa-youtube"></i></SocialLink>
-                            <SocialLink href="#"><i className="fab fa-instagram"></i></SocialLink>
+                            <SocialLink href="#"><img src={youtubeIcon} alt="YouTube" /></SocialLink>
+                            <SocialLink href="#"><img src={facebookIcon} alt="FaceBook" /></SocialLink>
+                            <SocialLink href="#"><img src={kakaoIcon} alt="Kakao" /></SocialLink>
                         </SocialLinks>
                     </FooterCol>
                 </Row>

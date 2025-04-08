@@ -63,6 +63,28 @@ export const MainMenuLink = styled(Link)`
     font-size: 16px;
     height: 50px;
     line-height: 50px;
+    position: relative;
+
+
+
+    &:hover {
+        color: #007BFF;
+    }
+
+
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 2px;
+        width: ${({$active}) => ($active ? '100%' : '0')};
+        background-color: #007BFF;
+        transition: width 0.3s ease-in-out;
+    }
+
+    
+    
 `;
 
 export const UserActionsContainer = styled.div`
