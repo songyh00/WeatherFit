@@ -1,4 +1,4 @@
-package com.weatherfit.backend.weather;
+package com.weatherfit.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
