@@ -5,20 +5,55 @@ import {Link} from "react-router-dom";
 export const ContentsWrapper = styled.div`
     padding: 176px 0 0 0;
     width: 80%;
-    margin: 0 auto;
+    margin: 30px auto 0 auto;
 `;
 
 export const Content = styled.div`
+    position: relative;
+    overflow: hidden;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+
+    .arrow-button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
+        cursor: pointer;
+        color: white;
+        transition: color 0.3s ease;
+    }
+
+    .left {
+        left: 10px;
+        
+    }
+
+    .right {
+        right: 10px;
+    }
+
+    `;
+
+export const SliderContainer = styled.div`
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    transform: ${({ sliderIndex }) => `translateX(-${sliderIndex * (100 / 3)}%)`};
+    width: ${({ totalImages }) => `${totalImages * (100 / 3)}%`};
+`;
+export const StyledImageContainer = styled.div`
+    flex: 0 0 calc(100% / 3); // 화면 너비의 1/3만큼씩 차지
+    padding: 0 10px; // 좌우 여백
+    box-sizing: border-box;
 `;
 
 export const StyledImage = styled.img`
-    width: auto;
-    height: auto;
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 600px;
+    object-fit: cover;
+    border-radius: 15px;
 `;
 
 export const ContentsTitle = styled.div`
