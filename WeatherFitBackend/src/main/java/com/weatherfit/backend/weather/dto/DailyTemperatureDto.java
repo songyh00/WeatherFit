@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TemperatureDto {
+public class DailyTemperatureDto {
     private int minTemperature; // 최저 기온
     private int maxTemperature; // 최고 기온
 }
