@@ -1,8 +1,8 @@
-package com.weatherfit.backend;
+package com.weatherfit.backend.apicontroller;
 
+import com.weatherfit.backend.apiservice.WeatherService;
+import com.weatherfit.backend.dto.TemperatureDto;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/weather") // API 기본 경로
@@ -15,18 +15,14 @@ public class WeatherController {
         this.weatherService = weatherService;
     }
 
-    @GetMapping("/get")
-    public String getWeather(
+    @GetMapping("/temperature")
+    public TemperatureDto getTemperature(
             @RequestParam(name = "baseDate") String baseDate,
             @RequestParam(name = "baseTime") String baseTime,
             @RequestParam(name = "nx") String nx,
             @RequestParam(name = "ny") String ny
     ) {
-        return weatherService.getWeather(baseDate, baseTime, nx, ny);
+        return weatherService.getTemperature(baseDate, baseTime, nx, ny);
     }
 
-    @GetMapping("/hello")
-    public String hello() {
-        return "Hello World";
-    }
 }
