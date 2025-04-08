@@ -22,7 +22,7 @@ public class RecommendController {
     private final ClothesService clothesService;
 
     /**
-     * [1] 개별 카테고리 추천 (상의, 하의, 아우터)
+     * [1] 개별 카테고리 추천 (아우터, 상의, 하의)
      */
     @GetMapping("/single")
     public List<ClothesDTO> recommendSingleClothes(
@@ -37,7 +37,7 @@ public class RecommendController {
     }
 
     /**
-     * [2] 전체 추천 (상의, 하의, 아우터 각 3장씩 총 9장)
+     * [2] 전체 추천 (아우터, 상의, 하의 각 3장씩 총 9장)
      */
     @GetMapping("/all")
     public Map<String, List<ClothesDTO>> recommendAll(
@@ -65,11 +65,28 @@ public class RecommendController {
     }
 
     /**
-     * [3] 좋아요 클릭 (likeCount 증가)
+     * [3] 상의 + 하의 추천 (6장)
      */
-    @PostMapping("/like")
-    public void likeClothes(@RequestParam Long clothesId) {
-        clothesService.increaseLikeCount(clothesId);
+    @GetMapping("/top-bottom")
+    public Map<String, List<ClothesDTO>> recommendTopAndBottom(
+            @RequestParam @NotNull Double temperature,
+            @RequestParam @NotBlank String gender) {
+
+        Map<String, List<ClothesDTO>> result = new LinkedHashMap<>();
+
+        // 상의 3장 추천
+        result.put("top", clothesService.recommendSingleClothes("상의", temperature, gender)
+                .stream()
+                .map(c -> new ClothesDTO(c.getCategory(), c.getName(), c.getGender(), c.getImageUrl()))
+                .toList());
+
+        // 하의 3장 추천
+        result.put("bottom", clothesService.recommendSingleClothes("하의", temperature, gender)
+                .stream()
+                .map(c -> new ClothesDTO(c.getCategory(), c.getName(), c.getGender(), c.getImageUrl()))
+                .toList());
+
+        return result;
     }
 
     /**
@@ -98,5 +115,13 @@ public class RecommendController {
                 .toList());
 
         return result;
+    }
+
+    /**
+     * [5] 좋아요 클릭 (likeCount 증가)
+     */
+    @PostMapping("/like")
+    public void likeClothes(@RequestParam Long clothesId) {
+        clothesService.increaseLikeCount(clothesId);
     }
 }
