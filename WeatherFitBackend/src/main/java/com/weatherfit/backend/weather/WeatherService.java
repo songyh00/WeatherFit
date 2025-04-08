@@ -1,13 +1,11 @@
-package com.weatherfit.backend;
+package com.weatherfit.backend.weather;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class WeatherService {
@@ -25,8 +23,9 @@ public class WeatherService {
     }
 
     public String getWeather(String baseDate, String baseTime, String nx, String ny) {
+        // ✅ 동네예보(getVilageFcst)로 변경
         StringBuilder urlBuilder = new StringBuilder(apiurl)
-                .append("/getUltraSrtNcst")
+                .append("/getVilageFcst")
                 .append("?serviceKey=").append(apikey)
                 .append("&pageNo=1")
                 .append("&numOfRows=1000")
@@ -54,7 +53,6 @@ public class WeatherService {
 
         String responseBody = response.getBody();
 
-
         if (responseBody != null && responseBody.trim().startsWith("{")) {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -65,7 +63,7 @@ public class WeatherService {
 
                 for (JsonNode item : items) {
                     String category = item.path("category").asText();
-                    String value = item.path("obsrValue").asText();
+                    String value = item.path("fcstValue").asText(); // ✅ 동네예보는 obsrValue가 아니라 fcstValue
                     result.append(category).append(": ").append(value).append("\n");
                 }
 
@@ -75,7 +73,6 @@ public class WeatherService {
                 return "JSON 파싱 실패";
             }
         } else {
-            // ❗ JSON이 아닌 경우 (XML 등 오류 메시지)
             return "서버에서 JSON이 아닌 응답을 받았습니다:\n\n" + responseBody;
         }
     }

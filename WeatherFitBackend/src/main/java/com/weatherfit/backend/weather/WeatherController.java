@@ -1,8 +1,6 @@
-package com.weatherfit.backend;
+package com.weatherfit.backend.weather;
 
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/weather") // API 기본 경로
