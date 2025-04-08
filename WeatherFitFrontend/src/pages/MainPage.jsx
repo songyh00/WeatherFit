@@ -35,7 +35,7 @@ const MainPage = () => {
     }, []);
 
     return (
-        <ContentsWrapper>
+        <ContentsWrapper style={{marginTop: '80px'}}>
             <Content>
                 <StyledImage src={myImage1} alt="Image 1" />
             </Content>

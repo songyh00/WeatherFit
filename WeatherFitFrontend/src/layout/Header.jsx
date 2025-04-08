@@ -34,21 +34,20 @@ const Header = () => {
                             <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink>
                         </UserActions>
                     </UserActionsContainer>
-
-                    <HeaderNav>
-                        <MainMenu>
-                            {/* 임시 데이터 메뉴 */}
-                            {/*<MainMenuLink to="/">오늘의 날씨</MainMenuLink> <- component로 하나 만들예정*/}
-                            <MainMenuLink to="/Best">BEST</MainMenuLink>
-                            <MainMenuLink to="/Suggestion">추천</MainMenuLink>
-                            <MainMenuLink to="/Outerwear">아우터</MainMenuLink>
-                            <MainMenuLink to="/Consultation">상의</MainMenuLink>
-                            <MainMenuLink to="/Pants">바지</MainMenuLink>
-                        </MainMenu>
-                    </HeaderNav>
                 </HeaderContent>
+                <HeaderNav>
+                    <MainMenu>
+                        {/* 임시 데이터 메뉴 */}
+                        {/*<MainMenuLink to="/">오늘의 날씨</MainMenuLink> <- component로 하나 만들예정*/}
+                        <MainMenuLink to="/Best">BEST</MainMenuLink>
+                        <MainMenuLink to="/Suggestion">추천</MainMenuLink>
+                        <MainMenuLink to="/Outerwear">아우터</MainMenuLink>
+                        <MainMenuLink to="/Consultation">상의</MainMenuLink>
+                        <MainMenuLink to="/Pants">바지</MainMenuLink>
+                    </MainMenu>
+                </HeaderNav>
             </HeaderWrapper>
-            <HeaderBackground />
+            {/*<HeaderBackground />*/}
         </>
     )
 }
