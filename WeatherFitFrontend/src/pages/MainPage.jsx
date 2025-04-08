@@ -1,20 +1,29 @@
 import React, { useState, useEffect } from 'react';
+import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import '../App.css';
 import {
     ContentsWrapper,
     ContentsTitle,
     Content,
+    StyledImageContainer,
     StyledImage,
     ServiceGrid,
     ServiceCard,
     ImageTextWrapper,
     LeftImage,
-    RightText
+    RightText,
+    SliderContainer
 } from "../layout/mainPage.style.js";
 import Main1 from "../assets/spring.png";
 import Main2 from "../assets/summer.png";
 import Main3 from "../assets/autumn.png";
 import Main4 from "../assets/winter.png";
+
+import Mainimg1 from "../assets/mainimg/mainimg1.jpg";
+import Mainimg2 from "../assets/mainimg/mainimg2.jpg";
+import Mainimg3 from "../assets/mainimg/mainimg3.jpg";
+import Mainimg4 from "../assets/mainimg/mainimg4.jpg";
+
 
 import myImage1 from "../assets/img1.png";
 import bestimg from "../assets/best2.png";
@@ -25,6 +34,24 @@ import clpaimg from "../assets/clpaimg.png";
 const MainPage = () => {
     const images = [Main1, Main2, Main3, Main4];
     const [currentImage, setCurrentImage] = useState(0);
+    const sliderImages = [Mainimg1, Mainimg2, Mainimg3, Mainimg4];
+    const [sliderIndex, setSliderIndex] = useState(0);
+    const totalSlides = images.length;
+    const visibleSlides = 3;
+
+    const goToPrev = () => {
+        setSliderIndex((prevIndex) =>
+            prevIndex === 0 ? totalSlides - visibleSlides : prevIndex - 1
+        );
+    };
+
+    const goToNext = () => {
+        setSliderIndex((prevIndex) =>
+            prevIndex >= totalSlides - visibleSlides ? 0 : prevIndex + 1
+        );
+    };
+
+
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -37,9 +64,27 @@ const MainPage = () => {
     return (
         <ContentsWrapper>
             <Content>
-                <StyledImage src={myImage1} alt="Image 1" />
+                <IoIosArrowBack
+                    size={45}
+                    onClick={goToPrev}
+                    className="arrow-button left"
+                />
+                <SliderContainer
+                    sliderIndex={sliderIndex}
+                    totalImages={sliderImages.length}
+                >
+                    {sliderImages.map((img, idx) => (
+                        <StyledImageContainer key={idx}>
+                            <StyledImage src={img} alt={`slide-${idx}`} />
+                        </StyledImageContainer>
+                    ))}
+                </SliderContainer>
+                <IoIosArrowForward
+                    size={45}
+                    onClick={goToNext}
+                    className="arrow-button right"
+                />
             </Content>
-
             <ContentsTitle>
                 <h1>계절이 바뀔때 마다, 오늘 무슨 옷 입을지 고민되지 않으세요?</h1>
 

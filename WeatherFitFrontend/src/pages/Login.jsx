@@ -61,7 +61,9 @@ const Login = () => {
                     Login
                 </LoginButton>
                 <LoginTexts>
-                    <JoinTheMembershipLink to="../JoinTheMembership">아직 회원이 아니신가요? 회원가입</JoinTheMembershipLink>
+                    <JoinTheMembershipLink to="../JoinTheMembership">회원가입</JoinTheMembershipLink>
+                    <JoinTheMembershipLink to="../ForgotIdOrPassword?page=id">| 아이디찾기 찾기</JoinTheMembershipLink>
+                    <JoinTheMembershipLink to="../ForgotIdOrPassword?page=pw">| 비밀번호 찾기</JoinTheMembershipLink>
                 </LoginTexts>
             </LoginSection>
         </LoginWrapper>

@@ -14,9 +14,12 @@ import {
 import { Link } from 'react-router-dom';
 import MainLogo from "../components/MainLogo.jsx";
 import logo from "../assets/logo.png";
+import {useState} from "react";
 
 
 const Header = () => {
+    const [activeMenu, setActiveMenu] = useState("");
+
     return (
         <>
             <HeaderWrapper>
@@ -35,18 +38,28 @@ const Header = () => {
                         </UserActions>
                     </UserActionsContainer>
 
-                    <HeaderNav>
-                        <MainMenu>
-                            {/* 임시 데이터 메뉴 */}
-                            {/*<MainMenuLink to="/">오늘의 날씨</MainMenuLink> <- component로 하나 만들예정*/}
-                            <MainMenuLink to="/Best">BEST</MainMenuLink>
-                            <MainMenuLink to="/Suggestion">추천</MainMenuLink>
-                            <MainMenuLink to="/Outerwear">아우터</MainMenuLink>
-                            <MainMenuLink to="/Consultation">상의</MainMenuLink>
-                            <MainMenuLink to="/Pants">바지</MainMenuLink>
-                        </MainMenu>
-                    </HeaderNav>
+
                 </HeaderContent>
+                <HeaderNav>
+                    <MainMenu>
+                        {/* 임시 데이터 메뉴 */}
+                        {/*<MainMenuLink to="/">오늘의 날씨</MainMenuLink> <- component로 하나 만들예정*/}
+                        <MainMenuLink to="/Best"  $active={activeMenu === "BEST"}
+                                      onClick={() => setActiveMenu("BEST")}>BEST</MainMenuLink>
+
+                        <MainMenuLink to="/Suggestion" $active={activeMenu === "추천"}
+                                      onClick={() => setActiveMenu("추천")}>추천</MainMenuLink>
+
+                        <MainMenuLink to="/Outerwear" $active={activeMenu === "아우터"}
+                                      onClick={() => setActiveMenu("아우터")}>아우터</MainMenuLink>
+
+                        <MainMenuLink to="/Consultation" $active={activeMenu === "상의"}
+                                      onClick={() => setActiveMenu("상의")}>상의</MainMenuLink>
+
+                        <MainMenuLink to="/Pants" $active={activeMenu === "바지"}
+                                      onClick={() => setActiveMenu("바지")}>바지</MainMenuLink>
+                    </MainMenu>
+                </HeaderNav>
             </HeaderWrapper>
             <HeaderBackground />
         </>

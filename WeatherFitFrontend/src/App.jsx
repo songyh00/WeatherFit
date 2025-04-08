@@ -13,11 +13,12 @@ import MyPage from "./pages/MyPage.jsx";
 import CustomerServiceCenter from "./pages/CustomerServiceCenter.jsx";
 import { HeaderBackground } from "./layout/header.style.js";
 import Footer from "./layout/Footer.jsx";
+import ForgotIdOrPassword from "./pages/ForgotIdOrPassword.jsx";
 
 function Layout() {
     // 로그인 페이지면 헤더와 푸터를 안보이게 하기 위한 코드
     const location = useLocation();
-    const hideHeaderFooter = location.pathname === "/Login" || location.pathname === "/JoinTheMembership";
+    const hideHeaderFooter = location.pathname === "/Login" || location.pathname === "/JoinTheMembership" || location.pathname === "/ForgotIdOrPassword";
 
     return (
         <>
@@ -34,6 +35,7 @@ function Layout() {
                 <Route path="/JoinTheMembership" element={<JoinTheMembership />} />
                 <Route path="/MyPage" element={<MyPage />} />
                 <Route path="/CustomerServiceCenter" element={<CustomerServiceCenter />} />
+                <Route path="/ForgotIdOrPassword" element={<ForgotIdOrPassword />} />
             </Routes>
 
             {!hideHeaderFooter && <Footer />}

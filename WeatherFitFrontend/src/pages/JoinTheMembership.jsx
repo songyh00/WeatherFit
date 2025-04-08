@@ -3,7 +3,7 @@ import { LoginWrapper, LoginSection, LoginInput, LoginButton } from "../layout/l
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { getSeason, theme } from "../components/theme.js";
-import { BtnSection, DuplicateTestBtn, RegisterWrapper } from "../layout/JoinTheMembership.style.js";
+import {BtnSection, CheckboxWrapper, DuplicateTestBtn, RegisterWrapper} from "../layout/JoinTheMembership.style.js";
 
 const JoinTheMembership = () => {
     const [season, setSeason] = useState(getSeason());
@@ -11,6 +11,7 @@ const JoinTheMembership = () => {
     const [userName, setUserName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [selectedRadio, setSelectedRadio] = useState("men");
 
     // 중복확인 결과를 저장할 상태 추가
     const [isUserNameAvailable, setIsUserNameAvailable] = useState(false);
@@ -107,11 +108,11 @@ const JoinTheMembership = () => {
             </Link>
 
             <LoginSection>
-                <BtnSection style={{ marginTop: '5px' }}>
+                <BtnSection style={{marginTop: '5px'}}>
                     <LoginInput
                         ref={userNameRef}
                         type="text"
-                        style={{ width: '356px' }}
+                        style={{width: '390px'}}
                         value={userName}
                         onChange={(e) => setUserName(e.target.value)}
                         borderColor={theme[season].borderColor}
@@ -138,7 +139,7 @@ const JoinTheMembership = () => {
                     <LoginInput
                         ref={emailRef}
                         type="email"
-                        style={{ width: '356px' }}
+                        style={{width: '390px'}}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         borderColor={theme[season].borderColor}
@@ -173,9 +174,42 @@ const JoinTheMembership = () => {
                     onBlur={handleBlur}
                     placeholder="비밀번호를 입력해주세요"
                 />
+
+                <CheckboxWrapper>
+                    <div className="form-check">
+                        <input
+                            className="form-check-input"
+                            type="radio"
+                            name="sex"
+                            id="radioDefault1"
+                            value="men"
+                            checked={selectedRadio === "men"}
+                            onChange={(e) => setSelectedRadio(e.target.value)} // value를 직접 설정
+                        />
+                        <label className="form-check-label" htmlFor="radioDefault1">
+                            남자
+                        </label>
+                    </div>
+                    &nbsp;&nbsp;
+                    <div className="form-check">
+                        <input
+                            className="form-check-input"
+                            type="radio"
+                            name="sex"
+                            id="radioDefault2"
+                            value="women"
+                            checked={selectedRadio === "women"}
+                            onChange={(e) => setSelectedRadio(e.target.value)}
+                        />
+                        <label className="form-check-label" htmlFor="radioDefault2">
+                            여자
+                        </label>
+                    </div>
+                </CheckboxWrapper>
+
                 <LoginButton
                     type="submit"
-                    style={{ marginBottom: '20px' }}
+                    style={{marginBottom: '20px'}}
                     borderColor={theme[season].borderColor}
                     bgColor={theme[season].bgColor}
                     focusColor={theme[season].focusColor}
