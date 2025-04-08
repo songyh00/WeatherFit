@@ -26,7 +26,7 @@ WeatherFit/
 ---
 
 ## 🛠️ 기술 스택  
-- **Backend:** Spring Boot, MySQL, AWS (예정)  
+- **Backend:** Spring Boot, MySQL, AWS 
 - **Frontend:** React (Vite), Tailwind CSS  
 - **Deployment:** AWS S3 + CloudFront (예정)  
 
@@ -98,4 +98,18 @@ git push origin feature-작업이름
 - 코드 리뷰 후 병합 (feature-작업이름 → dev)
 - feature-작업이름 삭제
 - dev 브랜치가 안정화되면 main 브랜치로 병합
+
+---
+
+## 💾 DB 초기화 방법
+
+1. MySQL에서 `weatherfit` 데이터베이스 생성
+
+2. 아래 명령어로 테이블과 초기 데이터를 설정하세요:
+
+```bash
+mysql -u root -p weatherfit < sql/schema.sql
+mysql -u root -p weatherfit < sql/clothes_data.sql
+mysql -u root -p weatherfit < sql/outfits_data.sql
+```
 
