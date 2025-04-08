@@ -15,7 +15,7 @@ export const LoginSection = styled.div`
 `;
 
 export const LoginInput = styled.input`
-    width: 430px;
+    width: 464px;
     padding: 12px 15px;
     margin: 10px 0 0 0;
     font-size: 16px;
