@@ -53,7 +53,7 @@ export const StyledImage = styled.img`
     width: 100%;
     height: 600px;
     object-fit: cover;
-    border-radius: 15px;
+    border-radius: 5px;
 `;
 
 export const ContentsTitle = styled.div`
@@ -83,12 +83,12 @@ export const LeftImage = styled.div`
     img {
         width: 65%;
         height: auto;
-        border-radius: 2px;
+        border-radius: 120px;
     }
 `;
 
 export const RightText = styled.div`
-    flex: 1;
+    flex: 0.9;
     text-align: left;
     font-size: 1.4rem;
     line-height: 1.5;
