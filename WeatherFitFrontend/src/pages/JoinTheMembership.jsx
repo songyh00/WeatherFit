@@ -111,7 +111,7 @@ const JoinTheMembership = () => {
                     <LoginInput
                         ref={userNameRef}
                         type="text"
-                        style={{ width: '356px' }}
+                        style={{ width: '390px' }}
                         value={userName}
                         onChange={(e) => setUserName(e.target.value)}
                         borderColor={theme[season].borderColor}
@@ -138,7 +138,7 @@ const JoinTheMembership = () => {
                     <LoginInput
                         ref={emailRef}
                         type="email"
-                        style={{ width: '356px' }}
+                        style={{ width: '390px' }}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         borderColor={theme[season].borderColor}
