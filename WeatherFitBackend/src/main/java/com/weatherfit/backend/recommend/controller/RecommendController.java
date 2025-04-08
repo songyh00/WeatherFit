@@ -1,48 +1,28 @@
 package com.weatherfit.backend.recommend.controller;
 
 import com.weatherfit.backend.recommend.dto.ClothesDTO;
-import com.weatherfit.backend.recommend.dto.OutfitDTO;
 import com.weatherfit.backend.recommend.service.ClothesService;
-import com.weatherfit.backend.recommend.service.OutfitService;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * 추천 관련 API 컨트롤러
+ * 추천 API를 제공하는 컨트롤러
  */
 @RestController
 @RequestMapping("/api/recommend")
 @RequiredArgsConstructor
 public class RecommendController {
 
-    private final OutfitService outfitService;
     private final ClothesService clothesService;
 
     /**
-     * [1] 스타일 기반 전체 코디 추천
-     * 스타일 선택 안 하면 전체 스타일 추천
-     */
-    @GetMapping("/outfit")
-    public List<OutfitDTO> recommendOutfitSet(
-            @RequestParam @NotNull Double temperature,
-            @RequestParam(required = false) String style,
-            @RequestParam @NotBlank String gender) {
-
-        return outfitService.recommendOutfitSet(temperature, style, gender)
-                .stream()
-                .map(o -> new OutfitDTO(o.getStyle(), o.getName(), o.getGender(), o.getImageUrl()))
-                .toList();
-    }
-
-    /**
-     * [2] 카테고리별 개별 옷 추천
+     * [1] 개별 카테고리 추천 (상의, 하의, 아우터)
      */
     @GetMapping("/single")
     public List<ClothesDTO> recommendSingleClothes(
@@ -54,5 +34,69 @@ public class RecommendController {
                 .stream()
                 .map(c -> new ClothesDTO(c.getCategory(), c.getName(), c.getGender(), c.getImageUrl()))
                 .toList();
+    }
+
+    /**
+     * [2] 전체 추천 (상의, 하의, 아우터 각 3장씩 총 9장)
+     */
+    @GetMapping("/all")
+    public Map<String, List<ClothesDTO>> recommendAll(
+            @RequestParam @NotNull Double temperature,
+            @RequestParam @NotBlank String gender) {
+
+        Map<String, List<ClothesDTO>> result = new LinkedHashMap<>();
+
+        result.put("outer", clothesService.recommendSingleClothes("아우터", temperature, gender)
+                .stream()
+                .map(c -> new ClothesDTO(c.getCategory(), c.getName(), c.getGender(), c.getImageUrl()))
+                .toList());
+
+        result.put("top", clothesService.recommendSingleClothes("상의", temperature, gender)
+                .stream()
+                .map(c -> new ClothesDTO(c.getCategory(), c.getName(), c.getGender(), c.getImageUrl()))
+                .toList());
+
+        result.put("bottom", clothesService.recommendSingleClothes("하의", temperature, gender)
+                .stream()
+                .map(c -> new ClothesDTO(c.getCategory(), c.getName(), c.getGender(), c.getImageUrl()))
+                .toList());
+
+        return result;
+    }
+
+    /**
+     * [3] 좋아요 클릭 (likeCount 증가)
+     */
+    @PostMapping("/like")
+    public void likeClothes(@RequestParam Long clothesId) {
+        clothesService.increaseLikeCount(clothesId);
+    }
+
+    /**
+     * [4] BEST 추천 (좋아요 많은 옷 추천)
+     */
+    @GetMapping("/best")
+    public Map<String, List<ClothesDTO>> bestClothes(
+            @RequestParam @NotNull Double temperature,
+            @RequestParam @NotBlank String gender) {
+
+        Map<String, List<ClothesDTO>> result = new LinkedHashMap<>();
+
+        result.put("outer", clothesService.findTop3BestClothes("아우터", temperature, gender)
+                .stream()
+                .map(c -> new ClothesDTO(c.getCategory(), c.getName(), c.getGender(), c.getImageUrl()))
+                .toList());
+
+        result.put("top", clothesService.findTop3BestClothes("상의", temperature, gender)
+                .stream()
+                .map(c -> new ClothesDTO(c.getCategory(), c.getName(), c.getGender(), c.getImageUrl()))
+                .toList());
+
+        result.put("bottom", clothesService.findTop3BestClothes("하의", temperature, gender)
+                .stream()
+                .map(c -> new ClothesDTO(c.getCategory(), c.getName(), c.getGender(), c.getImageUrl()))
+                .toList());
+
+        return result;
     }
 }

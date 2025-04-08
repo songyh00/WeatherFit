@@ -110,6 +110,5 @@ git push origin feature-작업이름
 ```bash
 mysql -u root -p weatherfit < sql/schema.sql
 mysql -u root -p weatherfit < sql/clothes_data.sql
-mysql -u root -p weatherfit < sql/outfits_data.sql
 ```
 
