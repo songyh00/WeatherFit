@@ -21,11 +21,10 @@ export const Row = styled.div`
 export const FooterCol = styled.div`
     width: 20%;
     padding: 0 15px;
+    position: relative;
 
-    &.contact {
-        border-left: 1px solid #ccc; /* ← 세로 구분선 */
-        padding-left: 25px; /* 선 때문에 살짝 더 여백 줘도 좋음 */
-        margin-left: -1px; /* 선이 너무 안쪽으로 들어가는 느낌이면 살짝 땡겨줌 */
+    &:not(:last-child) {
+        border-right: 1px solid #ccc; /* 오른쪽 경계선 */
     }
     
     h4 {
@@ -70,30 +69,38 @@ export const FooterLink = styled(Link)`
     transition: all 0.3s ease;
 
     &:hover {
-        color: #4d4242;
+        color: #383030;
         padding-left: 8px;
     }
 `;
-
 export const SocialLinks = styled.div`
     display: flex;
     gap: 10px;
 `;
 
 export const SocialLink = styled.a`
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     height: 40px;
     width: 40px;
-    font-size: 20px;
-    background-color: #b3aaaa;
-    text-align: center;
-    line-height: 40px;
+    background-color: #fafaf7;
     border-radius: 50%;
-    color: #b3aaaa;
     transition: all 0.5s ease;
 
+    border: 1px solid black;
+
     &:hover {
-        color: #948f8f;
-        background-color: #4d4242;
+        background-color: #e3e3e3;
+
+        img {
+            filter: brightness(0.8); /* hover 시 이미지 어둡게 */
+        }
+    }
+
+    img {
+        width: 23px;
+        height: 23px;
+        transition: filter 0.3s ease;
     }
 `;
