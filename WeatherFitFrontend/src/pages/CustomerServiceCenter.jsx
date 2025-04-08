@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import '../App.css';
 import {ContentsWrapper} from "../layout/mainPage.style.js";
+
 // import {
 //     ContentsWrapper,
 //     Selected,

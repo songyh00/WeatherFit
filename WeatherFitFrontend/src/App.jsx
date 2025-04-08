@@ -18,7 +18,7 @@ import ForgotIdOrPassword from "./pages/ForgotIdOrPassword.jsx";
 function Layout() {
     // 로그인 페이지면 헤더와 푸터를 안보이게 하기 위한 코드
     const location = useLocation();
-    const hideHeaderFooter = location.pathname === "/Login" || location.pathname === "/JoinTheMembership";
+    const hideHeaderFooter = location.pathname === "/Login" || location.pathname === "/JoinTheMembership" || location.pathname === "/ForgotIdOrPassword";
 
     return (
         <>

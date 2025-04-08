@@ -37,5 +37,11 @@ export const BtnSection = styled.div`
     justify-content: center;
 `;
 
+export const CheckboxWrapper = styled.div`
+    display: flex;
+    width: 464px;
+    margin: 10px auto 0;
+    padding: 0 0 0 5px;
+`;
 
 
