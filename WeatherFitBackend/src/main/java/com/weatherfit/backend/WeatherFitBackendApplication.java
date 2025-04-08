@@ -8,7 +8,6 @@ public class WeatherFitBackendApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(WeatherFitBackendApplication.class, args);
-
     }
 
 
