@@ -4,16 +4,19 @@ import { Link } from 'react-router-dom';
 
 
 export const HeaderWrapper = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
     background: #fff;
-    z-index: 10;
-    position: relative;
+    z-index: 1000;  
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); 
 `;
 
 export const HeaderContent = styled.div`
     width: 80%;
-    position: fixed;
-    left: 50%;
-    transform:translate(-50%, 0);
+    margin: 0 auto;
+    position: relative;
 `;
 
 export const UserActions = styled.div`
@@ -32,7 +35,6 @@ export const HeaderNav = styled.div`
     align-items: center; /* 가운데 정렬 */
     justify-content: center;
     border-top : 1px solid darkgrey;
-    box-shadow: 0px 7px 10px rgba(0, 0, 0, 0.1);
 `;
 
 export const UserActionsLink = styled(Link)`
