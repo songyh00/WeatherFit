@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom"; // Link도 여기로 같이 정리
 import { LoginWrapper, LoginSection, LoginInput, LoginButton } from "../layout/login.style.js";
-import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 import axios from "axios";
 
@@ -22,10 +22,10 @@ const theme = {
 };
 
 const Login = () => {
+    const navigate = useNavigate();
     const [season, setSeason] = useState(getSeason());
     const [inputFocused, setInputFocused] = useState(false);
 
-    // 로그인 상태 관리
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
@@ -33,7 +33,7 @@ const Login = () => {
     useEffect(() => {
         const interval = setInterval(() => {
             setSeason(getSeason());
-        }, 1000 * 60 * 60 * 24); // 하루마다 갱신
+        }, 1000 * 60 * 60 * 24);
         return () => clearInterval(interval);
     }, []);
 
@@ -49,7 +49,8 @@ const Login = () => {
 
             if (response.data.success) {
                 alert("로그인 성공!");
-                // 로그인 성공 후 처리 (예: 페이지 이동 등)
+                localStorage.setItem("isLoggedIn", "true"); // 로그인 상태 저장
+                navigate("/"); // 메인페이지로 이동
             } else {
                 alert("아이디 또는 비밀번호가 틀렸습니다.");
             }
