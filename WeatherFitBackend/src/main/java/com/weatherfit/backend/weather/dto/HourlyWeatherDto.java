@@ -1,23 +1,36 @@
 package com.weatherfit.backend.weather.dto;
 
+import java.time.LocalDateTime;
+
 public class HourlyWeatherDto {
-    private String forecastTime;
-    private double temperature;
-    private String weather; // ⭐ 추가: 날씨 상태까지 같이 저장
 
-    public HourlyWeatherDto() {}
+    private LocalDateTime dateTime;      // 날씨 정보가 측정된 시간
+    private int temperature;             // 측정된 온도 (섭씨)
+    private String weatherDescription;   // 날씨 설명 (예: 맑음, 흐림, 비, 눈 등)
+    private String precipitation;        // 강수량(mm) 또는 적설(cm), 없으면 null
 
-    public HourlyWeatherDto(String forecastTime, double temperature, String weather) {
-        this.forecastTime = forecastTime;
+    // 생성자: 날씨 정보 초기화
+    public HourlyWeatherDto(LocalDateTime dateTime, int temperature, String weatherDescription, String precipitation) {
+        this.dateTime = dateTime;
         this.temperature = temperature;
-        this.weather = weather;
+        this.weatherDescription = weatherDescription;
+        this.precipitation = precipitation;
     }
 
-    // Getter & Setter
-    public String getForecastTime() { return forecastTime; }
-    public void setForecastTime(String forecastTime) { this.forecastTime = forecastTime; }
-    public double getTemperature() { return temperature; }
-    public void setTemperature(double temperature) { this.temperature = temperature; }
-    public String getWeather() { return weather; }
-    public void setWeather(String weather) { this.weather = weather; }
+    // Getter 메서드들
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public int getTemperature() {
+        return temperature;
+    }
+
+    public String getWeatherDescription() {
+        return weatherDescription;
+    }
+
+    public String getPrecipitation() {
+        return precipitation;
+    }
 }

@@ -1,53 +1,56 @@
 plugins {
-    id 'java'
-    id 'org.springframework.boot' version '3.4.3'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'  // Java 플러그인 적용
+    id 'org.springframework.boot' version '3.4.3'  // Spring Boot 플러그인 적용
+    id 'io.spring.dependency-management' version '1.1.7'  // Spring 의존성 관리 플러그인 적용
 }
 
-group = 'com.weatherfit'
-version = '0.0.1-SNAPSHOT'
+group = 'com.weatherfit'  // 그룹 ID 설정
+version = '0.0.1-SNAPSHOT'  // 프로젝트 버전 설정
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(17)  // Java 17 버전 설정
     }
 }
 
 configurations {
     compileOnly {
-        extendsFrom annotationProcessor
+        extendsFrom annotationProcessor  // 컴파일 시 Lombok 처리 위해 annotationProcessor 의존성 포함
     }
 }
 
 repositories {
-    mavenCentral()
+    mavenCentral()  // Maven 중앙 저장소 사용
 }
 
 dependencies {
-    // Spring Boot 기본
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    // Spring Boot 기본 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-web'  // 웹 애플리케이션 지원
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'  // JPA (데이터베이스 연동)
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'  // Thymeleaf 템플릿 엔진
 
-    // Lombok
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-
-    // DB 연결
-    runtimeOnly 'com.mysql:mysql-connector-j'
-
-    // DevTools (개발용 핫 리로드)
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
+    // JSON 파싱 라이브러리
     implementation 'org.json:json:20250107'
 
-    // Validation (요청 검증용)
+    // Lombok 라이브러리 (컴파일 시 코드 생성 도구)
+    compileOnly 'org.projectlombok:lombok'  // Lombok 의존성 추가
+    annotationProcessor 'org.projectlombok:lombok'  // Lombok 어노테이션 프로세서 설정
+
+    // 입력 값 검증 라이브러리
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    // Test
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // MySQL 데이터베이스 연결 드라이버
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // 개발 중 핫 리로드 기능 제공
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // 테스트 관련 의존성
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'  // Spring Boot 테스트 지원
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'  // JUnit 플랫폼 런처
 }
 
+// 테스트 태스크에서 JUnit 사용 설정
 tasks.named('test') {
     useJUnitPlatform()
 }

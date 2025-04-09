@@ -1,5 +1,6 @@
 package com.weatherfit.backend.weather.util;
 
+// 위도/경도 -> nx/ny 계산식
 public class LocationUtil {
     private static final double RE = 6371.00877;
     private static final double GRID = 5.0;

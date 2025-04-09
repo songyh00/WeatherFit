@@ -3,18 +3,28 @@ package com.weatherfit.backend.weather.dto;
 import java.util.List;
 
 public class WeatherForecastDto {
-    private String date;
-    private double minTemperature;
-    private double maxTemperature;
-    private List<HourlyWeatherDto> weatherList; // ⭐ 온도+날씨 합친 리스트 하나만
 
-    // Getter & Setter
-    public String getDate() { return date; }
-    public void setDate(String date) { this.date = date; }
-    public double getMinTemperature() { return minTemperature; }
-    public void setMinTemperature(double minTemperature) { this.minTemperature = minTemperature; }
-    public double getMaxTemperature() { return maxTemperature; }
-    public void setMaxTemperature(double maxTemperature) { this.maxTemperature = maxTemperature; }
-    public List<HourlyWeatherDto> getWeatherList() { return weatherList; }
-    public void setWeatherList(List<HourlyWeatherDto> weatherList) { this.weatherList = weatherList; }
+    private int minTemperature;                  // 최저 기온
+    private int maxTemperature;                  // 최고 기온
+    private List<HourlyWeatherDto> hourlyWeather; // 시간별 날씨 데이터 리스트
+
+    // 생성자: 날씨 예보 초기화
+    public WeatherForecastDto(int minTemperature, int maxTemperature, List<HourlyWeatherDto> hourlyWeather) {
+        this.minTemperature = minTemperature;
+        this.maxTemperature = maxTemperature;
+        this.hourlyWeather = hourlyWeather;
+    }
+
+    // Getter 메서드들
+    public int getMinTemperature() {
+        return minTemperature;
+    }
+
+    public int getMaxTemperature() {
+        return maxTemperature;
+    }
+
+    public List<HourlyWeatherDto> getHourlyWeather() {
+        return hourlyWeather;
+    }
 }
