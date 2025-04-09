@@ -1,14 +1,15 @@
 package com.weatherfit.backend.weather.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.weatherfit.backend.weather.dto.DailyTemperatureDto;
-import com.weatherfit.backend.weather.dto.HourlyTemperatureDto;
+import com.weatherfit.backend.weather.dto.HourlyWeatherDto;
+import com.weatherfit.backend.weather.dto.WeatherForecastDto;
+import com.weatherfit.backend.weather.util.BaseDateTimeCalculator;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,96 +17,127 @@ import java.util.List;
 public class WeatherService {
 
     @Value("${weather.api.key}")
-    private String apiKey;
+    private String weatherApiKey;
 
-    @Value("${weather.api.url}")
-    private String apiUrl;
+    private static final String WEATHER_URL = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
 
-    private final RestTemplate restTemplate;
+    public WeatherForecastDto getForecast(int nx, int ny, boolean tomorrow) {
+        String baseDate = BaseDateTimeCalculator.getBaseDate(false);
+        String baseTime = BaseDateTimeCalculator.getBaseTime();
 
-    public WeatherService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+        String apiUrl = WEATHER_URL
+                + "?serviceKey=" + weatherApiKey
+                + "&numOfRows=100&pageNo=1&dataType=JSON"
+                + "&base_date=" + baseDate
+                + "&base_time=" + baseTime
+                + "&nx=" + nx
+                + "&ny=" + ny;
+
+        RestTemplate restTemplate = new RestTemplate();
+        String response = restTemplate.getForObject(apiUrl, String.class);
+
+        WeatherForecastDto allData = parseForecastResponse(response);
+        return filterForecast(allData, tomorrow);
     }
 
-    // ✅ 하루 최소/최대 온도 조회
-    public DailyTemperatureDto getDailyTemperature(String baseDate, String baseTime, String nx, String ny) {
-        String url = buildUrl(baseDate, baseTime, nx, ny);
-        ResponseEntity<String> response = fetchWeatherData(url);
+    private WeatherForecastDto parseForecastResponse(String response) {
+        JSONObject json = new JSONObject(response);
+        JSONArray items = json.getJSONObject("response")
+                .getJSONObject("body")
+                .getJSONObject("items")
+                .getJSONArray("item");
 
-        int minTemp = Integer.MAX_VALUE;
-        int maxTemp = Integer.MIN_VALUE;
+        List<HourlyWeatherDto> hourlyList = new ArrayList<>();
+        double minTemp = Double.MAX_VALUE;
+        double maxTemp = Double.MIN_VALUE;
 
-        if (response != null && response.getBody() != null) {
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode items = objectMapper.readTree(response.getBody())
-                        .path("response").path("body").path("items").path("item");
+        // 임시 저장
+        String[] weathers = new String[items.length()];
+        Double[] temps = new Double[items.length()];
+        String[] times = new String[items.length()];
 
-                for (JsonNode item : items) {
-                    if ("TMP".equals(item.path("category").asText())) { // TMP = 예보 기온
-                        int temp = Integer.parseInt(item.path("fcstValue").asText());
-                        minTemp = Math.min(minTemp, temp);
-                        maxTemp = Math.max(maxTemp, temp);
-                    }
+        for (int i = 0; i < items.length(); i++) {
+            JSONObject item = items.getJSONObject(i);
+            String category = item.getString("category");
+            String fcstTime = item.getString("fcstTime");
+            String fcstValue = item.getString("fcstValue");
+
+            times[i] = fcstTime;
+
+            if (category.equals("TMP")) { // 온도
+                double temp = Double.parseDouble(fcstValue);
+                temps[i] = temp;
+                minTemp = Math.min(minTemp, temp);
+                maxTemp = Math.max(maxTemp, temp);
+            } else if (category.equals("PTY")) { // 강수 형태
+                weathers[i] = convertPtyToWeather(Integer.parseInt(fcstValue));
+            } else if (category.equals("SKY")) { // 하늘 상태
+                if (weathers[i] == null || weathers[i].isEmpty()) {
+                    weathers[i] = convertSkyToWeather(Integer.parseInt(fcstValue));
                 }
-                return new DailyTemperatureDto(minTemp, maxTemp);
-            } catch (Exception e) {
-                System.err.println("❗ getDailyTemperature 파싱 오류: " + e.getMessage());
             }
         }
-        return new DailyTemperatureDto(0, 0); // 실패 시 기본값
-    }
 
-    // ✅ 3시간 간격 시간대별 온도 조회
-    public List<HourlyTemperatureDto> getHourlyTemperature(String baseDate, String baseTime, String nx, String ny) {
-        String url = buildUrl(baseDate, baseTime, nx, ny);
-        ResponseEntity<String> response = fetchWeatherData(url);
-
-        List<HourlyTemperatureDto> hourlyList = new ArrayList<>();
-
-        if (response != null && response.getBody() != null) {
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode items = objectMapper.readTree(response.getBody())
-                        .path("response").path("body").path("items").path("item");
-
-                for (JsonNode item : items) {
-                    if ("TMP".equals(item.path("category").asText())) { // TMP = 3시간 간격 기온
-                        String fcstTime = item.path("fcstTime").asText();
-                        int temp = Integer.parseInt(item.path("fcstValue").asText());
-                        hourlyList.add(new HourlyTemperatureDto(fcstTime, temp));
-                    }
-                }
-                return hourlyList;
-            } catch (Exception e) {
-                System.err.println("❗ getHourlyTemperature 파싱 오류: " + e.getMessage());
+        // 시간별로 다시 정리
+        for (int i = 0; i < items.length(); i++) {
+            if (times[i] != null && temps[i] != null && weathers[i] != null) {
+                hourlyList.add(new HourlyWeatherDto(times[i], temps[i], weathers[i]));
             }
         }
-        return new ArrayList<>(); // 실패 시 빈 리스트
+
+        WeatherForecastDto forecastDto = new WeatherForecastDto();
+        forecastDto.setDate(BaseDateTimeCalculator.getToday());
+        forecastDto.setMinTemperature(minTemp);
+        forecastDto.setMaxTemperature(maxTemp);
+        forecastDto.setWeatherList(hourlyList);
+
+        return forecastDto;
     }
 
-    // ✅ 공통 - 요청 URL 조립
-    private String buildUrl(String baseDate, String baseTime, String nx, String ny) {
-        return apiUrl +
-                "/getVilageFcst?serviceKey=" + apiKey +
-                "&pageNo=1&numOfRows=1000&dataType=JSON" +
-                "&base_date=" + baseDate +
-                "&base_time=" + baseTime +
-                "&nx=" + nx +
-                "&ny=" + ny;
+    private String convertPtyToWeather(int pty) {
+        return switch (pty) {
+            case 1 -> "비";
+            case 2 -> "비/눈";
+            case 3 -> "눈";
+            default -> "";
+        };
     }
 
-    // ✅ 공통 - API 호출
-    private ResponseEntity<String> fetchWeatherData(String url) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("User-Agent", "Mozilla/5.0");
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+    private String convertSkyToWeather(int sky) {
+        return switch (sky) {
+            case 1 -> "맑음";
+            case 3 -> "구름많음";
+            case 4 -> "흐림";
+            default -> "";
+        };
+    }
 
-        try {
-            return restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-        } catch (Exception e) {
-            System.err.println("❗ fetchWeatherData 호출 오류: " + e.getMessage());
-            return null;
+    private WeatherForecastDto filterForecast(WeatherForecastDto original, boolean tomorrow) {
+        List<HourlyWeatherDto> filteredList = new ArrayList<>();
+
+        if (tomorrow) {
+            for (HourlyWeatherDto h : original.getWeatherList()) {
+                int hour = Integer.parseInt(h.getForecastTime().substring(0, 2));
+                if (hour >= 5 || hour == 2) {
+                    filteredList.add(h);
+                }
+            }
+        } else {
+            int nowHour = LocalTime.now().getHour();
+            for (HourlyWeatherDto h : original.getWeatherList()) {
+                int hour = Integer.parseInt(h.getForecastTime().substring(0, 2));
+                if (nowHour <= hour || hour <= 2) {
+                    filteredList.add(h);
+                }
+            }
         }
+
+        WeatherForecastDto filtered = new WeatherForecastDto();
+        filtered.setDate(original.getDate());
+        filtered.setMinTemperature(original.getMinTemperature());
+        filtered.setMaxTemperature(original.getMaxTemperature());
+        filtered.setWeatherList(filteredList);
+
+        return filtered;
     }
 }
