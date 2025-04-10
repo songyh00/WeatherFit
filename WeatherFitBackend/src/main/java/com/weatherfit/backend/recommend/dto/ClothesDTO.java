@@ -1,17 +1,22 @@
 package com.weatherfit.backend.recommend.dto;
 
-import lombok.AllArgsConstructor;
+import com.weatherfit.backend.recommend.domain.Clothes;
 import lombok.Getter;
 
-/**
- * 클라이언트에게 전달할 옷 정보 DTO
- */
 @Getter
-@AllArgsConstructor
 public class ClothesDTO {
 
-    private String category;
-    private String name;
-    private String gender;
-    private String imageUrl;
+    private final Long id;
+    private final String category;
+    private final String name;
+    private final String imageUrl;
+    private final int likes;
+
+    public ClothesDTO(Clothes clothes) {
+        this.id = clothes.getId();
+        this.category = clothes.getCategory();
+        this.name = clothes.getName();
+        this.imageUrl = clothes.getImageUrl();
+        this.likes = clothes.getLikes();
+    }
 }

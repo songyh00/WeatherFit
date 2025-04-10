@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * - JPA 리포지토리가 있는 패키지를 지정한다
  */
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = "com.weatherfit.backend.recommend")
+@EnableJpaRepositories(basePackages = "com.weatherfit.backend")
 public class WeatherFitBackendApplication {
 
     public static void main(String[] args) {

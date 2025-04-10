@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 기상청 단기예보 데이터를 조회하고 가공하는 서비스
@@ -28,16 +29,10 @@ public class WeatherService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    /**
-     * 주어진 좌표(nx, ny)와 예보 타입(today, tomorrow)에 맞는 날씨 데이터를 조회한다.
-     */
     public WeatherForecastDto getForecast(int nx, int ny, String forecastType) {
         BaseDateTimeCalculator.DateTime baseDateTime = BaseDateTimeCalculator.calculateBaseDateTime();
-
-        // 1차 시도
         JSONArray items = tryFetchItems(nx, ny, baseDateTime);
 
-        // 실패하면 직전 사이클로 fallback
         if (items == null || items.isEmpty()) {
             BaseDateTimeCalculator.DateTime fallbackDateTime = BaseDateTimeCalculator.calculatePreviousDateTime(baseDateTime);
             items = tryFetchItems(nx, ny, fallbackDateTime);
@@ -52,7 +47,62 @@ public class WeatherService {
         int minTemp = hourlyWeathers.stream().mapToInt(HourlyWeatherDto::getTemperature).min().orElse(0);
         int maxTemp = hourlyWeathers.stream().mapToInt(HourlyWeatherDto::getTemperature).max().orElse(0);
 
-        return new WeatherForecastDto(minTemp, maxTemp, hourlyWeathers);
+        LocalDateTime now = LocalDateTime.now();
+        int currentHour = now.getHour();
+
+        double avg = hourlyWeathers.stream()
+                .filter(dto -> {
+                    LocalDateTime targetTime = dto.getDateTime();
+                    if ("today".equalsIgnoreCase(forecastType)) {
+                        if (currentHour < 9) {
+                            return targetTime.getHour() >= 9 && targetTime.getHour() <= 23;
+                        } else {
+                            return !targetTime.isBefore(now) && targetTime.getHour() <= 23;
+                        }
+                    } else if ("tomorrow".equalsIgnoreCase(forecastType)) {
+                        LocalDateTime tomorrow9am = now.toLocalDate().plusDays(1).atTime(9, 0);
+                        LocalDateTime dayAfterTomorrow0am = now.toLocalDate().plusDays(2).atTime(0, 0);
+                        return !targetTime.isBefore(tomorrow9am) && !targetTime.isAfter(dayAfterTomorrow0am);
+                    }
+                    return false;
+                })
+                .mapToInt(HourlyWeatherDto::getTemperature)
+                .average()
+                .orElse(0.0);
+
+        int avgTemp = (int) Math.round(avg);
+
+        // ⭐ 주요 날씨 형태 구하기
+        String mainWeather = hourlyWeathers.stream()
+                .collect(Collectors.groupingBy(HourlyWeatherDto::getWeatherDescription, Collectors.counting()))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse("알수없음");
+
+        // ⭐ 비/눈이 올 때 강수량, 적설량, 강수확률도 추출
+        String precipitationAmount = null;
+        String snowfallAmount = null;
+        String precipitationProbability = null;
+
+        for (HourlyWeatherDto dto : hourlyWeathers) {
+            if (dto.getWeatherDescription().contains("비") || dto.getWeatherDescription().contains("눈")) {
+                if (precipitationAmount == null && dto.getPrecipitation() != null) {
+                    precipitationAmount = dto.getPrecipitation();
+                }
+                if (snowfallAmount == null && dto.getPrecipitation() != null) {
+                    snowfallAmount = dto.getPrecipitation();
+                }
+            }
+        }
+
+        // 확률은 그냥 placeholder로 남겨둘게 (기상청 API에 강수확률 데이터 추가되면 여기서 꺼낼 수 있음)
+
+        return new WeatherForecastDto(
+                minTemp, maxTemp, avgTemp, mainWeather,
+                precipitationAmount, snowfallAmount, precipitationProbability,
+                hourlyWeathers
+        );
     }
 
     private JSONArray tryFetchItems(int nx, int ny, BaseDateTimeCalculator.DateTime dateTime) {
@@ -133,8 +183,13 @@ public class WeatherService {
     }
 
     private boolean isTargetTime(LocalDateTime targetTime, LocalDateTime now, String forecastType) {
+        if (now.getMinute() >= 50) {
+            now = now.plusHours(1).withMinute(0).withSecond(0).withNano(0);
+        } else {
+            now = now.withMinute(0).withSecond(0).withNano(0);
+        }
+
         if ("today".equalsIgnoreCase(forecastType)) {
-            LocalDateTime todayEnd = now.toLocalDate().atTime(23, 59);
             LocalDateTime tomorrow2am = now.toLocalDate().plusDays(1).atTime(2, 0);
             return !targetTime.isBefore(now) && !targetTime.isAfter(tomorrow2am);
         } else if ("tomorrow".equalsIgnoreCase(forecastType)) {

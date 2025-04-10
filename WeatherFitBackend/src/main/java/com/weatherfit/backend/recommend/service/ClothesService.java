@@ -1,69 +1,127 @@
 package com.weatherfit.backend.recommend.service;
 
+import com.weatherfit.backend.recommend.dto.ClothesDTO;
 import com.weatherfit.backend.recommend.domain.Clothes;
 import com.weatherfit.backend.recommend.repository.ClothesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
-/**
- * 옷 추천, 좋아요 관리 서비스
- */
 @Service
 @RequiredArgsConstructor
 public class ClothesService {
 
     private final ClothesRepository clothesRepository;
 
-    /**
-     * 개별 카테고리(상의, 하의, 아우터) 추천
-     * - 현재 온도와 성별에 맞는 옷을 랜덤으로 3개 추천
-     */
-    public List<Clothes> recommendSingleClothes(String category, double temperature, String gender) {
-        List<Clothes> clothes = clothesRepository.findClothesByCategoryAndTemperatureAndGender(category, temperature, gender);
+    private static final int TEMPERATURE_THRESHOLD = 21;
 
-        if (clothes.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "추천 결과가 없습니다.");
+    private static final String OUTER = "아우터";
+    private static final String TOP = "상의";
+    private static final String BOTTOM = "하의";
+    private static final String DRESS = "원피스";
+
+    public List<ClothesDTO> recommendBest(String gender, int temperature) {
+        List<Clothes> clothes = clothesRepository.findBestClothesByLikes(gender);
+        return selectClothesByRules(clothes, gender, temperature, true);
+    }
+
+    public List<ClothesDTO> recommendRandom(String gender, int temperature) {
+        List<Clothes> clothes = clothesRepository.findAllRandom(gender);
+        return selectClothesByRules(clothes, gender, temperature, false);
+    }
+
+    public Object recommendOuter(int temperature) {
+        if (temperature >= TEMPERATURE_THRESHOLD) {
+            return "아우터를 입기에는 날씨가 덥습니다. 그래도 입으시려면 얇은 아우터를 추천드립니다 :)";
+        }
+        return pickRandom(clothesRepository.findByCategory(OUTER), 3);
+    }
+
+    public List<ClothesDTO> recommendTop(String gender) {
+        List<Clothes> tops = clothesRepository.findByCategory(TOP);
+        if (gender.equalsIgnoreCase("FEMALE")) {
+            tops.addAll(clothesRepository.findByCategory(DRESS));
+        }
+        return pickRandom(tops, 3);
+    }
+
+    public List<ClothesDTO> recommendBottom() {
+        return pickRandom(clothesRepository.findByCategory(BOTTOM), 3);
+    }
+
+    private List<ClothesDTO> selectClothesByRules(List<Clothes> clothes, String gender, int temperature, boolean best) {
+        List<Clothes> outers = new ArrayList<>();
+        List<Clothes> tops = new ArrayList<>();
+        List<Clothes> bottoms = new ArrayList<>();
+        List<Clothes> dresses = new ArrayList<>();
+
+        for (Clothes c : clothes) {
+            switch (c.getCategory()) {
+                case OUTER -> outers.add(c);
+                case TOP -> tops.add(c);
+                case BOTTOM -> bottoms.add(c);
+                case DRESS -> dresses.add(c);
+            }
         }
 
-        Collections.shuffle(clothes); // 무작위 섞기
-        return clothes.stream()
-                .limit(3)
-                .toList();
+        List<ClothesDTO> result = new ArrayList<>();
+
+        if (temperature < TEMPERATURE_THRESHOLD) {
+            result.addAll(pickTop(outers, 3, best));
+        }
+
+        if (gender.equalsIgnoreCase("FEMALE")) {
+            tops.addAll(dresses);
+        }
+
+        List<ClothesDTO> selectedTops = pickTop(tops, 3, best);
+        int dressCount = (int) selectedTops.stream()
+                .filter(dto -> DRESS.equals(dto.getCategory()))
+                .count();
+        result.addAll(selectedTops);
+
+        result.addAll(pickTop(bottoms, 3 - dressCount, best));
+
+        return result;
     }
 
-    /**
-     * 좋아요 수 증가
-     * - 사용자가 특정 옷에 좋아요 버튼을 누르면 호출
-     */
-    public void increaseLikeCount(Long clothesId) {
-        Clothes clothes = clothesRepository.findById(clothesId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "옷을 찾을 수 없습니다."));
-        clothes.setLikeCount(clothes.getLikeCount() + 1);
-        clothesRepository.save(clothes);
-    }
+    private List<ClothesDTO> pickTop(List<Clothes> clothes, int count, boolean best) {
+        if (clothes.isEmpty()) return List.of();
+        if (best) {
+            // [수정] 좋아요 수 기준 그룹핑하고, 동률끼리 랜덤 섞기
+            Map<Integer, List<Clothes>> grouped = clothes.stream()
+                    .collect(Collectors.groupingBy(Clothes::getLikes));
 
-    /**
-     * BEST 추천
-     * - 온도/성별 조건을 만족하고
-     * - 좋아요 수가 많은 옷을 랜덤 섞은 뒤 다시 좋아요 순으로 정렬
-     */
-    public List<Clothes> findTop3BestClothes(String category, double temperature, String gender) {
-        List<Clothes> clothesList = clothesRepository.findBestClothesByCategoryAndTemperatureAndGender(category, temperature, gender);
+            List<Integer> sortedLikes = new ArrayList<>(grouped.keySet());
+            sortedLikes.sort(Comparator.reverseOrder());  // 좋아요 높은 순
 
-        if (clothesList.size() > 1) {
-            Collections.shuffle(clothesList); // 동률 랜덤 섞기
-            clothesList = clothesList.stream()
-                    .sorted((c1, c2) -> Integer.compare(c2.getLikeCount(), c1.getLikeCount()))
+            List<Clothes> sortedAndShuffled = new ArrayList<>();
+            for (Integer likes : sortedLikes) {
+                List<Clothes> sameLikeClothes = grouped.get(likes);
+                Collections.shuffle(sameLikeClothes);  // 동률끼리 랜덤 섞기
+                sortedAndShuffled.addAll(sameLikeClothes);
+            }
+
+            return sortedAndShuffled.stream()
+                    .limit(count)
+                    .map(ClothesDTO::new)
+                    .toList();
+        } else {
+            Collections.shuffle(clothes);
+            return clothes.stream()
+                    .limit(count)
+                    .map(ClothesDTO::new)
                     .toList();
         }
+    }
 
-        return clothesList.stream()
-                .limit(3)
+    private List<ClothesDTO> pickRandom(List<Clothes> clothes, int count) {
+        Collections.shuffle(clothes);
+        return clothes.stream()
+                .limit(count)
+                .map(ClothesDTO::new)
                 .toList();
     }
 }
