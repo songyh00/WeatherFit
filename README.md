@@ -56,27 +56,67 @@ WeatherFit/
 
 ## 📌 Git 작업 흐름
 
-### ✅ 1. `dev` 브랜치 최신화
+### ✅ 1. 깃허브 브랜치 최신화
+```sh
+git fetch origin --prune
+```
+
+### ✅ 2. `dev` 브랜치 최신화
 ```sh
 git checkout dev
 git pull origin dev
 ```
 
-### ✅ 2. 새 기능 브랜치 생성
+### ✅ 3. 새 기능 브랜치 생성
 ```sh
 git checkout -b feature-작업이름
 ```
 
-### ✅ 3. 작업 후 커밋 & 푸시
+### ✅ 4. 내 브랜치에 dev내용 최신화
 ```sh
+git fetch origin
+git merge origin/dev
+```
+
+### ✅ 5. 작업 후 커밋 & 푸시
+```sh
+git status
 git add .
 git commit -m "새로운 기능 추가"
 git push origin feature-작업이름
 ```
 
-### ✅ 4. PR 생성 후 리뷰 요청
+### ✅ 6. PR 생성 후 리뷰 요청
 - GitHub에서 feature-작업이름 → dev로 Pull Request(PR) 생성
-- 팀원들의 코드 리뷰를 거쳐 병합
+- PR 제목은 feat: 기능 추가 / fix: 버그 수정 식으로 작성
+- Reviewer 지정해서 코드 리뷰 요청 or 완벽할경우 스스로 머지 승인
+
+### ✅ 7. 기타 github 명령어
+```sh
+# 수정한 파일 복구 (수정 취소)
+git restore 파일명
+
+# 스테이징(=git add한거) 취소
+git restore --staged 파일명
+
+# 로컬 브랜치 삭제
+git branch -d 브랜치명
+
+# 리모트(깃허브) 브랜치 삭제
+git push origin --delete 브랜치명
+
+# 커밋 수정 (최근 커밋 메시지 고치기)
+git commit --amend
+
+# 커밋 되돌리기 (취소하고 다시 커밋)
+git reset --soft HEAD~1
+
+# 브랜치 목록 보기 (로컬/리모트)
+git branch -a
+
+# 리모트 목록 보기
+git remote -v
+```
 
 ---
 
@@ -85,9 +125,11 @@ git push origin feature-작업이름
 2. .env, application.properties 등 민감한 파일을 Git에 올리지 않도록 주의
 3. 커밋 메시지는 명확하게 작성
 
-    - fix: 로그인 버그 수정
-    - feat: 사용자 프로필 페이지 추가
-    - chore: 코드 리팩토링
+    - feat: 새로운 기능 추가 (예: 사용자 프로필 페이지 추가)
+    - fix: 버그 수정 (예: 로그인 오류 수정)
+    - chore: 개발과 무관한 단순 작업 (예: 패키지 업데이트, 설정 파일 수정)
+    - refactor: 코드 리팩토링 (예: 불필요한 코드 정리)
+    - docs: 문서 수정 (예: README 수정)
 
 ---
 
@@ -108,7 +150,11 @@ git push origin feature-작업이름
 2. 아래 명령어로 테이블과 초기 데이터를 설정하세요:
 
 ```bash
+# 스키마
 mysql -u root -p weatherfit < sql/schema.sql
+
+# DATA
 mysql -u root -p weatherfit < sql/clothes_data.sql
 ```
+※ SQL 파일 경로가 다를 경우 해당 경로를 맞춰서 입력하세요.
 

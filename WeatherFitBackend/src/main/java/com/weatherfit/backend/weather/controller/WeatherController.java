@@ -4,29 +4,32 @@ import com.weatherfit.backend.weather.dto.WeatherForecastDto;
 import com.weatherfit.backend.weather.service.KakaoAddressService;
 import com.weatherfit.backend.weather.service.WeatherService;
 import com.weatherfit.backend.weather.util.LocationUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
+@RequestMapping("/weather")
 public class WeatherController {
 
-    @Autowired
-    private KakaoAddressService kakaoAddressService;
+    private final KakaoAddressService kakaoAddressService;
+    private final WeatherService weatherService;
 
-    @Autowired
-    private WeatherService weatherService;
-
-    // 1. 날씨 조회 폼 화면을 보여주는 GET 요청
-    @GetMapping("/weather")
-    public String showWeatherForm() {
-        return "weather"; // templates/weather.html
+    public WeatherController(KakaoAddressService kakaoAddressService, WeatherService weatherService) {
+        this.kakaoAddressService = kakaoAddressService;
+        this.weatherService = weatherService;
     }
 
-    // 2. 폼 제출 후 날씨 정보 조회 (주소, forecastType을 받아 처리)
-    @GetMapping("/weather/search")
+    // 날씨 검색 폼 화면을 보여주는 요청 (GET)
+    @GetMapping
+    public String showWeatherForm() {
+        return "weather"; // templates/weather.html 렌더링
+    }
+
+    // 주소와 타입을 받아 날씨 데이터 조회 후 화면에 전달
+    @GetMapping("/search")
     public String getWeather(@RequestParam String address,
                              @RequestParam String forecastType,
                              Model model) {
@@ -44,6 +47,8 @@ public class WeatherController {
 
         // 4. 모델에 날씨 데이터 추가
         model.addAttribute("weatherData", weatherData);
+        model.addAttribute("address", address);
+        model.addAttribute("forecastType", forecastType);
 
         return "weather"; // 조회 결과를 포함한 weather.html 렌더링
     }

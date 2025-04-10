@@ -2,35 +2,46 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>날씨 기반 코디 추천</title>
 </head>
 <body>
 <h1>날씨 기반 코디 추천</h1>
 
-<form action="/weather/search" method="get">
+<!-- 검색 폼 -->
+<form action="/weather/search" method="get" style="padding: 10px;">
     <label>지역:
-        <input type="text" name="address" placeholder="예: 서울시 강남구" required>
+        <input type="text" name="address" placeholder="예: 서울시 강남구"
+               th:value="${address}" required style="margin-left: 10px;">
     </label>
     <br><br>
     <label>날씨 기준:
-        <select name="forecastType">
-            <option value="today">오늘 날씨</option>
-            <option value="tomorrow">내일 날씨</option>
+        <select name="forecastType" style="margin-left: 10px;">
+            <option value="today" th:selected="${forecastType == 'today'}">오늘 날씨</option>
+            <option value="tomorrow" th:selected="${forecastType == 'tomorrow'}">내일 날씨</option>
         </select>
     </label>
     <br><br>
-    <button type="submit">날씨 조회</button>
+    <button type="submit" style="padding: 5px 10px; border-radius: 5px;">조회하기 🔍</button>
 </form>
 
 <hr>
 
-<h2>날씨 정보</h2>
-
+<!-- 조회 결과 -->
 <div th:if="${weatherData != null}">
+    <!-- 지역과 예보 기준을 이용해 제목 표시 (address, forecastType null 방어 추가) -->
+    <h2 th:if="${address != null and forecastType != null}"
+        th:text="|${address}의 ${#strings.equals(forecastType, 'today') ? '오늘 날씨' : '내일 날씨'}|">
+    </h2>
+
+
+
+    <!-- 최저/최고 기온 -->
     <p>최저 기온: <span th:text="${weatherData.minTemperature}">최저 기온</span>°C</p>
     <p>최고 기온: <span th:text="${weatherData.maxTemperature}">최고 기온</span>°C</p>
 
-    <table border="1">
+    <!-- 시간별 날씨 테이블 -->
+    <table border="1" style="border-collapse: collapse; width: 100%; margin-top: 10px; text-align: center;">
         <thead>
         <tr>
             <th>시간</th>
