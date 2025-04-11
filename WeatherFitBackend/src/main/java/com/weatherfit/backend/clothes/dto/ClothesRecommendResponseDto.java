@@ -7,14 +7,21 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * 코디 추천 결과를 담아서 반환하는 DTO
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class ClothesRecommendResponseDto {
 
+    // 추천된 옷 목록
     private List<RecommendedClothesDto> recommendedClothes;
 
+    /**
+     * 추천된 개별 옷 정보를 나타내는 내부 DTO
+     */
     @Data
     @NoArgsConstructor
     @AllArgsConstructor

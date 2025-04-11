@@ -26,7 +26,9 @@ public class AuthController {
     private final ClothesRepository clothesRepository;
     private final JwtUtil jwtUtil;
 
-    // 수정된 로그인
+    /**
+     * 로그인 (username + password 입력 → 성공 시 token + username 반환)
+     */
     @PostMapping("/login")
     public Map<String, String> login(@RequestParam("username") String username,
                                      @RequestParam("password") String password) {
@@ -42,10 +44,12 @@ public class AuthController {
         Map<String, String> response = new HashMap<>();
         response.put("token", token);
         response.put("username", user.getUsername());
-
         return response;
     }
 
+    /**
+     * 회원가입 (username, email 중복 검사 후 등록)
+     */
     @PostMapping("/signup")
     public String signup(@RequestBody SignupRequestDto requestDto) {
         if (userRepository.findByUsername(requestDto.getUsername()).isPresent()) {
@@ -57,7 +61,7 @@ public class AuthController {
 
         User newUser = new User();
         newUser.setUsername(requestDto.getUsername());
-        newUser.setPassword(requestDto.getPassword()); // 나중에 암호화 권장
+        newUser.setPassword(requestDto.getPassword()); // 비밀번호는 추후 암호화 권장
         newUser.setEmail(requestDto.getEmail());
         newUser.setGender(User.Gender.valueOf(requestDto.getGender().toUpperCase()));
 
@@ -66,6 +70,9 @@ public class AuthController {
         return "회원가입이 완료되었습니다.";
     }
 
+    /**
+     * 아이디 찾기 (email + password 입력 → username 반환)
+     */
     @PostMapping("/find-username")
     public String findUsername(@RequestParam("email") String email,
                                @RequestParam("password") String password) {
@@ -76,9 +83,12 @@ public class AuthController {
             throw new RuntimeException("일치하는 사용자가 없습니다.");
         }
 
-        return user.getUsername(); // 성공하면 username 반환
+        return user.getUsername();
     }
 
+    /**
+     * 비밀번호 찾기 (username + email 입력 → password 반환)
+     */
     @PostMapping("/find-password")
     public String findPassword(@RequestParam("username") String username,
                                @RequestParam("email") String email) {
@@ -89,23 +99,26 @@ public class AuthController {
             throw new RuntimeException("일치하는 사용자가 없습니다.");
         }
 
-        return user.getPassword(); // 성공하면 password 반환
+        return user.getPassword();
     }
 
+    /**
+     * 회원 탈퇴 (토큰 인증 → 좋아요한 옷 likeCount 감소 → 좋아요 기록 삭제 → 회원 삭제)
+     */
     @DeleteMapping("/withdraw")
     @Transactional
     public String withdraw(@RequestHeader("Authorization") String token) {
         String tokenValue = token.replace("Bearer ", "");
         Long userId = jwtUtil.extractUserId(tokenValue);
 
-        // 1. 이 유저가 누른 좋아요들 조회
+        // 1. 이 유저가 누른 좋아요 조회
         List<Like> userLikes = likeRepository.findByUserId(userId);
 
-        // 2. 각 좋아요마다 clothes의 likeCount 줄이기
+        // 2. 좋아요한 옷들의 likeCount 감소
         for (Like like : userLikes) {
             Clothes clothes = like.getClothes();
             clothes.setLikeCount(Math.max(0, clothes.getLikeCount() - 1)); // 0보다 작아지지 않게
-            clothesRepository.save(clothes); // 업데이트
+            clothesRepository.save(clothes);
         }
 
         // 3. 좋아요 기록 삭제

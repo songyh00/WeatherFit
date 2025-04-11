@@ -11,19 +11,29 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 사용자가 주소, 날짜, 배너 타입을 입력하면
+ * 해당 조건에 맞춰 코디를 추천해주는 Controller
+ */
 @RestController
 @RequestMapping("/api/recommend")
 @RequiredArgsConstructor
 public class ClothesRecommendController {
 
-    private final KakaoAddressService kakaoAddressService;
-    private final WeatherService weatherService;
-    private final ClothesService clothesService;
-    private final JwtUtil jwtUtil;
+    private final KakaoAddressService kakaoAddressService; // 주소 → 좌표 변환 서비스
+    private final WeatherService weatherService;           // 날씨 데이터 조회 서비스
+    private final ClothesService clothesService;           // 코디 추천 서비스
+    private final JwtUtil jwtUtil;                          // JWT 유틸
 
+    /**
+     * 코디 추천 API
+     * @param requestDto 주소, 날짜, 배너타입 정보
+     * @param request    HttpServletRequest (헤더에서 JWT 토큰 추출)
+     * @return ClothesRecommendResponseDto 추천 결과
+     */
     @PostMapping
     public ClothesRecommendResponseDto recommendClothes(
-            @RequestBody ClothesRecommendRequestDto requestDto, // ✅ @RequestBody로 통째로 받는다
+            @RequestBody ClothesRecommendRequestDto requestDto,
             HttpServletRequest request
     ) {
         // 1. 주소 → 위도/경도 → NX/NY 변환
@@ -35,15 +45,15 @@ public class ClothesRecommendController {
         // 2. 날씨 데이터 가져오기
         var weather = weatherService.getForecast(xy.x, xy.y, requestDto.isTomorrow());
 
-        // 3. JWT 토큰에서 성별 가져오기
+        // 3. JWT 토큰에서 성별 추출
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             throw new RuntimeException("Authorization 헤더가 없습니다.");
         }
-        String token = authorizationHeader.substring(7);
+        String token = authorizationHeader.substring(7); // "Bearer " 제거
         String gender = jwtUtil.extractGender(token);
 
-        // 4. 추천 결과 반환
+        // 4. 코디 추천 결과 반환
         return clothesService.recommendClothes(
                 requestDto,
                 weather.getAverageTemperature(),

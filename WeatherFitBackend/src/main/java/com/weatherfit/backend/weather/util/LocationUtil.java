@@ -25,7 +25,7 @@ public class LocationUtil {
      * @return 변환된 격자 좌표 (XY 객체)
      */
     public static XY xyFromLatLng(double lat, double lng) {
-        double DEGRAD = Math.PI / 180.0;
+        double DEGRAD = Math.PI / 180.0; // 도 -> 라디안 변환 상수
 
         double re = RE / GRID;
         double slat1 = SLAT1 * DEGRAD;

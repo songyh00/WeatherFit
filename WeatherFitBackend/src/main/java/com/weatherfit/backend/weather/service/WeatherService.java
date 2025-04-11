@@ -4,15 +4,17 @@ import com.weatherfit.backend.weather.dto.ForecastDto;
 import com.weatherfit.backend.weather.dto.HourlyTemperatureDto;
 import com.weatherfit.backend.weather.dto.WeatherApiResponseDto;
 import com.weatherfit.backend.weather.util.BaseDateTimeCalculator;
-import com.weatherfit.backend.weather.util.LocationUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * 기상청 API를 이용하여 날씨 데이터를 가져오는 서비스
+ */
 @Service
 public class WeatherService {
 
@@ -26,12 +28,18 @@ public class WeatherService {
         this.serviceKey = serviceKey;
     }
 
+    /**
+     * nx, ny 좌표와 날짜(오늘/내일)를 기준으로 날씨 데이터 반환
+     */
     public ForecastDto getForecast(int nx, int ny, boolean tomorrow) {
         BaseDateTimeCalculator.DateTimeInfo dateTimeInfo = BaseDateTimeCalculator.getForecastDateTime(tomorrow);
         WeatherApiResponseDto responseDto = fetchWeatherApi(nx, ny, dateTimeInfo);
         return parseWeatherData(responseDto, dateTimeInfo.getTargetDate(), tomorrow);
     }
 
+    /**
+     * 기상청 API 호출
+     */
     private WeatherApiResponseDto fetchWeatherApi(int nx, int ny, BaseDateTimeCalculator.DateTimeInfo dateTimeInfo) {
         String uri = "/getVilageFcst?" +
                 "serviceKey=" + serviceKey +
@@ -50,6 +58,9 @@ public class WeatherService {
                 .block();
     }
 
+    /**
+     * 기상청 API 응답 데이터를 ForecastDto 형태로 변환
+     */
     private ForecastDto parseWeatherData(WeatherApiResponseDto responseDto, String targetDate, boolean tomorrow) {
         List<WeatherApiResponseDto.Item> items = responseDto.getResponse()
                 .getBody()
@@ -66,9 +77,9 @@ public class WeatherService {
         double snowAmount = 0.0;
         int precipitationProbability = 0;
 
-        // 현재 시간
+        // 현재 시간 (ex: 9시 -> 900, 14시 -> 1400)
         LocalDateTime now = LocalDateTime.now();
-        int nowHour = now.getHour() * 100; // 예: 9시 -> 900, 14시 -> 1400
+        int nowHour = now.getHour() * 100;
 
         for (WeatherApiResponseDto.Item item : items) {
             if (!item.getFcstDate().equals(targetDate)) continue;
@@ -80,10 +91,10 @@ public class WeatherService {
 
             boolean isTargetTime = false;
             if (tomorrow) {
-                // 내일 추천은 무조건 09~24시
+                // 내일 추천: 09시 ~ 24시
                 isTargetTime = (timeInt >= 900 && timeInt <= 2400);
             } else {
-                // 오늘 추천
+                // 오늘 추천: 현재 시간이 09시 전이면 09~24시, 이후면 현재시~24시
                 if (nowHour < 900) {
                     isTargetTime = (timeInt >= 900 && timeInt <= 2400);
                 } else {
@@ -92,7 +103,7 @@ public class WeatherService {
             }
 
             switch (category) {
-                case "TMP":
+                case "TMP": // 기온
                     int temp = Integer.parseInt(value);
                     hourlyTemperatures.add(new HourlyTemperatureDto(time, temp));
                     if (isTargetTime) {
@@ -101,27 +112,27 @@ public class WeatherService {
                     maxTemp = Math.max(maxTemp, temp);
                     minTemp = Math.min(minTemp, temp);
                     break;
-                case "SKY":
+                case "SKY": // 하늘 상태
                     if (time.equals("0900")) {
                         weatherType = getSkyDescription(value);
                     }
                     break;
-                case "PTY":
+                case "PTY": // 강수 형태
                     if (time.equals("0900") && !value.equals("0")) {
                         weatherType = getPrecipitationDescription(value);
                     }
                     break;
-                case "POP":
+                case "POP": // 강수 확률
                     if (time.equals("0900")) {
                         precipitationProbability = Integer.parseInt(value);
                     }
                     break;
-                case "PCP":
+                case "PCP": // 강수량
                     if (time.equals("0900")) {
                         precipitationAmount = parsePrecipitationOrSnow(value);
                     }
                     break;
-                case "SNO":
+                case "SNO": // 적설량
                     if (time.equals("0900")) {
                         snowAmount = parsePrecipitationOrSnow(value);
                     }
@@ -129,7 +140,7 @@ public class WeatherService {
             }
         }
 
-        // ⭐ 평균 계산 (반올림 + int 변환)
+        // ⭐ 평균 기온 계산
         double averageTemp = tempsForAverage.stream()
                 .mapToInt(Integer::intValue)
                 .average()
@@ -143,10 +154,13 @@ public class WeatherService {
                 .precipitationAmount(precipitationAmount)
                 .snowAmount(snowAmount)
                 .precipitationProbability(precipitationProbability)
-                .averageTemperature((int) Math.round(averageTemp)) // 🔥 여기만 int로 변환해서 넘기기
+                .averageTemperature((int) Math.round(averageTemp))
                 .build();
     }
 
+    /**
+     * 강수량, 적설량 파싱
+     */
     private double parsePrecipitationOrSnow(String value) {
         if (value.equals("강수없음") || value.equals("적설없음")) {
             return 0.0;
@@ -158,6 +172,9 @@ public class WeatherService {
         return 0.0;
     }
 
+    /**
+     * 하늘 상태 값 → 텍스트 변환
+     */
     private String getSkyDescription(String skyValue) {
         switch (skyValue) {
             case "1": return "맑음";
@@ -167,6 +184,9 @@ public class WeatherService {
         }
     }
 
+    /**
+     * 강수 형태 값 → 텍스트 변환
+     */
     private String getPrecipitationDescription(String ptyValue) {
         switch (ptyValue) {
             case "1": return "비";
