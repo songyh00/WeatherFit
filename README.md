@@ -240,7 +240,7 @@ mysql -u root -p weatherfit < sql/clothes_data.sql
 }
 ```
 
-### 9. 회원 탈퇴 (DELETE /api/auth/withdraw)
+### 9. 회원 탈퇴 (DELETE http://localhost:8080/api/auth/withdraw)
 ```bash
 # Headers
 {
