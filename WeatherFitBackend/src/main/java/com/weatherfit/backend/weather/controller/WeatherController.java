@@ -7,6 +7,9 @@ import com.weatherfit.backend.weather.util.LocationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 날씨 정보를 제공하는 컨트롤러
  */
@@ -25,11 +28,11 @@ public class WeatherController {
      *
      * @param address  조회할 주소
      * @param tomorrow 오늘(false) / 내일(true) 여부
-     * @return ForecastDto (날씨 정보 반환)
+     * @return 날씨 정보를 담은 Map 반환
      */
     @GetMapping
-    public ForecastDto getWeather(@RequestParam String address,
-                                  @RequestParam(defaultValue = "false") boolean tomorrow) {
+    public Map<String, Object> getWeather(@RequestParam String address,
+                                          @RequestParam(defaultValue = "false") boolean tomorrow) {
         // 1. 주소를 위도/경도로 변환
         double[] coordinates = kakaoAddressService.getCoordinates(address);
         double latitude = coordinates[0];
@@ -39,8 +42,15 @@ public class WeatherController {
         LocationUtil.XY xy = LocationUtil.xyFromLatLng(latitude, longitude);
 
         // 3. 변환된 좌표를 기준으로 날씨 데이터 조회
-        return weatherService.getForecast(xy.x, xy.y, tomorrow);
+        ForecastDto weather = weatherService.getForecast(xy.x, xy.y, tomorrow);
 
+        // 4. 응답용 맵에 날씨 정보 추가
+        Map<String, Object> response = new HashMap<>();
+        response.put("currentTemperature", weather.getAverageTemperature());
+        response.put("maxTemperature", weather.getMaxTemperature());
+        response.put("minTemperature", weather.getMinTemperature());
+        response.put("weatherType", weather.getWeatherType());
 
+        return response;
     }
 }
