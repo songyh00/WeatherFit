@@ -1,18 +1,31 @@
 package com.weatherfit.backend.weather.util;
 
-// 위도/경도 -> nx/ny 계산식
+/**
+ * 위도/경도를 기상청 API용 격자 좌표(nx, ny)로 변환하는 유틸리티
+ *
+ * (기상청 초단기/단기예보 API는 격자 좌표를 사용하기 때문에 변환이 필요함)
+ */
 public class LocationUtil {
-    private static final double RE = 6371.00877;
-    private static final double GRID = 5.0;
-    private static final double SLAT1 = 30.0;
-    private static final double SLAT2 = 60.0;
-    private static final double OLON = 126.0;
-    private static final double OLAT = 38.0;
-    private static final double XO = 43;
-    private static final double YO = 136;
 
+    // 고정된 변환 파라미터 (기상청 표준)
+    private static final double RE = 6371.00877;  // 지구 반경 (km)
+    private static final double GRID = 5.0;       // 격자 간격 (km)
+    private static final double SLAT1 = 30.0;     // 투영 위도1 (도)
+    private static final double SLAT2 = 60.0;     // 투영 위도2 (도)
+    private static final double OLON = 126.0;     // 기준점 경도 (도)
+    private static final double OLAT = 38.0;      // 기준점 위도 (도)
+    private static final double XO = 43;          // 기준점 X좌표 (격자)
+    private static final double YO = 136;         // 기준점 Y좌표 (격자)
+
+    /**
+     * 위도, 경도를 입력받아 격자 좌표 (nx, ny)로 변환한다.
+     *
+     * @param lat 위도 (Latitude)
+     * @param lng 경도 (Longitude)
+     * @return 변환된 격자 좌표 (XY 객체)
+     */
     public static XY xyFromLatLng(double lat, double lng) {
-        double DEGRAD = Math.PI / 180.0;
+        double DEGRAD = Math.PI / 180.0; // 도 -> 라디안 변환 상수
 
         double re = RE / GRID;
         double slat1 = SLAT1 * DEGRAD;
@@ -43,6 +56,9 @@ public class LocationUtil {
         return new XY(x, y);
     }
 
+    /**
+     * 격자 좌표를 담는 내부 클래스
+     */
     public static class XY {
         public int x;
         public int y;
