@@ -12,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -24,9 +26,10 @@ public class AuthController {
     private final ClothesRepository clothesRepository;
     private final JwtUtil jwtUtil;
 
+    // 수정된 로그인
     @PostMapping("/login")
-    public String login(@RequestParam("username") String username,
-                        @RequestParam("password") String password) {
+    public Map<String, String> login(@RequestParam("username") String username,
+                                     @RequestParam("password") String password) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 사용자입니다."));
 
@@ -34,7 +37,13 @@ public class AuthController {
             throw new RuntimeException("비밀번호가 틀렸습니다.");
         }
 
-        return jwtUtil.generateToken(user.getId(), user.getGender().toString());
+        String token = jwtUtil.generateToken(user.getId(), user.getGender().toString());
+
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+        response.put("username", user.getUsername());
+
+        return response;
     }
 
     @PostMapping("/signup")
@@ -55,6 +64,32 @@ public class AuthController {
         userRepository.save(newUser);
 
         return "회원가입이 완료되었습니다.";
+    }
+
+    @PostMapping("/find-username")
+    public String findUsername(@RequestParam("email") String email,
+                               @RequestParam("password") String password) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("일치하는 사용자가 없습니다."));
+
+        if (!user.getPassword().equals(password)) {
+            throw new RuntimeException("일치하는 사용자가 없습니다.");
+        }
+
+        return user.getUsername(); // 성공하면 username 반환
+    }
+
+    @PostMapping("/find-password")
+    public String findPassword(@RequestParam("username") String username,
+                               @RequestParam("email") String email) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("일치하는 사용자가 없습니다."));
+
+        if (!user.getEmail().equals(email)) {
+            throw new RuntimeException("일치하는 사용자가 없습니다.");
+        }
+
+        return user.getPassword(); // 성공하면 password 반환
     }
 
     @DeleteMapping("/withdraw")
