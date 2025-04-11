@@ -1,239 +1,179 @@
 package com.weatherfit.backend.weather.service;
 
-import com.weatherfit.backend.weather.dto.HourlyWeatherDto;
-import com.weatherfit.backend.weather.dto.WeatherForecastDto;
+import com.weatherfit.backend.weather.dto.ForecastDto;
+import com.weatherfit.backend.weather.dto.HourlyTemperatureDto;
+import com.weatherfit.backend.weather.dto.WeatherApiResponseDto;
 import com.weatherfit.backend.weather.util.BaseDateTimeCalculator;
+import com.weatherfit.backend.weather.util.LocationUtil;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
-/**
- * 기상청 단기예보 데이터를 조회하고 가공하는 서비스
- */
 @Service
 public class WeatherService {
 
-    @Value("${weather.api.url}")
-    private String weatherApiUrl;
+    private final WebClient webClient;
+    private final String serviceKey;
 
-    @Value("${weather.api.key}")
-    private String weatherApiKey;
+    public WeatherService(WebClient.Builder webClientBuilder,
+                          @Value("${weather.api.base-url}") String baseUrl,
+                          @Value("${weather.api.service-key}") String serviceKey) {
+        this.webClient = webClientBuilder.baseUrl(baseUrl).build();
+        this.serviceKey = serviceKey;
+    }
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    public ForecastDto getForecast(int nx, int ny, boolean tomorrow) {
+        BaseDateTimeCalculator.DateTimeInfo dateTimeInfo = BaseDateTimeCalculator.getForecastDateTime(tomorrow);
+        WeatherApiResponseDto responseDto = fetchWeatherApi(nx, ny, dateTimeInfo);
+        return parseWeatherData(responseDto, dateTimeInfo.getTargetDate(), tomorrow);
+    }
 
-    public WeatherForecastDto getForecast(int nx, int ny, String forecastType) {
-        BaseDateTimeCalculator.DateTime baseDateTime = BaseDateTimeCalculator.calculateBaseDateTime();
-        JSONArray items = tryFetchItems(nx, ny, baseDateTime);
+    private WeatherApiResponseDto fetchWeatherApi(int nx, int ny, BaseDateTimeCalculator.DateTimeInfo dateTimeInfo) {
+        String uri = "/getVilageFcst?" +
+                "serviceKey=" + serviceKey +
+                "&pageNo=1" +
+                "&numOfRows=1000" +
+                "&dataType=JSON" +
+                "&base_date=" + dateTimeInfo.getBaseDate() +
+                "&base_time=" + dateTimeInfo.getBaseTime() +
+                "&nx=" + nx +
+                "&ny=" + ny;
 
-        if (items == null || items.isEmpty()) {
-            BaseDateTimeCalculator.DateTime fallbackDateTime = BaseDateTimeCalculator.calculatePreviousDateTime(baseDateTime);
-            items = tryFetchItems(nx, ny, fallbackDateTime);
+        return webClient.get()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(WeatherApiResponseDto.class)
+                .block();
+    }
 
-            if (items == null || items.isEmpty()) {
-                throw new RuntimeException("현재 기상 데이터가 준비되지 않았습니다. 잠시 후 다시 시도해주세요.");
+    private ForecastDto parseWeatherData(WeatherApiResponseDto responseDto, String targetDate, boolean tomorrow) {
+        List<WeatherApiResponseDto.Item> items = responseDto.getResponse()
+                .getBody()
+                .getItems()
+                .getItem();
+
+        List<HourlyTemperatureDto> hourlyTemperatures = new ArrayList<>();
+        List<Integer> tempsForAverage = new ArrayList<>();
+
+        int maxTemp = Integer.MIN_VALUE;
+        int minTemp = Integer.MAX_VALUE;
+        String weatherType = "맑음";
+        double precipitationAmount = 0.0;
+        double snowAmount = 0.0;
+        int precipitationProbability = 0;
+
+        // 현재 시간
+        LocalDateTime now = LocalDateTime.now();
+        int nowHour = now.getHour() * 100; // 예: 9시 -> 900, 14시 -> 1400
+
+        for (WeatherApiResponseDto.Item item : items) {
+            if (!item.getFcstDate().equals(targetDate)) continue;
+
+            String category = item.getCategory();
+            String time = item.getFcstTime();
+            int timeInt = Integer.parseInt(time);
+            String value = item.getFcstValue();
+
+            boolean isTargetTime = false;
+            if (tomorrow) {
+                // 내일 추천은 무조건 09~24시
+                isTargetTime = (timeInt >= 900 && timeInt <= 2400);
+            } else {
+                // 오늘 추천
+                if (nowHour < 900) {
+                    isTargetTime = (timeInt >= 900 && timeInt <= 2400);
+                } else {
+                    isTargetTime = (timeInt >= nowHour && timeInt <= 2400);
+                }
+            }
+
+            switch (category) {
+                case "TMP":
+                    int temp = Integer.parseInt(value);
+                    hourlyTemperatures.add(new HourlyTemperatureDto(time, temp));
+                    if (isTargetTime) {
+                        tempsForAverage.add(temp);
+                    }
+                    maxTemp = Math.max(maxTemp, temp);
+                    minTemp = Math.min(minTemp, temp);
+                    break;
+                case "SKY":
+                    if (time.equals("0900")) {
+                        weatherType = getSkyDescription(value);
+                    }
+                    break;
+                case "PTY":
+                    if (time.equals("0900") && !value.equals("0")) {
+                        weatherType = getPrecipitationDescription(value);
+                    }
+                    break;
+                case "POP":
+                    if (time.equals("0900")) {
+                        precipitationProbability = Integer.parseInt(value);
+                    }
+                    break;
+                case "PCP":
+                    if (time.equals("0900")) {
+                        precipitationAmount = parsePrecipitationOrSnow(value);
+                    }
+                    break;
+                case "SNO":
+                    if (time.equals("0900")) {
+                        snowAmount = parsePrecipitationOrSnow(value);
+                    }
+                    break;
             }
         }
 
-        List<HourlyWeatherDto> hourlyWeathers = parseWeather(items, forecastType);
-
-        int minTemp = hourlyWeathers.stream().mapToInt(HourlyWeatherDto::getTemperature).min().orElse(0);
-        int maxTemp = hourlyWeathers.stream().mapToInt(HourlyWeatherDto::getTemperature).max().orElse(0);
-
-        LocalDateTime now = LocalDateTime.now();
-        int currentHour = now.getHour();
-
-        double avg = hourlyWeathers.stream()
-                .filter(dto -> {
-                    LocalDateTime targetTime = dto.getDateTime();
-                    if ("today".equalsIgnoreCase(forecastType)) {
-                        if (currentHour < 9) {
-                            return targetTime.getHour() >= 9 && targetTime.getHour() <= 23;
-                        } else {
-                            return !targetTime.isBefore(now) && targetTime.getHour() <= 23;
-                        }
-                    } else if ("tomorrow".equalsIgnoreCase(forecastType)) {
-                        LocalDateTime tomorrow9am = now.toLocalDate().plusDays(1).atTime(9, 0);
-                        LocalDateTime dayAfterTomorrow0am = now.toLocalDate().plusDays(2).atTime(0, 0);
-                        return !targetTime.isBefore(tomorrow9am) && !targetTime.isAfter(dayAfterTomorrow0am);
-                    }
-                    return false;
-                })
-                .mapToInt(HourlyWeatherDto::getTemperature)
+        // ⭐ 평균 계산 (반올림 + int 변환)
+        double averageTemp = tempsForAverage.stream()
+                .mapToInt(Integer::intValue)
                 .average()
                 .orElse(0.0);
 
-        int avgTemp = (int) Math.round(avg);
-
-        // ⭐ 주요 날씨 형태 구하기
-        String mainWeather = hourlyWeathers.stream()
-                .collect(Collectors.groupingBy(HourlyWeatherDto::getWeatherDescription, Collectors.counting()))
-                .entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .orElse("알수없음");
-
-        // ⭐ 비/눈이 올 때 강수량, 적설량, 강수확률도 추출
-        String precipitationAmount = null;
-        String snowfallAmount = null;
-        String precipitationProbability = null;
-
-        for (HourlyWeatherDto dto : hourlyWeathers) {
-            if (dto.getWeatherDescription().contains("비") || dto.getWeatherDescription().contains("눈")) {
-                if (precipitationAmount == null && dto.getPrecipitation() != null) {
-                    precipitationAmount = dto.getPrecipitation();
-                }
-                if (snowfallAmount == null && dto.getPrecipitation() != null) {
-                    snowfallAmount = dto.getPrecipitation();
-                }
-            }
-        }
-
-        // 확률은 그냥 placeholder로 남겨둘게 (기상청 API에 강수확률 데이터 추가되면 여기서 꺼낼 수 있음)
-
-        return new WeatherForecastDto(
-                minTemp, maxTemp, avgTemp, mainWeather,
-                precipitationAmount, snowfallAmount, precipitationProbability,
-                hourlyWeathers
-        );
+        return ForecastDto.builder()
+                .maxTemperature(maxTemp)
+                .minTemperature(minTemp)
+                .hourlyTemperatures(hourlyTemperatures)
+                .weatherType(weatherType)
+                .precipitationAmount(precipitationAmount)
+                .snowAmount(snowAmount)
+                .precipitationProbability(precipitationProbability)
+                .averageTemperature((int) Math.round(averageTemp)) // 🔥 여기만 int로 변환해서 넘기기
+                .build();
     }
 
-    private JSONArray tryFetchItems(int nx, int ny, BaseDateTimeCalculator.DateTime dateTime) {
-        try {
-            String url = weatherApiUrl + "/getVilageFcst"
-                    + "?serviceKey=" + weatherApiKey
-                    + "&numOfRows=1500"
-                    + "&pageNo=1"
-                    + "&dataType=JSON"
-                    + "&base_date=" + dateTime.getBaseDate()
-                    + "&base_time=" + dateTime.getBaseTime()
-                    + "&nx=" + nx
-                    + "&ny=" + ny;
+    private double parsePrecipitationOrSnow(String value) {
+        if (value.equals("강수없음") || value.equals("적설없음")) {
+            return 0.0;
+        } else if (value.endsWith("mm")) {
+            return Double.parseDouble(value.replace("mm", "").trim());
+        } else if (value.endsWith("cm")) {
+            return Double.parseDouble(value.replace("cm", "").trim());
+        }
+        return 0.0;
+    }
 
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-
-            JSONObject json = new JSONObject(response.getBody());
-            JSONObject header = json.getJSONObject("response").getJSONObject("header");
-
-            if (!"00".equals(header.getString("resultCode"))) {
-                return null;
-            }
-
-            return json.getJSONObject("response")
-                    .getJSONObject("body")
-                    .getJSONObject("items")
-                    .getJSONArray("item");
-
-        } catch (Exception e) {
-            return null;
+    private String getSkyDescription(String skyValue) {
+        switch (skyValue) {
+            case "1": return "맑음";
+            case "3": return "구름많음";
+            case "4": return "흐림";
+            default: return "맑음";
         }
     }
 
-    private List<HourlyWeatherDto> parseWeather(JSONArray items, String forecastType) {
-        Map<String, String> tempMap = new HashMap<>();
-        Map<String, String> skyMap = new HashMap<>();
-        Map<String, String> ptyMap = new HashMap<>();
-        Map<String, String> pcpMap = new HashMap<>();
-        Map<String, String> snoMap = new HashMap<>();
-
-        for (int i = 0; i < items.length(); i++) {
-            JSONObject item = items.getJSONObject(i);
-            String category = item.getString("category");
-            String fcstDate = item.getString("fcstDate");
-            String fcstTime = item.getString("fcstTime");
-            String value = item.getString("fcstValue");
-
-            String dateTimeKey = fcstDate + fcstTime;
-
-            switch (category) {
-                case "TMP" -> tempMap.put(dateTimeKey, value);
-                case "SKY" -> skyMap.put(dateTimeKey, value);
-                case "PTY" -> ptyMap.put(dateTimeKey, value);
-                case "PCP" -> pcpMap.put(dateTimeKey, value);
-                case "SNO" -> snoMap.put(dateTimeKey, value);
-            }
+    private String getPrecipitationDescription(String ptyValue) {
+        switch (ptyValue) {
+            case "1": return "비";
+            case "2": return "비/눈";
+            case "3": return "눈";
+            case "4": return "소나기";
+            default: return "맑음";
         }
-
-        LocalDateTime now = LocalDateTime.now();
-        List<HourlyWeatherDto> result = new ArrayList<>();
-
-        for (String dateTimeKey : tempMap.keySet()) {
-            LocalDateTime targetTime = parseDateTime(dateTimeKey);
-
-            if (isTargetTime(targetTime, now, forecastType)) {
-                int temp = Integer.parseInt(tempMap.get(dateTimeKey));
-                String sky = convertSkyCodeToText(skyMap.getOrDefault(dateTimeKey, "1"));
-                String pty = ptyMap.getOrDefault(dateTimeKey, "0");
-                String weatherDescription = getWeatherDescription(sky, pty);
-                String precipitation = getPrecipitation(pty, pcpMap.get(dateTimeKey), snoMap.get(dateTimeKey));
-
-                result.add(new HourlyWeatherDto(targetTime, temp, weatherDescription, precipitation));
-            }
-        }
-
-        result.sort(Comparator.comparing(HourlyWeatherDto::getDateTime));
-        return result;
-    }
-
-    private boolean isTargetTime(LocalDateTime targetTime, LocalDateTime now, String forecastType) {
-        if (now.getMinute() >= 50) {
-            now = now.plusHours(1).withMinute(0).withSecond(0).withNano(0);
-        } else {
-            now = now.withMinute(0).withSecond(0).withNano(0);
-        }
-
-        if ("today".equalsIgnoreCase(forecastType)) {
-            LocalDateTime tomorrow2am = now.toLocalDate().plusDays(1).atTime(2, 0);
-            return !targetTime.isBefore(now) && !targetTime.isAfter(tomorrow2am);
-        } else if ("tomorrow".equalsIgnoreCase(forecastType)) {
-            LocalDateTime tomorrow5am = now.toLocalDate().plusDays(1).atTime(5, 0);
-            LocalDateTime dayAfterTomorrow2am = now.toLocalDate().plusDays(2).atTime(2, 0);
-            return !targetTime.isBefore(tomorrow5am) && !targetTime.isAfter(dayAfterTomorrow2am);
-        }
-        return false;
-    }
-
-    private LocalDateTime parseDateTime(String dateTimeKey) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-        return LocalDateTime.parse(dateTimeKey, formatter);
-    }
-
-    private String convertSkyCodeToText(String code) {
-        return switch (code) {
-            case "1" -> "맑음";
-            case "3" -> "구름많음";
-            case "4" -> "흐림";
-            default -> "알수없음";
-        };
-    }
-
-    private String getWeatherDescription(String sky, String pty) {
-        return switch (pty) {
-            case "1" -> "비";
-            case "2" -> "비/눈";
-            case "3" -> "눈";
-            case "4" -> "소나기";
-            default -> sky;
-        };
-    }
-
-    private String getPrecipitation(String pty, String pcp, String sno) {
-        if ("1".equals(pty) || "2".equals(pty) || "4".equals(pty)) {
-            if (pcp != null && !"강수없음".equals(pcp)) {
-                return pcp;
-            }
-        } else if ("3".equals(pty)) {
-            if (sno != null && !"적설없음".equals(sno)) {
-                return sno;
-            }
-        }
-        return null;
     }
 }
