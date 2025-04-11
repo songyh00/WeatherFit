@@ -158,3 +158,94 @@ mysql -u root -p weatherfit < sql/clothes_data.sql
 ```
 ※ SQL 파일 경로가 다를 경우 해당 경로를 맞춰서 입력하세요.
 
+---
+
+## 🛠️ WeatherFit 백엔드 API 테스트 (Postman)
+
+※ 로컬url이 아닌 Postman 설치 후 안에서 테스트 하셔야합니다.(JSON)
+※ DB연결 후 테스트 하셔야합니다.
+
+### 1. 회원가입 (POST http://localhost:8080/api/auth/signup)
+```bash
+# Body -> raw(JSON)
+{
+  "username": "user1",
+  "password": "1234",
+  "email": "user1@example.com",
+  "gender": "FEMALE"
+}
+```
+
+### 2. 로그인 (POST http://localhost:8080/api/auth/login)
+```bash
+# x-www-form-urlencoded
+{
+  username: user1
+  password: 1234
+}
+```
+
+### 3. 아이디 찾기 (POST http://localhost:8080/api/auth/find-username)
+```bash
+# x-www-form-urlencoded
+{
+  email: user1@example.com
+  password: 1234
+}
+```
+
+### 4. 비밀번호 찾기 (POST http://localhost:8080/api/auth/find-password)
+```bash
+# Body -> x-www-form-urlencoded
+{
+  username: user1
+  email: user1@example.com
+}
+```
+
+### 5. 날씨 정보 조회 (GET http://localhost:8080/api/weather?address=서울&tomorrow=false)
+
+### 6. 코디 추천 (POST http://localhost:8080/api/recommend)
+```bash
+# Headers
+{
+  Authorization: Bearer + 본인 토큰키(로그인했을때 결과창에 뜬값, 띄어쓰기 필수)
+  ex) Bearer eyJhbGciOiJIUzI1NiJ9.~~~~~~
+}
+
+# Body -> raw(JSON)
+{
+  "bannerType": "RECOMMEND",    // BEST, RECOMMEND, OUTER, TOP, BOTTOM 중 택1
+  "address": "서울특별시 강남구 역삼동", 
+  "tomorrow": false        // 오늘 추천(false) / 내일 추천(true)
+}
+
+```
+
+### 7. 종아요 추가/삭제 기능 (POST http://localhost:8080/api/likes/좋아요누를코디ID)
+```bash
+# Headers
+{
+  Authorization: Bearer + 본인 토큰키(로그인했을때 결과창에 뜬값, 띄어쓰기 필수)
+  ex) Bearer eyJhbGciOiJIUzI1NiJ9.~~~~~~
+}
+```
+
+### 8. 좋아요 누른 코디 (GET http://localhost:8080/api/likes/mypage)
+```bash
+# Headers
+{
+  Authorization: Bearer + 본인 토큰키(로그인했을때 결과창에 뜬값, 띄어쓰기 필수)
+  ex) Bearer eyJhbGciOiJIUzI1NiJ9.~~~~~~
+}
+```
+
+### 9. 회원 탈퇴 (DELETE /api/auth/withdraw)
+```bash
+# Headers
+{
+  Authorization: Bearer + 본인 토큰키(로그인했을때 결과창에 뜬값, 띄어쓰기 필수)
+  ex) Bearer eyJhbGciOiJIUzI1NiJ9.~~~~~~
+}
+```
+
