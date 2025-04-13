@@ -25,7 +25,6 @@ import Mainimg3 from "../assets/mainimg/mainimg3.jpg";
 import Mainimg4 from "../assets/mainimg/mainimg4.jpg";
 
 
-import myImage1 from "../assets/img1.png";
 import bestimg from "../assets/best2.png";
 import recomimg from "../assets/recomimg.png";
 import outerimg from "../assets/outerimg.png";

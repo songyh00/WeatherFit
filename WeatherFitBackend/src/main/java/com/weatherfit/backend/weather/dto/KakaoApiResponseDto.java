@@ -9,14 +9,15 @@ import java.util.List;
 @Data
 public class KakaoApiResponseDto {
 
-    private List<Document> documents; // ⭐ 검색 결과 문서 리스트
+    private List<Document> documents; // 검색 결과 문서 리스트
 
     /**
-     * 개별 주소 정보 (위도/경도)
+     * 개별 주소 결과를 담는 내부 클래스
+     * - 위도/경도 좌표 정보를 포함
      */
     @Data
     public static class Document {
-        private String x; // ⭐ 경도 (Longitude)
-        private String y; // ⭐ 위도 (Latitude)
+        private String x; // 경도 (longitude)
+        private String y; // 위도 (latitude)
     }
 }

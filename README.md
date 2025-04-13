@@ -93,6 +93,9 @@ git push origin feature-작업이름
 
 ### ✅ 7. 기타 github 명령어
 ```sh
+# 현재 브랜치
+git branch
+
 # 수정한 파일 복구 (수정 취소)
 git restore 파일명
 

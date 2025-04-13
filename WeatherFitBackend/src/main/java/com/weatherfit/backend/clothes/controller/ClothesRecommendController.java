@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 사용자가 주소, 날짜, 배너 타입을 입력하면
+ * [코디 추천용] 사용자가 주소, 날짜, 배너 타입을 입력하면
  * 해당 조건에 맞춰 코디를 추천해주는 Controller
  */
 @RestController
@@ -20,16 +20,16 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ClothesRecommendController {
 
-    private final KakaoAddressService kakaoAddressService; // 주소 → 좌표 변환 서비스
-    private final WeatherService weatherService;           // 날씨 데이터 조회 서비스
+    private final KakaoAddressService kakaoAddressService; // 주소 → 위도/경도 변환
+    private final WeatherService weatherService;           // 날씨 데이터 조회
     private final ClothesService clothesService;           // 코디 추천 서비스
-    private final JwtUtil jwtUtil;                          // JWT 유틸
+    private final JwtUtil jwtUtil;                          // JWT 토큰 유틸리티
 
     /**
      * 코디 추천 API
-     * @param requestDto 주소, 날짜, 배너타입 정보
-     * @param request    HttpServletRequest (헤더에서 JWT 토큰 추출)
-     * @return ClothesRecommendResponseDto 추천 결과
+     * @param requestDto 주소, 날짜(오늘/내일), 배너 타입 정보
+     * @param request    HttpServletRequest (헤더에서 JWT 토큰 추출용)
+     * @return 추천된 옷 리스트
      */
     @PostMapping
     public ClothesRecommendResponseDto recommendClothes(
@@ -42,8 +42,8 @@ public class ClothesRecommendController {
         double longitude = coordinates[1];
         LocationUtil.XY xy = LocationUtil.xyFromLatLng(latitude, longitude);
 
-        // 2. 날씨 데이터 가져오기
-        var weather = weatherService.getForecast(xy.x, xy.y, requestDto.isTomorrow());
+        // 2. [코디 추천용] 날씨 데이터 가져오기 (averageTemperature 필요)
+        var weather = weatherService.getForecastForClothing(xy.x, xy.y, requestDto.isTomorrow());
 
         // 3. JWT 토큰에서 성별 추출
         String authorizationHeader = request.getHeader("Authorization");
@@ -57,10 +57,9 @@ public class ClothesRecommendController {
         return clothesService.recommendClothes(
                 requestDto,
                 weather.getAverageTemperature(),
-                weather.getMaxTemperature(),
-                weather.getWeatherType(),
                 gender,
-                requestDto.getBannerType()
+                requestDto.getBannerType(),
+                requestDto.isTomorrow()
         );
     }
 }

@@ -1,132 +1,113 @@
 package com.weatherfit.backend.auth.controller;
 
-import com.weatherfit.backend.auth.JwtUtil;
+import com.weatherfit.backend.auth.service.AuthService;
+import com.weatherfit.backend.auth.dto.LoginRequestDto;
 import com.weatherfit.backend.auth.dto.SignupRequestDto;
-import com.weatherfit.backend.clothes.entity.Clothes;
-import com.weatherfit.backend.clothes.repository.ClothesRepository;
-import com.weatherfit.backend.like.entity.Like;
-import com.weatherfit.backend.like.repository.LikeRepository;
-import com.weatherfit.backend.user.entity.User;
-import com.weatherfit.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+/**
+ * 인증(Auth) 관련 요청을 처리하는 Controller
+ * - 로그인, 회원가입, 아이디/비번 찾기, 회원 탈퇴 기능 제공
+ */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final UserRepository userRepository;
-    private final LikeRepository likeRepository;
-    private final ClothesRepository clothesRepository;
-    private final JwtUtil jwtUtil;
+    private final AuthService authService;
 
     /**
-     * 로그인 (username + password 입력 → 성공 시 token + username 반환)
+     * 로그인 요청
+     * @param requestDto 로그인 요청 정보 (username, password)
+     * @return 토큰 + username 반환
      */
     @PostMapping("/login")
-    public Map<String, String> login(@RequestParam("username") String username,
-                                     @RequestParam("password") String password) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 사용자입니다."));
-
-        if (!user.getPassword().equals(password)) {
-            throw new RuntimeException("비밀번호가 틀렸습니다.");
-        }
-
-        String token = jwtUtil.generateToken(user.getId(), user.getGender().toString());
+    public Map<String, String> login(@RequestBody LoginRequestDto requestDto) {
+        String token = authService.login(requestDto);
 
         Map<String, String> response = new HashMap<>();
         response.put("token", token);
-        response.put("username", user.getUsername());
+        response.put("username", requestDto.getUsername());
         return response;
     }
 
     /**
-     * 회원가입 (username, email 중복 검사 후 등록)
+     * 회원가입 요청
+     * @param requestDto 회원가입 요청 정보 (username, password, email, gender)
+     * @return 성공 메시지
      */
     @PostMapping("/signup")
     public String signup(@RequestBody SignupRequestDto requestDto) {
-        if (userRepository.findByUsername(requestDto.getUsername()).isPresent()) {
-            throw new RuntimeException("이미 존재하는 아이디입니다.");
-        }
-        if (userRepository.findByEmail(requestDto.getEmail()).isPresent()) {
-            throw new RuntimeException("이미 존재하는 이메일입니다.");
-        }
-
-        User newUser = new User();
-        newUser.setUsername(requestDto.getUsername());
-        newUser.setPassword(requestDto.getPassword()); // 비밀번호는 추후 암호화 권장
-        newUser.setEmail(requestDto.getEmail());
-        newUser.setGender(User.Gender.valueOf(requestDto.getGender().toUpperCase()));
-
-        userRepository.save(newUser);
-
+        authService.signup(requestDto);
         return "회원가입이 완료되었습니다.";
     }
 
     /**
-     * 아이디 찾기 (email + password 입력 → username 반환)
+     * 아이디 중복확인 요청
+     * @param username 확인할 사용자명
+     * @return 사용 가능 여부
+     */
+    @GetMapping("/check-username")
+    public String checkUsername(@RequestParam String username) {
+        boolean exists = authService.isUsernameTaken(username);
+        if (exists) {
+            throw new RuntimeException("이미 사용중인 아이디입니다.");
+        }
+        return "사용 가능한 아이디입니다.";
+    }
+
+    /**
+     * 이메일 중복확인 요청
+     * @param email 확인할 이메일
+     * @return 사용 가능 여부
+     */
+    @GetMapping("/check-email")
+    public String checkEmail(@RequestParam String email) {
+        boolean exists = authService.isEmailTaken(email);
+        if (exists) {
+            throw new RuntimeException("이미 사용중인 이메일입니다.");
+        }
+        return "사용 가능한 이메일입니다.";
+    }
+
+    /**
+     * 아이디 찾기 요청
+     * @param email 사용자의 이메일
+     * @param password 사용자의 비밀번호
+     * @return username 반환
      */
     @PostMapping("/find-username")
-    public String findUsername(@RequestParam("email") String email,
-                               @RequestParam("password") String password) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("일치하는 사용자가 없습니다."));
-
-        if (!user.getPassword().equals(password)) {
-            throw new RuntimeException("일치하는 사용자가 없습니다.");
-        }
-
-        return user.getUsername();
+    public String findUsername(@RequestParam String email,
+                               @RequestParam String password) {
+        return authService.findUsername(email, password);
     }
 
     /**
-     * 비밀번호 찾기 (username + email 입력 → password 반환)
+     * 비밀번호 찾기 요청
+     * @param username 사용자의 아이디
+     * @param email 사용자의 이메일
+     * @return password 반환
      */
     @PostMapping("/find-password")
-    public String findPassword(@RequestParam("username") String username,
-                               @RequestParam("email") String email) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("일치하는 사용자가 없습니다."));
-
-        if (!user.getEmail().equals(email)) {
-            throw new RuntimeException("일치하는 사용자가 없습니다.");
-        }
-
-        return user.getPassword();
+    public String findPassword(@RequestParam String username,
+                               @RequestParam String email) {
+        return authService.findPassword(username, email);
     }
 
     /**
-     * 회원 탈퇴 (토큰 인증 → 좋아요한 옷 likeCount 감소 → 좋아요 기록 삭제 → 회원 삭제)
+     * 회원 탈퇴 요청
+     * @param token Authorization 헤더에 담긴 토큰 ("Bearer {token}" 형태)
+     * @return 성공 메시지
      */
     @DeleteMapping("/withdraw")
-    @Transactional
     public String withdraw(@RequestHeader("Authorization") String token) {
-        String tokenValue = token.replace("Bearer ", "");
-        Long userId = jwtUtil.extractUserId(tokenValue);
-
-        // 1. 이 유저가 누른 좋아요 조회
-        List<Like> userLikes = likeRepository.findByUserId(userId);
-
-        // 2. 좋아요한 옷들의 likeCount 감소
-        for (Like like : userLikes) {
-            Clothes clothes = like.getClothes();
-            clothes.setLikeCount(Math.max(0, clothes.getLikeCount() - 1)); // 0보다 작아지지 않게
-            clothesRepository.save(clothes);
-        }
-
-        // 3. 좋아요 기록 삭제
-        likeRepository.deleteAll(userLikes);
-
-        // 4. 회원 삭제
-        userRepository.deleteById(userId);
-
+        // "Bearer " 접두어 제거 후 실제 토큰만 추출
+        String tokenValue = token.startsWith("Bearer ") ? token.substring(7) : token;
+        authService.withdraw(tokenValue);
         return "회원 탈퇴가 완료되었습니다.";
     }
 }
