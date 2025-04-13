@@ -14,15 +14,11 @@ import axios from 'axios';
 
 const Login = () => {
     const [season, setSeason] = useState(getSeason());
-    const [inputFocused, setInputFocused] = useState(false);
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     const navigate = useNavigate();
-
-    const handleFocus = () => setInputFocused(true);
-    const handleBlur = () => setInputFocused(false);
 
     const handleLogin = async (event) => {
         event.preventDefault();  // ✅ 폼 새로고침 막기
@@ -62,14 +58,12 @@ const Login = () => {
             <LoginSection>
                 <LoginInput
                     style={{ marginTop: '20px' }}
-                    type="text"  // 👈 username input은 type="text"로
+                    type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     $borderColor={theme[season].borderColor}
                     $bgColor={theme[season].bgColor}
                     $focusColor={theme[season].focusColor}
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
                     placeholder="아이디를 입력해주세요"
                 />
                 <LoginInput
@@ -79,12 +73,10 @@ const Login = () => {
                     $borderColor={theme[season].borderColor}
                     $bgColor={theme[season].bgColor}
                     $focusColor={theme[season].focusColor}
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
                     placeholder="비밀번호를 입력해주세요"
                 />
                 <LoginButton
-                    type="submit"   // ✅ 버튼에도 type="submit" 추가
+                    type="submit"
                     onClick={handleLogin}
                     $borderColor={theme[season].borderColor}
                     $bgColor={theme[season].bgColor}
