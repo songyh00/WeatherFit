@@ -3,18 +3,18 @@ package com.weatherfit.backend.weather.service;
 import com.weatherfit.backend.weather.dto.ForecastDto;
 import com.weatherfit.backend.weather.dto.HourlyTemperatureDto;
 import com.weatherfit.backend.weather.dto.WeatherApiResponseDto;
+import com.weatherfit.backend.weather.dto.WeatherResponseDto;
 import com.weatherfit.backend.weather.util.BaseDateTimeCalculator;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-/**
- * 기상청 API를 이용하여 날씨 데이터를 가져오는 서비스
- */
+@Slf4j
 @Service
 public class WeatherService {
 
@@ -29,152 +29,182 @@ public class WeatherService {
     }
 
     /**
-     * nx, ny 좌표와 날짜(오늘/내일)를 기준으로 날씨 데이터 반환
+     * 코디 추천용 날씨 데이터 조회 (평균 온도만 반환)
      */
-    public ForecastDto getForecast(int nx, int ny, boolean tomorrow) {
+    public ForecastDto getForecastForClothing(int nx, int ny, boolean tomorrow) {
+        log.info("🧥 코디 추천용 날씨 예보 조회 요청: nx={}, ny={}, tomorrow={}", nx, ny, tomorrow);
         BaseDateTimeCalculator.DateTimeInfo dateTimeInfo = BaseDateTimeCalculator.getForecastDateTime(tomorrow);
         WeatherApiResponseDto responseDto = fetchWeatherApi(nx, ny, dateTimeInfo);
-        return parseWeatherData(responseDto, dateTimeInfo.getTargetDate(), tomorrow);
+        return parseForecastDataForClothing(responseDto, dateTimeInfo.getTargetDate(), tomorrow);
+    }
+
+    /**
+     * 날씨 예보용 데이터 조회 (시간별+최고/최저 기온 반환)
+     */
+    public WeatherResponseDto getForecastForWeather(int nx, int ny, boolean tomorrow) {
+        log.info("🌦️ 날씨 예보용 데이터 조회 요청: nx={}, ny={}, tomorrow={}", nx, ny, tomorrow);
+        BaseDateTimeCalculator.DateTimeInfo dateTimeInfo = BaseDateTimeCalculator.getForecastDateTime(tomorrow);
+        WeatherApiResponseDto responseDto = fetchWeatherApi(nx, ny, dateTimeInfo);
+        return parseForecastDataForWeather(responseDto, dateTimeInfo.getTargetDate(), tomorrow);
     }
 
     /**
      * 기상청 API 호출
      */
     private WeatherApiResponseDto fetchWeatherApi(int nx, int ny, BaseDateTimeCalculator.DateTimeInfo dateTimeInfo) {
-        String uri = "/getVilageFcst?" +
-                "serviceKey=" + serviceKey +
-                "&pageNo=1" +
-                "&numOfRows=1000" +
-                "&dataType=JSON" +
-                "&base_date=" + dateTimeInfo.getBaseDate() +
-                "&base_time=" + dateTimeInfo.getBaseTime() +
-                "&nx=" + nx +
-                "&ny=" + ny;
-
-        return webClient.get()
-                .uri(uri)
-                .retrieve()
-                .bodyToMono(WeatherApiResponseDto.class)
-                .block();
+        try {
+            return webClient.get()
+                    .uri("/getVilageFcst?serviceKey=" + serviceKey +
+                            "&pageNo=1&numOfRows=1000&dataType=JSON" +
+                            "&base_date=" + dateTimeInfo.getBaseDate() +
+                            "&base_time=" + dateTimeInfo.getBaseTime() +
+                            "&nx=" + nx +
+                            "&ny=" + ny)
+                    .retrieve()
+                    .bodyToMono(WeatherApiResponseDto.class)
+                    .block();
+        } catch (Exception e) {
+            log.error("🔴 날씨 API 호출 실패: {}", e.getMessage());
+            throw new RuntimeException("날씨 API 조회에 실패했습니다.");
+        }
     }
 
     /**
-     * 기상청 API 응답 데이터를 ForecastDto 형태로 변환
+     * 옷 코디 추천용 데이터 파싱 (평균 기온만)
      */
-    private ForecastDto parseWeatherData(WeatherApiResponseDto responseDto, String targetDate, boolean tomorrow) {
-        List<WeatherApiResponseDto.Item> items = responseDto.getResponse()
-                .getBody()
-                .getItems()
-                .getItem();
+    private ForecastDto parseForecastDataForClothing(WeatherApiResponseDto responseDto, String targetDate, boolean tomorrow) {
+        List<WeatherApiResponseDto.Item> items = responseDto.getResponse().getBody().getItems().getItem();
 
-        List<HourlyTemperatureDto> hourlyTemperatures = new ArrayList<>();
-        List<Integer> tempsForAverage = new ArrayList<>();
-
-        int maxTemp = Integer.MIN_VALUE;
-        int minTemp = Integer.MAX_VALUE;
-        String weatherType = "맑음";
-        double precipitationAmount = 0.0;
-        double snowAmount = 0.0;
-        int precipitationProbability = 0;
-
-        // 현재 시간 (ex: 9시 -> 900, 14시 -> 1400)
-        LocalDateTime now = LocalDateTime.now();
-        int nowHour = now.getHour() * 100;
+        List<Integer> temps = new ArrayList<>();
 
         for (WeatherApiResponseDto.Item item : items) {
             if (!item.getFcstDate().equals(targetDate)) continue;
 
             String category = item.getCategory();
-            String time = item.getFcstTime();
-            int timeInt = Integer.parseInt(time);
-            String value = item.getFcstValue();
+            int timeInt = Integer.parseInt(item.getFcstTime());
 
-            boolean isTargetTime = false;
-            if (tomorrow) {
-                // 내일 추천: 09시 ~ 24시
-                isTargetTime = (timeInt >= 900 && timeInt <= 2400);
-            } else {
-                // 오늘 추천: 현재 시간이 09시 전이면 09~24시, 이후면 현재시~24시
-                if (nowHour < 900) {
-                    isTargetTime = (timeInt >= 900 && timeInt <= 2400);
-                } else {
-                    isTargetTime = (timeInt >= nowHour && timeInt <= 2400);
-                }
-            }
+            if (!isClothingRecommendationTargetTime(timeInt, tomorrow)) continue;
 
-            switch (category) {
-                case "TMP": // 기온
-                    int temp = Integer.parseInt(value);
-                    hourlyTemperatures.add(new HourlyTemperatureDto(time, temp));
-                    if (isTargetTime) {
-                        tempsForAverage.add(temp);
-                    }
-                    maxTemp = Math.max(maxTemp, temp);
-                    minTemp = Math.min(minTemp, temp);
-                    break;
-                case "SKY": // 하늘 상태
-                    if (time.equals("0900")) {
-                        weatherType = getSkyDescription(value);
-                    }
-                    break;
-                case "PTY": // 강수 형태
-                    if (time.equals("0900") && !value.equals("0")) {
-                        weatherType = getPrecipitationDescription(value);
-                    }
-                    break;
-                case "POP": // 강수 확률
-                    if (time.equals("0900")) {
-                        precipitationProbability = Integer.parseInt(value);
-                    }
-                    break;
-                case "PCP": // 강수량
-                    if (time.equals("0900")) {
-                        precipitationAmount = parsePrecipitationOrSnow(value);
-                    }
-                    break;
-                case "SNO": // 적설량
-                    if (time.equals("0900")) {
-                        snowAmount = parsePrecipitationOrSnow(value);
-                    }
-                    break;
+            if ("TMP".equals(category)) {
+                temps.add(Integer.parseInt(item.getFcstValue()));
             }
         }
 
-        // ⭐ 평균 기온 계산
-        double averageTemp = tempsForAverage.stream()
+        double averageTemp = temps.stream()
                 .mapToInt(Integer::intValue)
                 .average()
                 .orElse(0.0);
 
         return ForecastDto.builder()
-                .maxTemperature(maxTemp)
-                .minTemperature(minTemp)
-                .hourlyTemperatures(hourlyTemperatures)
-                .weatherType(weatherType)
-                .precipitationAmount(precipitationAmount)
-                .snowAmount(snowAmount)
-                .precipitationProbability(precipitationProbability)
                 .averageTemperature((int) Math.round(averageTemp))
                 .build();
     }
 
     /**
-     * 강수량, 적설량 파싱
+     * 날씨 예보용 데이터 파싱 (시간별 + 최고/최저 온도)
      */
-    private double parsePrecipitationOrSnow(String value) {
-        if (value.equals("강수없음") || value.equals("적설없음")) {
-            return 0.0;
-        } else if (value.endsWith("mm")) {
-            return Double.parseDouble(value.replace("mm", "").trim());
-        } else if (value.endsWith("cm")) {
-            return Double.parseDouble(value.replace("cm", "").trim());
+    private WeatherResponseDto parseForecastDataForWeather(WeatherApiResponseDto responseDto, String targetDate, boolean tomorrow) {
+        List<WeatherApiResponseDto.Item> items = responseDto.getResponse().getBody().getItems().getItem();
+
+        Map<String, HourlyTemperatureDto> hourlyMap = new HashMap<>();
+
+        for (WeatherApiResponseDto.Item item : items) {
+            if (!item.getFcstDate().equals(targetDate)) continue;
+
+            String category = item.getCategory();
+            int timeInt = Integer.parseInt(item.getFcstTime());
+
+            if (!isForecastTargetTime(timeInt, tomorrow)) continue;
+
+            String month = item.getFcstDate().substring(4, 6);
+            String day = item.getFcstDate().substring(6, 8);
+            String time = item.getFcstTime();
+
+            HourlyTemperatureDto dto = hourlyMap.getOrDefault(time, new HourlyTemperatureDto(
+                    month, day, time, 0, "맑음", 0, 0.0, 0.0
+            ));
+
+            switch (category) {
+                case "TMP":
+                    dto.setTemperature(Integer.parseInt(item.getFcstValue()));
+                    break;
+                case "SKY":
+                    dto.setWeatherType(getSkyDescription(item.getFcstValue()));
+                    break;
+                case "PTY":
+                    if (!"0".equals(item.getFcstValue())) {
+                        dto.setWeatherType(getPrecipitationDescription(item.getFcstValue()));
+                    }
+                    break;
+                case "POP":
+                    dto.setPrecipitationProbability(Integer.parseInt(item.getFcstValue()));
+                    break;
+                case "PCP":
+                    dto.setPrecipitationAmount(parsePrecipitationOrSnow(item.getFcstValue()));
+                    break;
+                case "SNO":
+                    dto.setSnowAmount(parsePrecipitationOrSnow(item.getFcstValue()));
+                    break;
+            }
+
+            hourlyMap.put(time, dto);
         }
-        return 0.0;
+
+        List<HourlyTemperatureDto> hourlyTemperatures = new ArrayList<>(hourlyMap.values());
+        hourlyTemperatures.sort(Comparator.comparing(HourlyTemperatureDto::getTime));
+
+        OptionalInt maxTemp = hourlyTemperatures.stream()
+                .mapToInt(HourlyTemperatureDto::getTemperature)
+                .max();
+
+        OptionalInt minTemp = hourlyTemperatures.stream()
+                .mapToInt(HourlyTemperatureDto::getTemperature)
+                .min();
+
+        return WeatherResponseDto.builder()
+                .hourlyTemperatures(hourlyTemperatures)
+                .maxTemperature(maxTemp.orElse(0))
+                .minTemperature(minTemp.orElse(0))
+                .build();
     }
 
     /**
-     * 하늘 상태 값 → 텍스트 변환
+     * 날씨 예보용 시간 필터
      */
+    private boolean isForecastTargetTime(int timeInt, boolean tomorrow) {
+        if (tomorrow) {
+            return (timeInt >= 0 && timeInt < 2400);
+        } else {
+            LocalDateTime now = LocalDateTime.now();
+            int nowHour = now.getHour() * 100;
+            return (timeInt >= nowHour && timeInt < 2400);
+        }
+    }
+
+    /**
+     * 코디 추천용 시간 필터
+     */
+    private boolean isClothingRecommendationTargetTime(int timeInt, boolean tomorrow) {
+        LocalDateTime now = LocalDateTime.now();
+        int nowHour = now.getHour() * 100;
+        if (tomorrow) {
+            return (timeInt >= 900 && (timeInt <= 2300 || timeInt == 0 || timeInt == 100));
+        } else {
+            if (nowHour < 900) {
+                return (timeInt >= 900 && (timeInt <= 2300 || timeInt == 0 || timeInt == 100));
+            } else {
+                return (timeInt >= nowHour && (timeInt <= 2300 || timeInt == 0 || timeInt == 100));
+            }
+        }
+    }
+
+    private double parsePrecipitationOrSnow(String value) {
+        if (value.equals("강수없음") || value.equals("적설없음")) return 0.0;
+        if (value.endsWith("mm")) return Double.parseDouble(value.replace("mm", "").trim());
+        if (value.endsWith("cm")) return Double.parseDouble(value.replace("cm", "").trim());
+        return 0.0;
+    }
+
     private String getSkyDescription(String skyValue) {
         switch (skyValue) {
             case "1": return "맑음";
@@ -184,9 +214,6 @@ public class WeatherService {
         }
     }
 
-    /**
-     * 강수 형태 값 → 텍스트 변환
-     */
     private String getPrecipitationDescription(String ptyValue) {
         switch (ptyValue) {
             case "1": return "비";

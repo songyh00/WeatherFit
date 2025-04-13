@@ -7,17 +7,45 @@ import {
     LoginTexts,
     JoinTheMembershipLink
 } from "../layout/login.style.js";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from '../assets/logo.png';
-import { getSeason, theme } from "../components/theme.js"; // ✅ 추가
-
+import { getSeason, theme } from "../components/theme.js";
+import axios from 'axios';
 
 const Login = () => {
     const [season, setSeason] = useState(getSeason());
     const [inputFocused, setInputFocused] = useState(false);
 
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
+    const navigate = useNavigate();
+
     const handleFocus = () => setInputFocused(true);
     const handleBlur = () => setInputFocused(false);
+
+    const handleLogin = async (event) => {
+        event.preventDefault();  // ✅ 폼 새로고침 막기
+        console.log('로그인 시도!');
+
+        try {
+            const response = await axios.post('/api/auth/login', {
+                username: username,
+                password: password,
+            });
+
+            const { token, username: loggedInUsername } = response.data;
+            localStorage.setItem('token', token);
+            localStorage.setItem('username', loggedInUsername);
+
+            console.log('로그인 성공, 토큰:', token);
+
+            navigate('/'); // 로그인 성공 시 메인 페이지로 이동
+        } catch (error) {
+            console.error('로그인 실패', error.response?.data);
+            alert(error.response?.data?.message || '로그인 실패');
+        }
+    };
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -34,35 +62,41 @@ const Login = () => {
             <LoginSection>
                 <LoginInput
                     style={{ marginTop: '20px' }}
-                    type="email"
-                    borderColor={theme[season].borderColor}
-                    bgColor={theme[season].bgColor}
-                    focusColor={inputFocused ? theme[season].focusColor : theme[season].borderColor}
+                    type="text"  // 👈 username input은 type="text"로
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    $borderColor={theme[season].borderColor}
+                    $bgColor={theme[season].bgColor}
+                    $focusColor={theme[season].focusColor}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
-                    placeholder="이메일을 입력해주세요"
+                    placeholder="아이디를 입력해주세요"
                 />
                 <LoginInput
                     type="password"
-                    borderColor={theme[season].borderColor}
-                    bgColor={theme[season].bgColor}
-                    focusColor={inputFocused ? theme[season].focusColor : theme[season].borderColor}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    $borderColor={theme[season].borderColor}
+                    $bgColor={theme[season].bgColor}
+                    $focusColor={theme[season].focusColor}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
                     placeholder="비밀번호를 입력해주세요"
                 />
                 <LoginButton
-                    borderColor={theme[season].borderColor}
-                    bgColor={theme[season].bgColor}
-                    focusColor={theme[season].focusColor}
-                    textColor={theme[season].textColor}
-                    hoverBgColor={theme[season].focusColor}
+                    type="submit"   // ✅ 버튼에도 type="submit" 추가
+                    onClick={handleLogin}
+                    $borderColor={theme[season].borderColor}
+                    $bgColor={theme[season].bgColor}
+                    $focusColor={theme[season].focusColor}
+                    $textColor={theme[season].textColor}
+                    $hoverBgColor={theme[season].focusColor}
                 >
                     Login
                 </LoginButton>
                 <LoginTexts>
                     <JoinTheMembershipLink to="../JoinTheMembership">회원가입</JoinTheMembershipLink>
-                    <JoinTheMembershipLink to="../ForgotIdOrPassword?page=id">| 아이디찾기 찾기</JoinTheMembershipLink>
+                    <JoinTheMembershipLink to="../ForgotIdOrPassword?page=id">| 아이디 찾기</JoinTheMembershipLink>
                     <JoinTheMembershipLink to="../ForgotIdOrPassword?page=pw">| 비밀번호 찾기</JoinTheMembershipLink>
                 </LoginTexts>
             </LoginSection>

@@ -4,17 +4,20 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * 기상청 단기예보 API용 날짜(baseDate), 시간(baseTime), 예측 날짜(targetDate)를 계산하는 유틸리티
+ * 기상청 단기예보 API 요청용 날짜(baseDate), 시간(baseTime), 예측 날짜(targetDate)를 계산하는 유틸리티 클래스
  */
 public class BaseDateTimeCalculator {
 
     /**
      * baseDate, baseTime, targetDate를 담는 DTO 클래스
+     * - baseDate : API 호출 기준 날짜
+     * - baseTime : API 호출 기준 시간
+     * - targetDate : 실제 조회하고 싶은 날짜
      */
     public static class DateTimeInfo {
-        private final String baseDate;   // API 요청 기준 날짜 (yyyyMMdd)
-        private final String baseTime;   // API 요청 기준 시간 (HH00)
-        private final String targetDate; // 실제 조회하고 싶은 날짜 (yyyyMMdd)
+        private final String baseDate;
+        private final String baseTime;
+        private final String targetDate;
 
         public DateTimeInfo(String baseDate, String baseTime, String targetDate) {
             this.baseDate = baseDate;
@@ -28,36 +31,40 @@ public class BaseDateTimeCalculator {
     }
 
     /**
-     * 오늘/내일 여부를 기준으로 기상청 API에 사용할 날짜, 시간 계산
+     * 오늘/내일 여부를 기준으로 기상청 API에 사용할 baseDate, baseTime, targetDate를 계산
+     *
+     * @param tomorrow 내일 조회 여부 (true: 내일, false: 오늘)
+     * @return DateTimeInfo (baseDate, baseTime, targetDate)
      */
     public static DateTimeInfo getForecastDateTime(boolean tomorrow) {
         LocalDateTime now = LocalDateTime.now();
 
-        // 기상청 API는 3시간 단위로 데이터 발표
+        // 기상청 단기예보 API는 하루 8번 발표: 02, 05, 08, 11, 14, 17, 20, 23시
         int[] baseHours = {2, 5, 8, 11, 14, 17, 20, 23};
-
         int hour = now.getHour();
         int minute = now.getMinute();
-        int selectedHour = 2; // 기본은 02시
+        int selectedHour = 2; // 기본값: 02시
 
-        // 현재 시간에 맞춰 가장 가까운 baseTime을 선택
+        // 3시간마다 발표된 가장 가까운 baseTime 선택
         for (int h : baseHours) {
-            if (hour < h || (hour == h && minute < 70)) {  // 발표 후 1시간 10분 이내까지만 같은 baseTime 사용
+            if (hour < h || (hour == h && minute < 70)) { // 발표 1시간 10분 이내까지만 인정
                 break;
             }
             selectedHour = h;
         }
 
-        // 새벽 00~01시라면 전날로 간주
+        // 새벽 0~2시 (02시 발표 전) 요청은 전날 데이터 기준
         if (hour < 2 || (hour == 2 && minute < 70)) {
             now = now.minusDays(1);
         }
 
-        // 최종 baseDate와 baseTime
+        // baseDate : API 요청 날짜
         String baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        // baseTime : API 요청 시간 (ex: 0200, 0500, ...)
         String baseTime = String.format("%02d00", selectedHour);
 
-        // targetDate는 오늘 or 내일
+        // targetDate : 오늘 or 내일 데이터
         String targetDate = tomorrow
                 ? now.plusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"))
                 : now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
