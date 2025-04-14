@@ -94,7 +94,7 @@ export const SocialLink = styled.a`
         background-color: #e3e3e3;
 
         img {
-            filter: brightness(0.8); /* hover 시 이미지 어둡게 */
+            filter: brightness(0.9); /* hover 시 이미지 어둡게 */
         }
     }
 

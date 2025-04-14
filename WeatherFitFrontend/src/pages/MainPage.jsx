@@ -34,14 +34,26 @@ import clpaimg from "../assets/clpaimg.png";
 const MainPage = () => {
     const images = [Main1, Main2, Main3, Main4];
     const [currentImage, setCurrentImage] = useState(0);
-    const sliderImages = [Mainimg1, Mainimg2, Mainimg3, Mainimg4];
+    const borderColors = [ // 계절별 이미지 테두리 색상 넣음
+        "#fcb5b5", // 봄
+        "#a1dffb", // 여름
+        "#f9c981", // 가을
+        "#d0e4ef"  // 겨울
+    ];
+    const sliderImages = [
+        { src: Mainimg1, label: "봄" },
+        { src: Mainimg2, label: "여름" },
+        { src: Mainimg3, label: "가을" },
+        { src: Mainimg4, label: "겨울" }
+    ];
+
     const [sliderIndex, setSliderIndex] = useState(0);
     const totalSlides = images.length;
     const visibleSlides = 3;
 
     const goToPrev = () => {
         setSliderIndex((prevIndex) =>
-            prevIndex === 0 ? totalSlides - visibleSlides : prevIndex - 1
+            prevIndex <= 0 ? totalSlides - visibleSlides : prevIndex - 1
         );
     };
 
@@ -73,9 +85,10 @@ const MainPage = () => {
                     sliderIndex={sliderIndex}
                     totalImages={sliderImages.length}
                 >
-                    {sliderImages.map((img, idx) => (
+                    {sliderImages.map((item, idx) => (
                         <StyledImageContainer key={idx}>
-                            <StyledImage src={img} alt={`slide-${idx}`} />
+                            <StyledImage src={item.src} alt={`slide-${idx}`} />
+                            <div className="slide-label">{item.label}</div>
                         </StyledImageContainer>
                     ))}
                 </SliderContainer>
@@ -88,8 +101,8 @@ const MainPage = () => {
             <ContentsTitle>
                 <h1>계절이 바뀔때 마다, 오늘 무슨 옷 입을지 고민되지 않으세요?</h1>
 
-                <ImageTextWrapper>
-                    <LeftImage>
+                <ImageTextWrapper> {/*이미지랑 테두리 색상 넣음*/}
+                    <LeftImage borderColor={borderColors[currentImage]}>
                         <img src={images[currentImage]} alt="Main Slide" />
                     </LeftImage>
                     <RightText>
