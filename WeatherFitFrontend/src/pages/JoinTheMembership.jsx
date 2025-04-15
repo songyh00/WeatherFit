@@ -210,8 +210,8 @@ const JoinTheMembership = () => {
                             type="radio"
                             name="sex"
                             id="radioDefault1"
-                            value="men"
-                            checked={selectedRadio === "men"}
+                            value="MALE"
+                            checked={selectedRadio === "MALE"}
                             onChange={(e) => setSelectedRadio(e.target.value)}
                         />
                         <label className="form-check-label" htmlFor="radioDefault1">
@@ -225,8 +225,8 @@ const JoinTheMembership = () => {
                             type="radio"
                             name="sex"
                             id="radioDefault2"
-                            value="women"
-                            checked={selectedRadio === "women"}
+                            value="FEMALE"
+                            checked={selectedRadio === "FEMALE"}
                             onChange={(e) => setSelectedRadio(e.target.value)}
                         />
                         <label className="form-check-label" htmlFor="radioDefault2">
