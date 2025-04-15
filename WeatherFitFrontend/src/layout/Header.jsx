@@ -19,13 +19,15 @@ import {useState} from "react";
 
 const Header = () => {
     const [activeMenu, setActiveMenu] = useState("");
-
+    function  onClickLogo() {
+        setActiveMenu("");
+    }
     return (
         <>
             <HeaderWrapper>
                 <HeaderContent>
                     <UserActionsContainer>
-                        <MainLogoLink to="/">
+                        <MainLogoLink to="/" onClick={onClickLogo}>
                             <img src={logo} alt="WeatherFit Logo" />
                         </MainLogoLink>
 

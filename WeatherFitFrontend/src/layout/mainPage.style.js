@@ -55,7 +55,7 @@ export const StyledImageContainer = styled.div`
         right: 40px;
         font-size: 20px;
         font-weight: bold;
-        color: lightgoldenrodyellow;
+        color: white;
         z-index: 2;
         text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
         font-family: 'Noto Sans KR', sans-serif;
