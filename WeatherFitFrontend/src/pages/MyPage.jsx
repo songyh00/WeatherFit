@@ -10,7 +10,6 @@ import {
     Button
 } from "../layout/Mypage.style.js";
 import { useState, useEffect } from 'react';
-import styled from 'styled-components';
 
 
 const Wishlist = ({ items }) => (
