@@ -44,16 +44,29 @@ export const SliderContainer = styled.div`
     width: ${({ totalImages }) => `${totalImages * (100 / 3)}%`};
 `;
 export const StyledImageContainer = styled.div`
+    position: relative;  // 텍스트를 겹치기 위해 추가
     flex: 0 0 calc(100% / 3); // 화면 너비의 1/3만큼씩 차지
-    padding: 0 10px; // 좌우 여백
+    padding: 0 4px; 
     box-sizing: border-box;
+
+    .slide-label {
+        position: absolute;
+        bottom: 15px;
+        right: 40px;
+        font-size: 20px;
+        font-weight: bold;
+        color: white;
+        z-index: 2;
+        text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+        font-family: 'Noto Sans KR', sans-serif;
+    }
 `;
 
 export const StyledImage = styled.img`
     width: 100%;
     height: 600px;
     object-fit: cover;
-    border-radius: 15px;
+    border-radius: 5px;
 `;
 
 export const ContentsTitle = styled.div`
@@ -71,8 +84,20 @@ export const ImageTextWrapper = styled.div`
     align-items: center;
     margin: 40px 0;
 
+    // 전체 영역에 배경과 박스 효과 추가
+    background: linear-gradient(135deg, #fdfbfb 50%, #ebedee 100%);
+    border: 2px solid #f2f2f2; 
+    border-radius: 20px;       
+    padding: 40px 30px;    
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); 
+
+    transition: transform 0.3s ease;
+
+  
+
     @media (max-width: 768px) {
         flex-direction: column;
+        padding: 30px 20px;
     }
 `;
 
@@ -83,12 +108,19 @@ export const LeftImage = styled.div`
     img {
         width: 65%;
         height: auto;
-        border-radius: 2px;
+        border-radius: 120px;
+        border: 8px solid ${({ borderColor }) => borderColor}; //테두리 색 사용
+        box-shadow: 0 3px 25px rgba(0, 0, 0, 0.3); 
+        transition: transform 0.4s ease-in-out; // 확대 ,회전 추가
+
+        &:hover { // 호버시 확대 회전
+            transform: rotate(0.4deg) scale(1.03);
+        }
     }
 `;
 
 export const RightText = styled.div`
-    flex: 1;
+    flex: 0.9;
     text-align: left;
     font-size: 1.4rem;
     line-height: 1.5;
@@ -101,7 +133,7 @@ export const ServiceGrid = styled.div`
     gap: 40px;
     margin-top: 50px;
     padding: 0 40px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); // 기본 그림자
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); 
     border-top: 1px solid #bfbfbf;
 `;
 

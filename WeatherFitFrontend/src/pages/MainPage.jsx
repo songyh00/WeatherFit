@@ -14,10 +14,10 @@ import {
     RightText,
     SliderContainer
 } from "../layout/mainPage.style.js";
-import Main1 from "../assets/spring.png";
-import Main2 from "../assets/summer.png";
-import Main3 from "../assets/autumn.png";
-import Main4 from "../assets/winter.png";
+import Main1 from "../assets/WeatherImg/spring.png";
+import Main2 from "../assets/WeatherImg/summer.png";
+import Main3 from "../assets/WeatherImg/autumn.png";
+import Main4 from "../assets/WeatherImg/winter.png";
 
 import Mainimg1 from "../assets/mainimg/mainimg1.jpg";
 import Mainimg2 from "../assets/mainimg/mainimg2.jpg";
@@ -25,22 +25,34 @@ import Mainimg3 from "../assets/mainimg/mainimg3.jpg";
 import Mainimg4 from "../assets/mainimg/mainimg4.jpg";
 
 
-import bestimg from "../assets/best2.png";
-import recomimg from "../assets/recomimg.png";
-import outerimg from "../assets/outerimg.png";
-import clpaimg from "../assets/clpaimg.png";
+import bestimg from "../assets/infoImg/best.png";
+import recomimg from "../assets/infoImg/recomimg.png";
+import outerimg from "../assets/infoImg/outerimg.png";
+import clpaimg from "../assets/infoImg/clpaimg.png";
 
 const MainPage = () => {
     const images = [Main1, Main2, Main3, Main4];
     const [currentImage, setCurrentImage] = useState(0);
-    const sliderImages = [Mainimg1, Mainimg2, Mainimg3, Mainimg4];
+    const borderColors = [ // 계절별 이미지 테두리 색상 넣음
+        "#fcb5b5", // 봄
+        "#a1dffb", // 여름
+        "#f9c981", // 가을
+        "#d0e4ef"  // 겨울
+    ];
+    const sliderImages = [
+        { src: Mainimg1, label: "봄" },
+        { src: Mainimg2, label: "여름" },
+        { src: Mainimg3, label: "가을" },
+        { src: Mainimg4, label: "겨울" }
+    ];
+
     const [sliderIndex, setSliderIndex] = useState(0);
     const totalSlides = images.length;
     const visibleSlides = 3;
 
     const goToPrev = () => {
         setSliderIndex((prevIndex) =>
-            prevIndex === 0 ? totalSlides - visibleSlides : prevIndex - 1
+            prevIndex <= 0 ? totalSlides - visibleSlides : prevIndex - 1
         );
     };
 
@@ -72,9 +84,10 @@ const MainPage = () => {
                     sliderIndex={sliderIndex}
                     totalImages={sliderImages.length}
                 >
-                    {sliderImages.map((img, idx) => (
+                    {sliderImages.map((item, idx) => (
                         <StyledImageContainer key={idx}>
-                            <StyledImage src={img} alt={`slide-${idx}`} />
+                            <StyledImage src={item.src} alt={`slide-${idx}`} />
+                            <div className="slide-label">{item.label}</div>
                         </StyledImageContainer>
                     ))}
                 </SliderContainer>
@@ -87,8 +100,8 @@ const MainPage = () => {
             <ContentsTitle>
                 <h1>계절이 바뀔때 마다, 오늘 무슨 옷 입을지 고민되지 않으세요?</h1>
 
-                <ImageTextWrapper>
-                    <LeftImage>
+                <ImageTextWrapper> {/*이미지랑 테두리 색상 넣음*/}
+                    <LeftImage borderColor={borderColors[currentImage]}>
                         <img src={images[currentImage]} alt="Main Slide" />
                     </LeftImage>
                     <RightText>
@@ -123,7 +136,7 @@ const MainPage = () => {
                         <h2>아우터</h2>
                         <img src={outerimg} alt="Outer" />
                     </ServiceCard>
-                    <ServiceCard>
+                    <ServiceCard to="Consultation">
                         <h2>상의 & 하의</h2>
                         <img src={clpaimg} alt="Top & Bottom" />
                     </ServiceCard>
