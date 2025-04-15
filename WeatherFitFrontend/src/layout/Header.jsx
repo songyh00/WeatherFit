@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     HeaderBackground,
     HeaderContent,
@@ -11,14 +11,20 @@ import {
     UserActionsContainer,
     UserActionsLink
 } from './header.style.js';
-import { Link } from 'react-router-dom';
-import MainLogo from "../components/MainLogo.jsx";
+import { Link, useNavigate } from 'react-router-dom'; // 🔥 useNavigate 추가
 import logo from "../assets/logo.png";
-import {useState} from "react";
-
 
 const Header = () => {
     const [activeMenu, setActiveMenu] = useState("");
+    const username = localStorage.getItem('username'); // 🔥 로그인한 사용자 이름 가져오기
+    const navigate = useNavigate(); // 🔥 페이지 이동용
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        navigate('/'); // 메인 페이지로 이동
+        window.location.reload(); // 새로고침(헤더 다시 그림)
+    };
 
     return (
         <>
@@ -30,21 +36,43 @@ const Header = () => {
                         </MainLogoLink>
 
                         <UserActions>
-                            {/* 추후 라우팅 추가 예정 */}
-                            <UserActionsLink to="/Login">로그인</UserActionsLink>|
-                            <UserActionsLink to="/JoinTheMembership">회원가입</UserActionsLink>|
-                            <UserActionsLink to="/MyPage">&nbsp;마이페이지</UserActionsLink>&nbsp;|
-                            <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink>
+                            {username ? (
+                                <>
+                                    <span style={{fontSize: "11px"}}>
+                                        {username}님</span>&nbsp;&nbsp;&nbsp;&nbsp;|
+
+                                    <span
+                                        onClick={handleLogout}
+                                        style={{
+                                            cursor: 'pointer',
+                                            fontSize: "11px",
+                                            textDecoration: 'none',
+                                            color: 'inherit',
+                                            marginLeft: '12px',
+                                            marginRight: '12px'
+                                        }}
+                                    >
+                                        로그아웃
+                                    </span>
+                                    |&nbsp;&nbsp;
+                                    <UserActionsLink to="/MyPage">마이페이지</UserActionsLink>&nbsp;&nbsp;|
+                                    <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink>
+                                </>
+                            ) : (
+                                <>
+                                    <UserActionsLink to="/Login">로그인</UserActionsLink>|&nbsp;
+                                    <UserActionsLink to="/JoinTheMembership">회원가입</UserActionsLink>&nbsp;|&nbsp;&nbsp;
+                                    <UserActionsLink to="/MyPage">마이페이지</UserActionsLink>&nbsp;&nbsp;|
+                                    <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink>
+                                </>
+                            )}
                         </UserActions>
                     </UserActionsContainer>
-
-
                 </HeaderContent>
+
                 <HeaderNav>
                     <MainMenu>
-                        {/* 임시 데이터 메뉴 */}
-                        {/*<MainMenuLink to="/">오늘의 날씨</MainMenuLink> <- component로 하나 만들예정*/}
-                        <MainMenuLink to="/Best"  $active={activeMenu === "BEST"}
+                        <MainMenuLink to="/Best" $active={activeMenu === "BEST"}
                                       onClick={() => setActiveMenu("BEST")}>BEST</MainMenuLink>
 
                         <MainMenuLink to="/Suggestion" $active={activeMenu === "추천"}
@@ -63,7 +91,7 @@ const Header = () => {
             </HeaderWrapper>
             <HeaderBackground />
         </>
-    )
-}
+    );
+};
 
 export default Header;
