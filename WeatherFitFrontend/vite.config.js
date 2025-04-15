@@ -7,6 +7,13 @@ export default defineConfig({
   server: {
     fs: {
       deny: ['.env', '.env.*', '**/secret*', '**/*.key']
+    },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080', // 백엔드 서버 주소
+        changeOrigin: true,
+        secure: false,
+      }
     }
   }
 })
