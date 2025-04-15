@@ -153,7 +153,7 @@ export const ServiceGrid = styled.div`
     margin-top: 50px;
     padding: 0 40px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); 
-    border-top: 1px solid #bfbfbf;
+   
 `;
 
 export const ServiceCard = styled(Link)`
