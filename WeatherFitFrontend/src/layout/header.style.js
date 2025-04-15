@@ -52,6 +52,7 @@ export const MainLogoLink = styled(Link)`
 
 export const MainMenu = styled.div`
     display: flex;
+    
 `;
 
 export const MainMenuLink = styled(Link)`
@@ -68,7 +69,7 @@ export const MainMenuLink = styled(Link)`
 
 
     &:hover {
-        color: #5c5e5e;
+        color: #939696;
     }
 
 

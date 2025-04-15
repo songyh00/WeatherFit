@@ -14,10 +14,10 @@ import {
     RightText,
     SliderContainer
 } from "../layout/mainPage.style.js";
-import Main1 from "../assets/spring.png";
-import Main2 from "../assets/summer.png";
-import Main3 from "../assets/autumn.png";
-import Main4 from "../assets/winter.png";
+import Main1 from "../assets/WeatherImg/spring.png";
+import Main2 from "../assets/WeatherImg/summer.png";
+import Main3 from "../assets/WeatherImg/autumn.png";
+import Main4 from "../assets/WeatherImg/winter.png";
 
 import Mainimg1 from "../assets/mainimg/mainimg1.jpg";
 import Mainimg2 from "../assets/mainimg/mainimg2.jpg";
@@ -25,11 +25,10 @@ import Mainimg3 from "../assets/mainimg/mainimg3.jpg";
 import Mainimg4 from "../assets/mainimg/mainimg4.jpg";
 
 
-import myImage1 from "../assets/img1.png";
-import bestimg from "../assets/best2.png";
-import recomimg from "../assets/recomimg.png";
-import outerimg from "../assets/outerimg.png";
-import clpaimg from "../assets/clpaimg.png";
+import bestimg from "../assets/infoImg/best.png";
+import recomimg from "../assets/infoImg/recomimg.png";
+import outerimg from "../assets/infoImg/outerimg.png";
+import clpaimg from "../assets/infoImg/clpaimg.png";
 
 const MainPage = () => {
     const images = [Main1, Main2, Main3, Main4];
@@ -137,7 +136,7 @@ const MainPage = () => {
                         <h2>아우터</h2>
                         <img src={outerimg} alt="Outer" />
                     </ServiceCard>
-                    <ServiceCard>
+                    <ServiceCard to="Consultation">
                         <h2>상의 & 하의</h2>
                         <img src={clpaimg} alt="Top & Bottom" />
                     </ServiceCard>

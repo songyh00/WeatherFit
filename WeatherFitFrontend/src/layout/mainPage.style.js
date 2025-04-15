@@ -46,7 +46,7 @@ export const SliderContainer = styled.div`
 export const StyledImageContainer = styled.div`
     position: relative;  // 텍스트를 겹치기 위해 추가
     flex: 0 0 calc(100% / 3); // 화면 너비의 1/3만큼씩 차지
-    padding: 0 4px; // 좌우 여백
+    padding: 0 4px; 
     box-sizing: border-box;
 
     .slide-label {
@@ -86,10 +86,10 @@ export const ImageTextWrapper = styled.div`
 
     // 전체 영역에 배경과 박스 효과 추가
     background: linear-gradient(135deg, #fdfbfb 50%, #ebedee 100%);
-    border: 2px solid #e0e0e0; // 연한 테두리
-    border-radius: 20px;        // 부드러운 모서리
-    padding: 40px 30px;         // 안쪽 여백
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); // 부드러운 그림자
+    border: 2px solid #f2f2f2; 
+    border-radius: 20px;       
+    padding: 40px 30px;    
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); 
 
     transition: transform 0.3s ease;
 
@@ -133,7 +133,7 @@ export const ServiceGrid = styled.div`
     gap: 40px;
     margin-top: 50px;
     padding: 0 40px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); // 기본 그림자
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); 
     border-top: 1px solid #bfbfbf;
 `;
 

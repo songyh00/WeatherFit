@@ -58,12 +58,11 @@ const Header = () => {
                         <MainMenuLink to="/Consultation" $active={activeMenu === "상의"}
                                       onClick={() => setActiveMenu("상의")}>상의</MainMenuLink>
 
-                        <MainMenuLink to="/Pants" $active={activeMenu === "바지"}
-                                      onClick={() => setActiveMenu("바지")}>바지</MainMenuLink>
+                        <MainMenuLink to="/Pants" $active={activeMenu === "하의"}
+                                      onClick={() => setActiveMenu("하의")}>하의</MainMenuLink>
                     </MainMenu>
                 </HeaderNav>
             </HeaderWrapper>
-            <HeaderBackground />
         </>
     )
 }
