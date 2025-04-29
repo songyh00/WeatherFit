@@ -228,4 +228,5 @@ public class WeatherService {
             default: return "맑음";
         }
     }
+
 }

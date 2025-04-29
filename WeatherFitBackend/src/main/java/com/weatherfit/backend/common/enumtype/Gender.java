@@ -31,4 +31,5 @@ public enum Gender {
         }
         throw new IllegalArgumentException("지원하지 않는 성별입니다: " + input);
     }
+
 }

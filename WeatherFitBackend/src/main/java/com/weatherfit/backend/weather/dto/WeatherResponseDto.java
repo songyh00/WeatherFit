@@ -10,9 +10,7 @@ import java.util.List;
 @Data
 @Builder
 public class WeatherResponseDto {
-
     private List<HourlyTemperatureDto> hourlyTemperatures;   // 시간별 기온 및 날씨 상태 목록
-
     private int minTemperature;                              //날씨 예보용 최소온도
     private int maxTemperature;                              //날씨 예보용 최고온도
 

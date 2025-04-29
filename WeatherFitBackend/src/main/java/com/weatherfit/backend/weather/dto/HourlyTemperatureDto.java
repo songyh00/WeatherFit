@@ -9,7 +9,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class HourlyTemperatureDto {
-
     private String month;        // 월 (예: "04")
     private String day;          // 일 (예: "15")
     private String time;         // 시간 (예: "0900")
@@ -19,4 +18,5 @@ public class HourlyTemperatureDto {
     private int precipitationProbability;   // 강수 확률 (%)
     private double precipitationAmount;     // 강수량 (mm)
     private double snowAmount;               // 적설량 (cm)
+
 }

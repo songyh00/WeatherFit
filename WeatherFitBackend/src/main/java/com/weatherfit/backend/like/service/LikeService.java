@@ -2,19 +2,21 @@ package com.weatherfit.backend.like.service;
 
 import com.weatherfit.backend.clothes.entity.Clothes;
 import com.weatherfit.backend.clothes.repository.ClothesRepository;
+import com.weatherfit.backend.common.exception.CustomException;
+import com.weatherfit.backend.common.exception.ErrorCode;
 import com.weatherfit.backend.like.dto.LikeDto;
 import com.weatherfit.backend.like.entity.Like;
 import com.weatherfit.backend.like.repository.LikeRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 좋아요(Like) 관련 비즈니스 로직을 담당하는 서비스
+ * 좋아요(Like) 비즈니스 로직 서비스
  */
 @Slf4j
 @Service
@@ -25,16 +27,12 @@ public class LikeService {
     private final ClothesRepository clothesRepository;
 
     /**
-     * 좋아요 토글 기능
-     * - 이미 좋아요를 눌렀으면 취소
-     * - 좋아요가 없으면 추가
-     *
-     * @param userId    사용자 ID
-     * @param clothesId 옷 ID
+     * 좋아요 토글
      */
+    @Transactional
     public void toggleLike(Long userId, Long clothesId) {
         Clothes clothes = clothesRepository.findById(clothesId)
-                .orElseThrow(() -> new IllegalArgumentException("옷을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.CLOTHES_NOT_FOUND));
 
         Like like = likeRepository.findByUserIdAndClothesId(userId, clothesId)
                 .orElse(null);
@@ -52,11 +50,7 @@ public class LikeService {
     }
 
     /**
-     * 사용자가 누른 모든 좋아요 코디 조회
-     * - 옷 정보(아이디, 이미지, 이름, 카테고리)를 LikeDto로 변환하여 반환
-     *
-     * @param userId 사용자 ID
-     * @return 좋아요한 옷 리스트 (LikeDto 목록)
+     * 내가 좋아요한 옷 리스트 조회
      */
     public List<LikeDto> getMyLikes(Long userId) {
         List<Like> likes = likeRepository.findByUserId(userId);
@@ -74,4 +68,5 @@ public class LikeService {
                 })
                 .collect(Collectors.toList());
     }
+
 }

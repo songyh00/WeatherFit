@@ -51,4 +51,5 @@ public class KakaoAddressService {
             throw new CustomException(ErrorCode.EXTERNAL_API_ERROR);
         }
     }
+
 }

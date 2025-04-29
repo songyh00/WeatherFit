@@ -41,4 +41,5 @@ public class WeatherController {
         // 3. 날씨 예보 데이터 조회
         return weatherService.getForecastForWeather(xy.x, xy.y, tomorrow);
     }
+
 }

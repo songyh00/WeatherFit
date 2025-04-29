@@ -12,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * [코디 추천용] 사용자가 주소, 날짜, 배너 타입을 입력하면
- * 해당 조건에 맞춰 코디를 추천해주는 Controller
+ * [코디 추천용] 사용자가 배너 타입을 선택하고 주소, 날짜를 입력하면
+ * 해당 조건에 맞춰 코디를 추천해주는 컨트롤러
  */
 @RestController
 @RequestMapping("/api/recommend")
@@ -23,7 +23,7 @@ public class ClothesRecommendController {
     private final KakaoAddressService kakaoAddressService; // 주소 → 위도/경도 변환
     private final WeatherService weatherService;           // 날씨 데이터 조회
     private final ClothesService clothesService;           // 코디 추천 서비스
-    private final JwtUtil jwtUtil;                          // JWT 토큰 유틸리티
+    private final JwtUtil jwtUtil;                         // JWT 토큰 유틸리티
 
     /**
      * 코디 추천 API
@@ -42,15 +42,11 @@ public class ClothesRecommendController {
         double longitude = coordinates[1];
         LocationUtil.XY xy = LocationUtil.xyFromLatLng(latitude, longitude);
 
-        // 2. [코디 추천용] 날씨 데이터 가져오기 (averageTemperature 필요)
+        // 2. 코디 추천용 날씨 데이터 가져오기
         var weather = weatherService.getForecastForClothing(xy.x, xy.y, requestDto.isTomorrow());
 
         // 3. JWT 토큰에서 성별 추출
-        String authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw new RuntimeException("Authorization 헤더가 없습니다.");
-        }
-        String token = authorizationHeader.substring(7); // "Bearer " 제거
+        String token = jwtUtil.cleanTokenFromHeader(request.getHeader("Authorization"));
         String gender = jwtUtil.extractGender(token);
 
         // 4. 코디 추천 결과 반환
@@ -62,4 +58,5 @@ public class ClothesRecommendController {
                 requestDto.isTomorrow()
         );
     }
+    
 }

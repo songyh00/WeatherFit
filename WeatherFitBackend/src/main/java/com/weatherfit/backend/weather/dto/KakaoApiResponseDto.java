@@ -20,4 +20,5 @@ public class KakaoApiResponseDto {
         private String x; // 경도 (longitude)
         private String y; // 위도 (latitude)
     }
+
 }

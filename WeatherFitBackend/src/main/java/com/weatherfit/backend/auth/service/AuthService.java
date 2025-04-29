@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * 회원(Auth) 관련 비즈니스 로직을 처리하는 서비스
+ * 회원 관련 비즈니스 로직을 처리하는 서비스
  */
 @Slf4j
 @Service
@@ -33,27 +33,6 @@ public class AuthService {
     private final ClothesRepository clothesRepository;
     private final JwtUtil jwtUtil;
     private final BCryptPasswordEncoder passwordEncoder;
-
-    /**
-     * 로그인 처리
-     */
-    public LoginResponseDto login(LoginRequestDto requestDto) {
-        log.info("🔵 로그인 시도: username={}", requestDto.getUsername());
-
-        User user = userRepository.findByUsername(requestDto.getUsername())
-                .orElseThrow(() -> {
-                    log.warn("🟠 로그인 실패 (아이디 없음): username={}", requestDto.getUsername());
-                    throw new CustomException(ErrorCode.USER_NOT_FOUND);
-                });
-
-        if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
-            log.warn("🟠 로그인 실패 (비밀번호 틀림): username={}", requestDto.getUsername());
-            throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
-        }
-
-        String token = jwtUtil.generateToken(user.getId(), user.getGender().toString());
-        return new LoginResponseDto(token, user.getUsername());
-    }
 
     /**
      * 회원가입 처리
@@ -104,25 +83,28 @@ public class AuthService {
     }
 
     /**
-     * 회원 탈퇴 처리
+     * 로그인 처리
      */
-    @Transactional
-    public void withdraw(String token) {
-        Long userId = jwtUtil.extractUserId(token);
-        log.info("🔴 회원 탈퇴 요청: userId={}", userId);
+    public LoginResponseDto login(LoginRequestDto requestDto) {
+        log.info("🔵 로그인 시도: username={}", requestDto.getUsername());
 
-        // 좋아요 누른 옷들의 좋아요 수 한 번에 감소 (최적화)
-        clothesRepository.decreaseLikeCountByUserId(userId);
+        User user = userRepository.findByUsername(requestDto.getUsername())
+                .orElseThrow(() -> {
+                    log.warn("🟠 로그인 실패 (아이디 없음): username={}", requestDto.getUsername());
+                    throw new CustomException(ErrorCode.USER_NOT_FOUND);
+                });
 
-        // 좋아요 기록 삭제
-        likeRepository.deleteByUserId(userId);
+        if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
+            log.warn("🟠 로그인 실패 (비밀번호 틀림): username={}", requestDto.getUsername());
+            throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
+        }
 
-        // 회원 삭제
-        userRepository.deleteById(userId);
+        String token = jwtUtil.generateToken(user.getId(), user.getGender().toString());
+        return new LoginResponseDto(token, user.getUsername(), user.getEmail(), user.getGender().toString());
     }
 
     /**
-     * 이메일 + 비밀번호로 아이디 찾기
+     * 아이디 찾기
      */
     public String findUsername(String email, String password) {
         log.info("🔵 아이디 찾기 요청: email={}", email);
@@ -138,7 +120,7 @@ public class AuthService {
     }
 
     /**
-     * 아이디 + 이메일 매칭 검증
+     * 비밀번호 재설정 검증
      */
     public void verifyUser(String username, String email) {
         log.info("🟡 비밀번호 재설정 검증 요청: username={}, email={}", username, email);
@@ -146,7 +128,7 @@ public class AuthService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        if (!user.getEmail().equals(email)) {
+        if (!user.getEmail().equalsIgnoreCase(email)) {
             throw new CustomException(ErrorCode.EMAIL_NOT_MATCHED);
         }
     }
@@ -184,4 +166,23 @@ public class AuthService {
         user.setPassword(encodedNewPassword);
         log.info("🟢 비밀번호 변경 성공: userId={}", userId);
     }
+
+    /**
+     * 회원 탈퇴 처리
+     */
+    @Transactional
+    public void withdraw(String token) {
+        Long userId = jwtUtil.extractUserId(token);
+        log.info("🔴 회원 탈퇴 요청: userId={}", userId);
+
+        // 좋아요 누른 옷들의 좋아요 수 한 번에 감소 (최적화)
+        clothesRepository.decreaseLikeCountByUserId(userId);
+
+        // 좋아요 기록 삭제
+        likeRepository.deleteByUserId(userId);
+
+        // 회원 삭제
+        userRepository.deleteById(userId);
+    }
+
 }

@@ -19,15 +19,7 @@ public class AuthController {
     private final AuthService authService;
 
     /**
-     * 로그인 요청 처리
-     */
-    @PostMapping("/login")
-    public LoginResponseDto login(@RequestBody LoginRequestDto requestDto) {
-        return authService.login(requestDto);
-    }
-
-    /**
-     * 회원가입 요청 처리
+     * 회원가입
      */
     @PostMapping("/signup")
     public void signup(@RequestBody SignupRequestDto requestDto) {
@@ -35,7 +27,31 @@ public class AuthController {
     }
 
     /**
-     * 아이디 찾기 요청 처리
+     * 아이디 중복 확인
+     */
+    @GetMapping("/check-username")
+    public boolean checkUsername(@RequestParam String username) {
+        return authService.isUsernameTaken(username);
+    }
+
+    /**
+     * 이메일 중복 확인
+     */
+    @GetMapping("/check-email")
+    public boolean checkEmail(@RequestParam String email) {
+        return authService.isEmailTaken(email);
+    }
+
+    /**
+     * 로그인
+     */
+    @PostMapping("/login")
+    public LoginResponseDto login(@RequestBody LoginRequestDto requestDto) {
+        return authService.login(requestDto);
+    }
+
+    /**
+     * 아이디 찾기
      */
     @PostMapping("/find-username")
     public String findUsername(@RequestParam String email,
@@ -44,31 +60,7 @@ public class AuthController {
     }
 
     /**
-     * 아이디 중복 확인 요청
-     */
-    @GetMapping("/check-username")
-    public boolean checkUsername(@RequestParam String username) {
-        return authService.isUsernameTaken(username);
-    }
-
-    /**
-     * 이메일 중복 확인 요청
-     */
-    @GetMapping("/check-email")
-    public boolean checkEmail(@RequestParam String email) {
-        return authService.isEmailTaken(email);
-    }
-
-    /**
-     * 회원 탈퇴 요청 처리
-     */
-    @DeleteMapping("/withdraw")
-    public void withdraw(@RequestHeader("Authorization") String token) {
-        authService.withdraw(token);
-    }
-
-    /**
-     * 비밀번호 재설정 검증 요청
+     * 비밀번호 재설정 검증
      */
     @PostMapping("/verify-user")
     public void verifyUser(@RequestParam String username,
@@ -77,7 +69,7 @@ public class AuthController {
     }
 
     /**
-     * 비밀번호 재설정 요청
+     * 비밀번호 재설정
      */
     @PostMapping("/change-password")
     public void changePassword(@RequestParam String username,
@@ -86,11 +78,20 @@ public class AuthController {
     }
 
     /**
-     * 로그인 후 비밀번호 변경 요청 처리
+     * 로그인 후 비밀번호 변경
      */
     @PostMapping("/change-my-password")
     public void changeMyPassword(@RequestHeader("Authorization") String token,
                                  @RequestBody ChangePasswordRequestDto requestDto) {
         authService.changeMyPassword(token, requestDto);
     }
+    
+    /**
+     * 회원 탈퇴
+     */
+    @DeleteMapping("/withdraw")
+    public void withdraw(@RequestHeader("Authorization") String token) {
+        authService.withdraw(token);
+    }
+
 }
