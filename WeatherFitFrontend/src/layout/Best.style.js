@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 export const ContentsWrapper = styled.div`
-
+    
     
 `;
 
@@ -18,27 +18,42 @@ export const MainContents = styled.div`
 
 
 
-export const Mainimage = styled.div`
-    width: 200px;
-    height: 150px;
-    border: 5px solid transparent;
+export const Card = styled.div`
+
     box-sizing: border-box;
     transition: transform .1s, background-color .6s;
     margin: 50px;
+    height: auto;
+
+    text-align: center;
+    width: 300px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+        transform: scale(1.1);
+    }
+    
 `;
 
 
 
+export const Content = styled.div`
+  padding: 16px;
+`;
 
-export const MainContentsLink = styled.div`
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    border-radius: 15px;
-    &:hover {
-        transform: scale(1.2);
-        z-index: 1;
-        border-radius: 20px;
-    }
+export const Like = styled.div`
+  color: #ff0000;
+  font-size: 20px;
+`;
+
+
+export const ClothesText = styled.p`
+  font-size: 14px;
+  color: #333;
+  margin-top: 8px;
+  line-height: 1.4;
 `;

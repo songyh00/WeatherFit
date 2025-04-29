@@ -46,7 +46,7 @@ export const SliderContainer = styled.div`
 export const StyledImageContainer = styled.div`
     position: relative;  // 텍스트를 겹치기 위해 추가
     flex: 0 0 calc(100% / 3); // 화면 너비의 1/3만큼씩 차지
-    padding: 0 4px; 
+    padding: 0 2px; 
     box-sizing: border-box;
 
     .slide-label {
@@ -60,6 +60,25 @@ export const StyledImageContainer = styled.div`
         text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
         font-family: 'Noto Sans KR', sans-serif;
     }
+    .image-credit {
+        position: absolute;
+        bottom: 8px;
+        left: 15px;
+        font-size: 11px;
+        font-family: 'Noto Sans KR', sans-serif;
+        color: white;
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 3px 6px;
+        border-radius: 5px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 2;
+    }
+
+    &:hover .image-credit {
+        opacity: 1;
+    }
+
 `;
 
 export const StyledImage = styled.img`
@@ -134,7 +153,7 @@ export const ServiceGrid = styled.div`
     margin-top: 50px;
     padding: 0 40px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); 
-    border-top: 1px solid #bfbfbf;
+   
 `;
 
 export const ServiceCard = styled(Link)`

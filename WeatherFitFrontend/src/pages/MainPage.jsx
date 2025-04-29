@@ -19,10 +19,10 @@ import Main2 from "../assets/WeatherImg/summer.png";
 import Main3 from "../assets/WeatherImg/autumn.png";
 import Main4 from "../assets/WeatherImg/winter.png";
 
-import Mainimg1 from "../assets/mainimg/mainimg1.jpg";
-import Mainimg2 from "../assets/mainimg/mainimg2.jpg";
-import Mainimg3 from "../assets/mainimg/mainimg3.jpg";
-import Mainimg4 from "../assets/mainimg/mainimg4.jpg";
+import Mainimg1 from "../assets/mainimg/SpringMainImg.png";
+import Mainimg2 from "../assets/mainimg/SummerMainImg.png";
+import Mainimg3 from "../assets/mainimg/AutumnMainImg.png";
+import Mainimg4 from "../assets/mainimg/WinterMainImg.png";
 
 
 import bestimg from "../assets/infoImg/best.png";
@@ -40,10 +40,10 @@ const MainPage = () => {
         "#d0e4ef"  // 겨울
     ];
     const sliderImages = [
-        { src: Mainimg1, label: "봄" },
-        { src: Mainimg2, label: "여름" },
-        { src: Mainimg3, label: "가을" },
-        { src: Mainimg4, label: "겨울" }
+        { src: Mainimg1, label: "봄",credit: "출처: 2-plan.co.kr"},
+        { src: Mainimg2, label: "여름",credit: "출처: 2-plan.co.kr" },
+        { src: Mainimg3, label: "가을",credit: "출처: 2-plan.co.kr" },
+        { src: Mainimg4, label: "겨울",credit: "출처: 2-plan.co.kr" }
     ];
 
     const [sliderIndex, setSliderIndex] = useState(0);
@@ -88,6 +88,7 @@ const MainPage = () => {
                         <StyledImageContainer key={idx}>
                             <StyledImage src={item.src} alt={`slide-${idx}`} />
                             <div className="slide-label">{item.label}</div>
+                            <div className="image-credit">{item.credit}</div> {/* 👈 출처 표시 */}
                         </StyledImageContainer>
                     ))}
                 </SliderContainer>

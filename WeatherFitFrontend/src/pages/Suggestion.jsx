@@ -1,13 +1,180 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import '../App.css';
 import {
-    ContentsWrapper
-} from "../layout/mainPage.style.js";
+    ContentsWrapper,
+    MainContents,
+    Card,
+    Content,
+    Like,
+    ClothesText
+} from "../layout/Best.style.js";
+import logo from "../assets/logo.png";
 
 const Suggestion = () => {
+
+
+    // 찜 목록 상태 관리
+    const [favorites, setFavorites] = useState([]);
+
+    // localStorage에서 찜 목록 불러오기
+    useEffect(() => {
+        const storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
+        setFavorites(storedFavorites);
+    }, []);
+
+    // 찜 상태 토글
+    const toggleFavorite = (id) => {
+        const updatedFavorites = favorites.includes(id)
+            ? favorites.filter((favoriteId) => favoriteId !== id)
+            : [...favorites, id];
+
+        // 찜 목록을 localStorage에 저장
+        setFavorites(updatedFavorites);
+        localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+    };
+    const isFavorite = (id) => favorites.includes(id);
+
+
     return (
         <ContentsWrapper>
-            추천페이지 입니다.
+            <MainContents>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like
+                            liked={isFavorite(1)}
+                            onClick={() => toggleFavorite(1)}
+                        >
+                            {isFavorite(1) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                        </Like>
+                        <ClothesText>
+                            아우터 1
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like
+                            liked={isFavorite(2)}
+                            onClick={() => toggleFavorite(2)}
+                        >
+                            {isFavorite(2) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                        </Like>
+                        <ClothesText>
+                            아우터 2
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like
+                            liked={isFavorite(3)}
+                            onClick={() => toggleFavorite(3)}
+                        >
+                            {isFavorite(3) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                        </Like>
+                        <ClothesText>
+                            아우터 3
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like
+                            liked={isFavorite(4)}
+                            onClick={() => toggleFavorite(4)}
+                        >
+                            {isFavorite(4) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                        </Like>
+                        <ClothesText>
+                            상의 1
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like
+                            liked={isFavorite(5)}
+                            onClick={() => toggleFavorite(5)}
+                        >
+                            {isFavorite(5) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                        </Like>
+                        <ClothesText>
+                            상의 2
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like
+                            liked={isFavorite(6)}
+                            onClick={() => toggleFavorite(6)}
+                        >
+                            {isFavorite(6) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                        </Like>
+                        <ClothesText>
+                            상의 3
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like
+                            liked={isFavorite(7)}
+                            onClick={() => toggleFavorite(7)}
+                        >
+                            {isFavorite(7) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                        </Like>
+                        <ClothesText>
+                            하의 1
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like
+                            liked={isFavorite(8)}
+                            onClick={() => toggleFavorite(8)}
+                        >
+                            {isFavorite(8) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                        </Like>
+                        <ClothesText>
+                            하의 2
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like
+                            liked={isFavorite(9)}
+                            onClick={() => toggleFavorite(9)}
+                        >
+                            {isFavorite(9) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                        </Like>
+                        <ClothesText>
+                            하의 3
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+            </MainContents>
         </ContentsWrapper>
     );
 }
