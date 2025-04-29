@@ -2,6 +2,8 @@ package com.weatherfit.backend.like.repository;
 
 import com.weatherfit.backend.like.entity.Like;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -16,18 +18,18 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
 
     /**
      * 특정 사용자(userId)가 특정 옷(clothesId)에 누른 좋아요 조회
-     *
-     * @param userId 사용자 ID
-     * @param clothesId 옷 ID
-     * @return 좋아요 정보 (Optional)
      */
     Optional<Like> findByUserIdAndClothesId(Long userId, Long clothesId);
 
     /**
      * 특정 사용자가 누른 모든 좋아요 리스트 조회
-     *
-     * @param userId 사용자 ID
-     * @return 좋아요 리스트
      */
     List<Like> findByUserId(Long userId);
+
+    /**
+     * 특정 사용자가 누른 좋아요들을 한 번에 삭제 (최적화)
+     */
+    @Modifying
+    @Query("DELETE FROM Likes l WHERE l.userId = :userId")
+    void deleteByUserId(Long userId);
 }

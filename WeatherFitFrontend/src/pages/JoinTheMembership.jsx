@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { LoginWrapper, LoginSection, LoginInput, LoginButton } from "../layout/login.style.js";
-import { Link, useNavigate } from "react-router-dom";   // ✅ useNavigate 추가
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { getSeason, theme } from "../components/theme.js";
 import { BtnSection, CheckboxWrapper, DuplicateTestBtn, RegisterWrapper } from "../layout/JoinTheMembership.style.js";
@@ -12,14 +12,14 @@ const JoinTheMembership = () => {
     const [userName, setUserName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [selectedRadio, setSelectedRadio] = useState("men");
+    const [selectedRadio, setSelectedRadio] = useState("MALE");
     const [isUserNameAvailable, setIsUserNameAvailable] = useState(false);
     const [isEmailAvailable, setIsEmailAvailable] = useState(false);
 
     const userNameRef = useRef(null);
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
-    const navigate = useNavigate(); // ✅ 페이지 이동용
+    const navigate = useNavigate();
 
     const handleFocus = () => setInputFocused(true);
     const handleBlur = () => setInputFocused(false);
@@ -38,12 +38,19 @@ const JoinTheMembership = () => {
             return;
         }
         try {
-            await axios.get(`/api/auth/check-username?username=${userName}`); // ✅ 진짜 서버 요청
-            setIsUserNameAvailable(true);
-            alert("사용 가능한 아이디입니다.");
+            const response = await axios.get(`/api/auth/check-username?username=${userName}`);
+            const isTaken = response.data;
+            if (isTaken) {
+                setIsUserNameAvailable(false);
+                alert("이미 사용 중인 아이디입니다.");
+            } else {
+                setIsUserNameAvailable(true);
+                alert("사용 가능한 아이디입니다.");
+            }
         } catch (error) {
+            console.error(error);
             setIsUserNameAvailable(false);
-            alert(error.response?.data?.message || "이미 사용중인 아이디입니다.");
+            alert("아이디 중복 검사 중 오류가 발생했습니다.");
         }
     };
 
@@ -60,12 +67,19 @@ const JoinTheMembership = () => {
             return;
         }
         try {
-            await axios.get(`/api/auth/check-email?email=${email}`); // ✅ 진짜 서버 요청
-            setIsEmailAvailable(true);
-            alert("사용 가능한 이메일입니다.");
+            const response = await axios.get(`/api/auth/check-email?email=${email}`);
+            const isTaken = response.data;
+            if (isTaken) {
+                setIsEmailAvailable(false);
+                alert("이미 사용 중인 이메일입니다.");
+            } else {
+                setIsEmailAvailable(true);
+                alert("사용 가능한 이메일입니다.");
+            }
         } catch (error) {
+            console.error(error);
             setIsEmailAvailable(false);
-            alert(error.response?.data?.message || "이미 사용중인 이메일입니다.");
+            alert("이메일 중복 검사 중 오류가 발생했습니다.");
         }
     };
 
@@ -96,7 +110,7 @@ const JoinTheMembership = () => {
         }
 
         try {
-            const gender = selectedRadio === "men" ? "MALE" : "FEMALE";
+            const gender = selectedRadio;
 
             await axios.post("/api/auth/signup", {
                 username: userName,
@@ -107,7 +121,6 @@ const JoinTheMembership = () => {
 
             alert("회원가입이 완료되었습니다.");
 
-            // ✅ 자동 로그인 바로 시도
             const response = await axios.post("/api/auth/login", {
                 username: userName,
                 password: password,
@@ -117,10 +130,9 @@ const JoinTheMembership = () => {
             localStorage.setItem("token", token);
             localStorage.setItem("username", loggedInUsername);
 
-            // ✅ 메인페이지로 이동
             navigate("/");
         } catch (error) {
-            console.error(error.response?.data);
+            console.error(error);
             alert(error.response?.data?.message || "회원가입 실패");
         }
     };
@@ -132,7 +144,6 @@ const JoinTheMembership = () => {
             </Link>
 
             <LoginSection>
-                {/* 사용자명 입력 + 중복검사 */}
                 <BtnSection style={{ marginTop: '5px' }}>
                     <LoginInput
                         ref={userNameRef}
@@ -160,7 +171,6 @@ const JoinTheMembership = () => {
                     </DuplicateTestBtn>
                 </BtnSection>
 
-                {/* 이메일 입력 + 중복검사 */}
                 <BtnSection>
                     <LoginInput
                         ref={emailRef}
@@ -188,7 +198,6 @@ const JoinTheMembership = () => {
                     </DuplicateTestBtn>
                 </BtnSection>
 
-                {/* 비밀번호 입력 */}
                 <LoginInput
                     ref={passwordRef}
                     type="password"
@@ -202,7 +211,6 @@ const JoinTheMembership = () => {
                     placeholder="비밀번호를 입력해주세요"
                 />
 
-                {/* 성별 선택 */}
                 <CheckboxWrapper>
                     <div className="form-check">
                         <input
@@ -235,7 +243,6 @@ const JoinTheMembership = () => {
                     </div>
                 </CheckboxWrapper>
 
-                {/* 회원가입 버튼 */}
                 <LoginButton
                     type="submit"
                     style={{ marginBottom: '20px' }}

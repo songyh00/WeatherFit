@@ -38,38 +38,39 @@ public class JwtUtil {
      */
     public String generateToken(Long id, String gender) {
         return Jwts.builder()
-                .claim("id", id)             // 사용자 ID 클레임 추가
-                .claim("gender", gender)      // 사용자 성별 클레임 추가
-                .setIssuedAt(new Date())      // 발급 시간
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // 만료 시간
-                .signWith(secretKey, SignatureAlgorithm.HS256) // 서명
+                .claim("id", id)
+                .claim("gender", gender)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
     /**
-     * 토큰에서 사용자 성별(gender) 추출
-     * @param token JWT 토큰
-     * @return 사용자 성별
+     * 토큰에서 사용자 성별 추출
      */
     public String extractGender(String token) {
-        Claims claims = parseToken(token);
+        Claims claims = parseToken(cleanToken(token));
         return claims.get("gender", String.class);
     }
 
     /**
      * 토큰에서 사용자 ID 추출
-     * @param token JWT 토큰
-     * @return 사용자 ID
      */
     public Long extractUserId(String token) {
-        Claims claims = parseToken(token);
+        Claims claims = parseToken(cleanToken(token));
         return claims.get("id", Long.class);
     }
 
     /**
-     * 토큰을 파싱하여 Claims 추출 (공통 부분 메서드화)
-     * @param token JWT 토큰
-     * @return Claims
+     * Bearer 접두어 제거
+     */
+    private String cleanToken(String token) {
+        return token != null && token.startsWith("Bearer ") ? token.substring(7) : token;
+    }
+
+    /**
+     * JWT 토큰을 파싱하여 Claims 추출
      */
     private Claims parseToken(String token) {
         return Jwts.parserBuilder()

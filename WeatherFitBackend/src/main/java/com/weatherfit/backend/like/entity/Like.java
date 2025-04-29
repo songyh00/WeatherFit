@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
  * 좋아요(Like) 엔티티
  * - 사용자가 특정 옷(Clothes)에 누른 좋아요 기록을 저장한다.
  */
-@Entity
+@Entity(name = "Likes")
 @Getter
 @NoArgsConstructor
 @Table(name = "clothes_like", uniqueConstraints = {
@@ -31,7 +31,7 @@ public class Like {
     /**
      * 좋아요 생성자
      *
-     * @param userId 좋아요를 누른 사용자 ID
+     * @param userId  좋아요를 누른 사용자 ID
      * @param clothes 좋아요를 누른 옷
      */
     public Like(Long userId, Clothes clothes) {

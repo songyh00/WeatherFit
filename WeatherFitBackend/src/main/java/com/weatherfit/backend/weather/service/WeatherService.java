@@ -5,28 +5,26 @@ import com.weatherfit.backend.weather.dto.HourlyTemperatureDto;
 import com.weatherfit.backend.weather.dto.WeatherApiResponseDto;
 import com.weatherfit.backend.weather.dto.WeatherResponseDto;
 import com.weatherfit.backend.weather.util.BaseDateTimeCalculator;
-
+import com.weatherfit.backend.common.exception.CustomException;
+import com.weatherfit.backend.common.exception.ErrorCode;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class WeatherService {
 
     private final WebClient webClient;
-    private final String serviceKey;
 
-    public WeatherService(WebClient.Builder webClientBuilder,
-                          @Value("${weather.api.base-url}") String baseUrl,
-                          @Value("${weather.api.service-key}") String serviceKey) {
-        this.webClient = webClientBuilder.baseUrl(baseUrl).build();
-        this.serviceKey = serviceKey;
-    }
+    @Value("${weather.api.service-key}")
+    private String serviceKey;
 
     /**
      * 코디 추천용 날씨 데이터 조회 (평균 온도만 반환)
@@ -54,18 +52,25 @@ public class WeatherService {
     private WeatherApiResponseDto fetchWeatherApi(int nx, int ny, BaseDateTimeCalculator.DateTimeInfo dateTimeInfo) {
         try {
             return webClient.get()
-                    .uri("/getVilageFcst?serviceKey=" + serviceKey +
-                            "&pageNo=1&numOfRows=1000&dataType=JSON" +
-                            "&base_date=" + dateTimeInfo.getBaseDate() +
-                            "&base_time=" + dateTimeInfo.getBaseTime() +
-                            "&nx=" + nx +
-                            "&ny=" + ny)
+                    .uri(uriBuilder -> uriBuilder
+                            .scheme("https")
+                            .host("apis.data.go.kr")
+                            .path("/1360000/VilageFcstInfoService_2.0/getVilageFcst")
+                            .queryParam("serviceKey", serviceKey)
+                            .queryParam("pageNo", 1)
+                            .queryParam("numOfRows", 1000)
+                            .queryParam("dataType", "JSON")
+                            .queryParam("base_date", dateTimeInfo.getBaseDate())
+                            .queryParam("base_time", dateTimeInfo.getBaseTime())
+                            .queryParam("nx", nx)
+                            .queryParam("ny", ny)
+                            .build())
                     .retrieve()
                     .bodyToMono(WeatherApiResponseDto.class)
                     .block();
         } catch (Exception e) {
             log.error("🔴 날씨 API 호출 실패: {}", e.getMessage());
-            throw new RuntimeException("날씨 API 조회에 실패했습니다.");
+            throw new CustomException(ErrorCode.EXTERNAL_API_ERROR);
         }
     }
 

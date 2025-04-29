@@ -67,7 +67,7 @@ public class LikeService {
                     Clothes clothes = like.getClothes();
                     return new LikeDto(
                             clothes.getId(),
-                            clothes.getImageUrl(),
+                            clothes.getImage(),
                             clothes.getName(),
                             clothes.getCategory()
                     );

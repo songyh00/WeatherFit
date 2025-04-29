@@ -1,16 +1,20 @@
 package com.weatherfit.backend.auth.service;
 
-import com.weatherfit.backend.auth.dto.LoginRequestDto;
-import com.weatherfit.backend.auth.dto.SignupRequestDto;
 import com.weatherfit.backend.auth.JwtUtil;
-import com.weatherfit.backend.clothes.entity.Clothes;
+import com.weatherfit.backend.auth.dto.ChangePasswordRequestDto;
+import com.weatherfit.backend.auth.dto.LoginRequestDto;
+import com.weatherfit.backend.auth.dto.LoginResponseDto;
+import com.weatherfit.backend.auth.dto.SignupRequestDto;
 import com.weatherfit.backend.clothes.repository.ClothesRepository;
-import com.weatherfit.backend.like.entity.Like;
+import com.weatherfit.backend.common.enumtype.Gender;
+import com.weatherfit.backend.common.exception.CustomException;
+import com.weatherfit.backend.common.exception.ErrorCode;
 import com.weatherfit.backend.like.repository.LikeRepository;
 import com.weatherfit.backend.user.entity.User;
 import com.weatherfit.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,77 +32,63 @@ public class AuthService {
     private final LikeRepository likeRepository;
     private final ClothesRepository clothesRepository;
     private final JwtUtil jwtUtil;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     /**
      * 로그인 처리
-     * @param requestDto 로그인 요청 정보
-     * @return JWT 토큰 반환
      */
-    public String login(LoginRequestDto requestDto) {
+    public LoginResponseDto login(LoginRequestDto requestDto) {
         log.info("🔵 로그인 시도: username={}", requestDto.getUsername());
 
         User user = userRepository.findByUsername(requestDto.getUsername())
                 .orElseThrow(() -> {
                     log.warn("🟠 로그인 실패 (아이디 없음): username={}", requestDto.getUsername());
-                    return new RuntimeException("존재하지 않는 사용자입니다.");
+                    throw new CustomException(ErrorCode.USER_NOT_FOUND);
                 });
 
-        if (!user.getPassword().equals(requestDto.getPassword())) {
+        if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             log.warn("🟠 로그인 실패 (비밀번호 틀림): username={}", requestDto.getUsername());
-            throw new RuntimeException("비밀번호가 틀렸습니다.");
+            throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
         }
 
-        return jwtUtil.generateToken(user.getId(), user.getGender().toString());
+        String token = jwtUtil.generateToken(user.getId(), user.getGender().toString());
+        return new LoginResponseDto(token, user.getUsername());
     }
 
     /**
      * 회원가입 처리
-     * @param requestDto 회원가입 요청 정보
      */
     public void signup(SignupRequestDto requestDto) {
         log.info("🟢 회원가입 시도: username={}", requestDto.getUsername());
 
         if (userRepository.findByUsername(requestDto.getUsername()).isPresent()) {
             log.warn("🟠 회원가입 실패 (아이디 중복): username={}", requestDto.getUsername());
-            throw new RuntimeException("이미 존재하는 아이디입니다.");
+            throw new CustomException(ErrorCode.USERNAME_ALREADY_EXISTS);
         }
         if (userRepository.findByEmail(requestDto.getEmail()).isPresent()) {
             log.warn("🟠 회원가입 실패 (이메일 중복): email={}", requestDto.getEmail());
-            throw new RuntimeException("이미 존재하는 이메일입니다.");
+            throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
+        }
+
+        String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
+
+        Gender gender = Gender.from(requestDto.getGender());
+        if (gender == Gender.UNISEX) {
+            log.warn("🟠 회원가입 실패 (잘못된 성별 선택): username={}", requestDto.getUsername());
+            throw new CustomException(ErrorCode.INVALID_USER_GENDER);
         }
 
         User newUser = new User();
         newUser.setUsername(requestDto.getUsername());
-        newUser.setPassword(requestDto.getPassword());
+        newUser.setPassword(encodedPassword);
         newUser.setEmail(requestDto.getEmail());
-        newUser.setGender(User.Gender.valueOf(requestDto.getGender().toUpperCase())); // MALE, FEMALE 변환
+        newUser.setGender(gender);
 
         userRepository.save(newUser);
     }
 
     /**
-     * 이메일 + 비밀번호로 아이디 찾기
-     * @param email 사용자 이메일
-     * @param password 사용자 비밀번호
-     * @return username 반환
-     */
-    public String findUsername(String email, String password) {
-        log.info("🔵 아이디 찾기 요청: email={}", email);
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("일치하는 사용자가 없습니다."));
-
-        if (!user.getPassword().equals(password)) {
-            throw new RuntimeException("일치하는 사용자가 없습니다.");
-        }
-
-        return user.getUsername();
-    }
-
-    /**
      * 아이디 중복확인
-     * @param username 확인할 사용자명
-     * @return true(중복됨) / false(사용 가능)
      */
     public boolean isUsernameTaken(String username) {
         log.info("🟡 아이디 중복확인 요청: username={}", username);
@@ -107,8 +97,6 @@ public class AuthService {
 
     /**
      * 이메일 중복확인
-     * @param email 확인할 이메일
-     * @return true(중복됨) / false(사용 가능)
      */
     public boolean isEmailTaken(String email) {
         log.info("🟡 이메일 중복확인 요청: email={}", email);
@@ -116,46 +104,84 @@ public class AuthService {
     }
 
     /**
-     * 아이디 + 이메일로 비밀번호 찾기
-     * @param username 사용자 아이디
-     * @param email 사용자 이메일
-     * @return password 반환
-     */
-    public String findPassword(String username, String email) {
-        log.info("🔵 비밀번호 찾기 요청: username={}", username);
-
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("일치하는 사용자가 없습니다."));
-
-        if (!user.getEmail().equals(email)) {
-            throw new RuntimeException("일치하는 사용자가 없습니다.");
-        }
-
-        return user.getPassword();
-    }
-
-    /**
      * 회원 탈퇴 처리
-     * - 사용자가 누른 좋아요 기록 삭제
-     * - 옷 좋아요 수 감소
-     * - 회원 삭제
-     * @param token Authorization 헤더에 담긴 JWT 토큰
      */
     @Transactional
     public void withdraw(String token) {
         Long userId = jwtUtil.extractUserId(token);
         log.info("🔴 회원 탈퇴 요청: userId={}", userId);
 
-        List<Like> userLikes = likeRepository.findByUserId(userId);
+        // 좋아요 누른 옷들의 좋아요 수 한 번에 감소 (최적화)
+        clothesRepository.decreaseLikeCountByUserId(userId);
 
-        for (Like like : userLikes) {
-            Clothes clothes = like.getClothes();
-            clothes.setLikeCount(Math.max(0, clothes.getLikeCount() - 1)); // 좋아요 수 감소
-            clothesRepository.save(clothes);
-        }
+        // 좋아요 기록 삭제
+        likeRepository.deleteByUserId(userId);
 
-        likeRepository.deleteAll(userLikes); // 좋아요 기록 삭제
-        userRepository.deleteById(userId);   // 사용자 계정 삭제
+        // 회원 삭제
+        userRepository.deleteById(userId);
     }
 
+    /**
+     * 이메일 + 비밀번호로 아이디 찾기
+     */
+    public String findUsername(String email, String password) {
+        log.info("🔵 아이디 찾기 요청: email={}", email);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
+        }
+
+        return user.getUsername();
+    }
+
+    /**
+     * 아이디 + 이메일 매칭 검증
+     */
+    public void verifyUser(String username, String email) {
+        log.info("🟡 비밀번호 재설정 검증 요청: username={}, email={}", username, email);
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if (!user.getEmail().equals(email)) {
+            throw new CustomException(ErrorCode.EMAIL_NOT_MATCHED);
+        }
+    }
+
+    /**
+     * 비밀번호 재설정
+     */
+    @Transactional
+    public void changePassword(String username, String newPassword) {
+        log.info("🟢 비밀번호 변경 요청: username={}", username);
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(encodedPassword);
+    }
+
+    /**
+     * 로그인 후 비밀번호 변경
+     */
+    @Transactional
+    public void changeMyPassword(String token, ChangePasswordRequestDto requestDto) {
+        Long userId = jwtUtil.extractUserId(token);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(requestDto.getOldPassword(), user.getPassword())) {
+            log.warn("🟠 비밀번호 변경 실패 (현재 비밀번호 불일치): userId={}", userId);
+            throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
+        }
+
+        String encodedNewPassword = passwordEncoder.encode(requestDto.getNewPassword());
+        user.setPassword(encodedNewPassword);
+        log.info("🟢 비밀번호 변경 성공: userId={}", userId);
+    }
 }

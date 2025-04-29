@@ -26,6 +26,8 @@ public class ClothesRecommendResponseDto {
     @Builder
     public static class RecommendedClothesDto {
         private Long id;           // 옷 ID
+        private String name;      // 옷 이름
+        private String category;  // 카테고리
         private String imageUrl;   // 옷 이미지 URL
         private int likeCount;     // 좋아요 수
     }
