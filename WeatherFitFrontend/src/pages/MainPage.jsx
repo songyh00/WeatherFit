@@ -81,8 +81,8 @@ const MainPage = () => {
                     className="arrow-button left"
                 />
                 <SliderContainer
-                    sliderIndex={sliderIndex}
-                    totalImages={sliderImages.length}
+                    $sliderIndex={sliderIndex}
+                    $totalImages={sliderImages.length}
                 >
                     {sliderImages.map((item, idx) => (
                         <StyledImageContainer key={idx}>
@@ -101,7 +101,7 @@ const MainPage = () => {
                 <h1>계절이 바뀔때 마다, 오늘 무슨 옷 입을지 고민되지 않으세요?</h1>
 
                 <ImageTextWrapper> {/*이미지랑 테두리 색상 넣음*/}
-                    <LeftImage borderColor={borderColors[currentImage]}>
+                    <LeftImage $borderColor={borderColors[currentImage]}>
                         <img src={images[currentImage]} alt="Main Slide" />
                     </LeftImage>
                     <RightText>
