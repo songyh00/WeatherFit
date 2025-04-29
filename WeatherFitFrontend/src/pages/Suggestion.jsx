@@ -3,37 +3,109 @@ import '../App.css';
 import {
     ContentsWrapper,
     MainContents,
-    Mainimage,
-    MainContentsLink
+    Card,
+    Content,
+    Like,
+    ClothesText
 } from "../layout/Best.style.js";
 import logo from "../assets/logo.png";
 
 const Suggestion = () => {
     return (
         <ContentsWrapper>
-            <ContentsWrapper>
-                <MainContents>
+            <MainContents>
 
-                    <Mainimage>
-                        <MainContentsLink to="/">
-                            <img src={logo} alt="WeatherFit Logo" />
-                        </MainContentsLink>
-                    </Mainimage>
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like>찜하기  ♥</Like>
+                        <ClothesText>
+                            아우터 1
+                        </ClothesText>
+                    </Content>
+                </Card>
 
-                    <Mainimage>
-                        <MainContentsLink to="/">
-                            <img src={logo} alt="WeatherFit Logo" />
-                        </MainContentsLink>
-                    </Mainimage>
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like>찜하기  ♥</Like>
+                        <ClothesText>
+                            아우터 2
+                        </ClothesText>
+                    </Content>
+                </Card>
 
-                    <Mainimage>
-                        <MainContentsLink to="/">
-                            <img src={logo} alt="WeatherFit Logo" />
-                        </MainContentsLink>
-                    </Mainimage>
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like>찜하기  ♥</Like>
+                        <ClothesText>
+                            아우터 3
+                        </ClothesText>
+                    </Content>
+                </Card>
 
-                </MainContents>
-            </ContentsWrapper>
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like>찜하기  ♥</Like>
+                        <ClothesText>
+                            상의 1
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like>찜하기  ♥</Like>
+                        <ClothesText>
+                            상의 2
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like>찜하기  ♥</Like>
+                        <ClothesText>
+                            상의 3
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like>찜하기  ♥</Like>
+                        <ClothesText>
+                            하의 1
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like>찜하기  ♥</Like>
+                        <ClothesText>
+                            하의 2
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like>찜하기  ♥</Like>
+                        <ClothesText>
+                            하의 3
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+            </MainContents>
         </ContentsWrapper>
     );
 }
