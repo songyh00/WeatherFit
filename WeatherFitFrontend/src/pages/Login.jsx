@@ -65,6 +65,7 @@ const Login = () => {
                     $bgColor={theme[season].bgColor}
                     $focusColor={theme[season].focusColor}
                     placeholder="아이디를 입력해주세요"
+                    autoComplete="username"
                 />
                 <LoginInput
                     type="password"
@@ -74,6 +75,7 @@ const Login = () => {
                     $bgColor={theme[season].bgColor}
                     $focusColor={theme[season].focusColor}
                     placeholder="비밀번호를 입력해주세요"
+                    autoComplete="current-password"
                 />
                 <LoginButton
                     type="submit"
