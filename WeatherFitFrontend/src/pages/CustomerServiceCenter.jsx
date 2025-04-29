@@ -66,8 +66,8 @@ const CustomerServiceCenter = () => {
                     </h2>
                     <div id="collapseTwo" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div className="accordion-body">
-                            로그인 페이지에서 <strong>'비밀번호 찾기'</strong>를 클릭한 후, 가입하신 이메일을 입력하세요.<br/>
-                            이메일로 비밀번호 재설정 링크를 보내드립니다.
+                            로그인 페이지에서 <strong>'비밀번호 찾기'</strong>를 클릭한 후, 가입하신 아이디와 이메일을 입력하세요.<br/>
+                            그 후 비밀번호를 재설정 하시면 됩니다.
                         </div>
                     </div>
                 </div>
@@ -97,8 +97,7 @@ const CustomerServiceCenter = () => {
                     </h2>
                     <div id="collapseFour" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div className="accordion-body">
-                            계절별 평균 기온 데이터를 분석하여, <strong>적절한 옷차림</strong>을 추천합니다.<br/>
-                            또한 최신 트렌드를 반영하여 스타일도 함께 고려합니다.
+                            저희는 실시간 날씨의 평균 기온 데이터를 분석하여, <strong>적절한 옷차림</strong>을 추천합니다.<br/>
                         </div>
                     </div>
                 </div>
@@ -113,8 +112,7 @@ const CustomerServiceCenter = () => {
                     </h2>
                     <div id="collapseFive" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div className="accordion-body">
-                            네! <strong>현재 위치의 실시간 날씨</strong>를 기반으로 의상을 추천합니다.<br/>
-                            비가 오는 날에는 방수 소재 옷을, 추운 날에는 보온성이 높은 옷을 제안합니다.
+                            네! <strong>지정된 위치의 실시간 날씨</strong>를 기반으로 의상을 추천합니다.<br/>
                         </div>
                     </div>
                 </div>
