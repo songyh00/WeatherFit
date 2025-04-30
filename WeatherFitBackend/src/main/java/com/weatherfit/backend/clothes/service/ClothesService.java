@@ -265,10 +265,13 @@ public class ClothesService {
             recommended.add(
                     ClothesRecommendResponseDto.RecommendedClothesDto.builder()
                             .id(clothes.getId())
+                            .category(clothes.getCategory())
+                            .name(clothes.getName())
                             .imageUrl(clothes.getImage())
                             .likeCount(clothes.getLikeCount())
                             .build()
             );
+
         }
         return ClothesRecommendResponseDto.builder()
                 .recommendedClothes(recommended)
