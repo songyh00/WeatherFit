@@ -6,13 +6,17 @@ import {
     HeaderWrapper,
     MainLogoLink,
     MainMenu,
-    MainMenuLink,
+    MainMenuLink, ProfileContainer, ProfileDropdown, ProfileImage, SvgWrapper,
     UserActions,
     UserActionsContainer,
     UserActionsLink
 } from './header.style.js';
-import { Link, useNavigate } from 'react-router-dom'; // 🔥 useNavigate 추가
+import { 
+    Link, 
+    useNavigate
+} from 'react-router-dom'; // 🔥 useNavigate 추가
 import logo from "../assets/logo.png";
+import DefaultProfile from "../components/DefaultProfile.jsx";
 
 const Header = () => {
     const [activeMenu, setActiveMenu] = useState("");
@@ -20,6 +24,7 @@ const Header = () => {
         setActiveMenu("");
     }
     const username = localStorage.getItem('username'); // 🔥 로그인한 사용자 이름 가져오기
+
     const navigate = useNavigate(); // 🔥 페이지 이동용
 
     const handleLogout = () => {
@@ -28,6 +33,7 @@ const Header = () => {
         navigate('/'); // 메인 페이지로 이동
         window.location.reload(); // 새로고침(헤더 다시 그림)
     };
+
 
     return (
         <>
@@ -41,32 +47,60 @@ const Header = () => {
                         <UserActions>
                             {username ? (
                                 <>
-                                    <span style={{fontSize: "11px"}}>
-                                        {username}님</span>&nbsp;&nbsp;&nbsp;&nbsp;|
+                                    <ProfileContainer>
+                                        <ProfileImage>
+                                            {/* 기본프로필 */}
+                                            <DefaultProfile width={18} height={18} />
+                                        </ProfileImage>&nbsp;
+                                        <span style={{fontSize: "11px"}}>
+                                            {username}님
+                                        </span>
+                                        <ProfileDropdown>
+                                            <SvgWrapper style={{margin: '20px auto 0 auto'}}>
+                                                <ProfileImage>
+                                                    <DefaultProfile/>
+                                                </ProfileImage>
+                                            </SvgWrapper>
 
-                                    <span
-                                        onClick={handleLogout}
-                                        style={{
-                                            cursor: 'pointer',
-                                            fontSize: "11px",
-                                            textDecoration: 'none',
-                                            color: 'inherit',
-                                            marginLeft: '12px',
-                                            marginRight: '12px'
-                                        }}
-                                    >
-                                        로그아웃
-                                    </span>
-                                    |&nbsp;&nbsp;
-                                    <UserActionsLink to="/MyPage">마이페이지</UserActionsLink>&nbsp;&nbsp;|
+                                            <div style={{fontSize: "18px"}}>
+                                                {username}
+                                            </div>
+
+                                            <Link
+                                                to="/MyPage"
+                                                style={{
+                                                    textDecoration: 'none',
+                                                    color: '#000',
+                                                    fontSize: '12px'
+                                                }}
+                                            >
+                                                마이페이지
+                                            </Link>
+
+                                            {/* 로그아웃 버튼 */}
+                                            <div
+                                                onClick={handleLogout}
+                                                style={{
+                                                    cursor: 'pointer',
+                                                    fontSize: "11px",
+                                                    textDecoration: 'none',
+                                                    color: 'inherit',
+                                                    marginLeft: '12px',
+                                                    marginRight: '12px',
+                                                    textAlign: 'right'
+                                                }}
+                                            >
+                                                로그아웃
+                                            </div>
+                                        </ProfileDropdown>
+                                    </ProfileContainer>&nbsp;&nbsp;|
                                     <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink>
                                 </>
                             ) : (
                                 <>
-                                    <UserActionsLink to="/Login">로그인</UserActionsLink>|&nbsp;
-                                    <UserActionsLink to="/JoinTheMembership">회원가입</UserActionsLink>&nbsp;|&nbsp;&nbsp;
-                                    <UserActionsLink to="/MyPage">마이페이지</UserActionsLink>&nbsp;&nbsp;|
-                                    <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink>
+                                    <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink>|
+                                    <UserActionsLink to="/Login">로그인</UserActionsLink>|
+                                    <UserActionsLink to="/JoinTheMembership">회원가입</UserActionsLink>
                                 </>
                             )}
                         </UserActions>
