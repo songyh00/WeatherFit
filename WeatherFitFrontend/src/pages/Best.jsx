@@ -11,7 +11,7 @@ import {
     ClothesText
 
 
-} from "../layout/Best2.style.js";
+} from "../layout/Best.style.js";
 import logo from "../assets/logo.png";
 
 const Best = () => {
@@ -43,7 +43,6 @@ const Best = () => {
 
     return (
         <ContentsWrapper>
-            <h2 style={{ textAlign: 'center', fontSize: '28px', marginTop: '200px' }}>이번달 BEST!</h2>
             <MainContents>
 
                 <Card>
@@ -90,59 +89,18 @@ const Best = () => {
                         </ClothesText>
                     </Content>
                 </Card>
+
                 <Card>
                     <img src={logo} alt="WeatherFit Logo" />
                     <Content>
                         <Like
-                            liked={isFavorite(1)}
-                            onClick={() => toggleFavorite(1)}
+                            liked={isFavorite(4)}
+                            onClick={() => toggleFavorite(4)}
                         >
-                            {isFavorite(1) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                            {isFavorite(4) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
                         </Like>
                         <ClothesText>
-                            레트로 체크자켓
-                        </ClothesText>
-                    </Content>
-                </Card>
-                <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
-                    <Content>
-                        <Like
-                            liked={isFavorite(1)}
-                            onClick={() => toggleFavorite(1)}
-                        >
-                            {isFavorite(1) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
-                        </Like>
-                        <ClothesText>
-                            레트로 체크자켓
-                        </ClothesText>
-                    </Content>
-                </Card>
-                <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
-                    <Content>
-                        <Like
-                            liked={isFavorite(1)}
-                            onClick={() => toggleFavorite(1)}
-                        >
-                            {isFavorite(1) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
-                        </Like>
-                        <ClothesText>
-                            레트로 체크자켓
-                        </ClothesText>
-                    </Content>
-                </Card>
-                <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
-                    <Content>
-                        <Like
-                            liked={isFavorite(1)}
-                            onClick={() => toggleFavorite(1)}
-                        >
-                            {isFavorite(1) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
-                        </Like>
-                        <ClothesText>
-                            레트로 체크자켓
+                            집업 셔츠
                         </ClothesText>
                     </Content>
                 </Card>
@@ -151,13 +109,13 @@ const Best = () => {
                     <img src={logo} alt="WeatherFit Logo" />
                     <Content>
                         <Like
-                            liked={isFavorite(2)}
-                            onClick={() => toggleFavorite(2)}
+                            liked={isFavorite(5)}
+                            onClick={() => toggleFavorite(5)}
                         >
-                            {isFavorite(2) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                            {isFavorite(5) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
                         </Like>
                         <ClothesText>
-                            풀오버 후드티
+                            맨투맨 티셔츠
                         </ClothesText>
                     </Content>
                 </Card>
@@ -166,16 +124,62 @@ const Best = () => {
                     <img src={logo} alt="WeatherFit Logo" />
                     <Content>
                         <Like
-                            liked={isFavorite(3)}
-                            onClick={() => toggleFavorite(3)}
+                            liked={isFavorite(6)}
+                            onClick={() => toggleFavorite(6)}
                         >
-                            {isFavorite(3) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                            {isFavorite(6) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
                         </Like>
                         <ClothesText>
-                            빈티지 청바지
+                            니트 티셔츠
                         </ClothesText>
                     </Content>
                 </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like
+                            liked={isFavorite(7)}
+                            onClick={() => toggleFavorite(7)}
+                        >
+                            {isFavorite(7) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                        </Like>
+                        <ClothesText>
+                            러닝 셔츠
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like
+                            liked={isFavorite(8)}
+                            onClick={() => toggleFavorite(8)}
+                        >
+                            {isFavorite(8) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                        </Like>
+                        <ClothesText>
+                            바람막이 재킷
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like
+                            liked={isFavorite(9)}
+                            onClick={() => toggleFavorite(9)}
+                        >
+                            {isFavorite(9) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                        </Like>
+                        <ClothesText>
+                            가디건
+                        </ClothesText>
+                    </Content>
+                </Card>
+
 
             </MainContents>
         </ContentsWrapper>
