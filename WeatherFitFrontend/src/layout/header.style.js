@@ -52,7 +52,6 @@ export const MainLogoLink = styled(Link)`
 
 export const MainMenu = styled.div`
     display: flex;
-    
 `;
 
 export const MainMenuLink = styled(Link)`
@@ -66,12 +65,9 @@ export const MainMenuLink = styled(Link)`
     line-height: 50px;
     position: relative;
 
-
-
     &:hover {
         color: #939696;
     }
-
 
     &::after {
         content: '';
@@ -82,10 +78,7 @@ export const MainMenuLink = styled(Link)`
         width: ${({$active}) => ($active ? '100%' : '0')};
         background-color: #5c5e5e;
         transition: width 0.3s ease-in-out;
-    }
-
-    
-    
+    } 
 `;
 
 export const UserActionsContainer = styled.div`
@@ -103,4 +96,45 @@ export const HeaderBackground = styled.div`
     position: fixed;
 `;
 
+export const ProfileDropdown = styled.div`
+    position: absolute;
+    top: 30px;
+    right: 0;
+    width: 250px;
+    border-radius: 15px;
+    background-color: #fff;
+    text-align: center;
+    box-shadow:
+            0 2px 4px rgba(0, 0, 0, 0.08),
+            0 8px 16px rgba(0, 0, 0, 0.12);
+    display: none;
+`;
+
+export const ProfileContainer = styled.div`
+    display: flex;
+    align-items: center;
+    &:hover ${ProfileDropdown} {
+        display: block;
+        
+    }
+`;
+
+export const ProfileImage = styled.div`
+    padding: 2px;
+    border-radius: 50%; 
+    object-fit: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+`;
+
+export const SvgWrapper = styled.div`
+    width: 100px;
+    height: 100px;
+    & > svg {
+        width: 100%;
+        height: 100%;
+    }
+`;
 

@@ -13,6 +13,7 @@
     "dev:unix": "concurrently \"npm run frontend\" \"npm run backend:unix\""
   },
   "dependencies": {
-    "concurrently": "^7.0.0"
+    "concurrently": "^7.0.0",
+    "prop-types": "^15.8.1"
   }
 }
