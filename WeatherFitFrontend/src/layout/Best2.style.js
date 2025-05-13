@@ -13,8 +13,7 @@ export const MainContents = styled.div`
     justify-content: center;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 200px 20px;
-      
+    padding: 10px 20px;
 `;
 
 
@@ -25,7 +24,7 @@ export const Card = styled.div`
     transition: transform .1s, background-color .6s;
     margin: 50px;
     height: auto;
-    
+
     text-align: center;
     width: 300px;
     border: 1px solid #e0e0e0;
@@ -33,7 +32,6 @@ export const Card = styled.div`
     overflow: hidden;
     font-family: Arial, sans-serif;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    
 
     &:hover {
         transform: scale(1.1);
@@ -44,8 +42,7 @@ export const Card = styled.div`
 
 
 export const Content = styled.div`
-  padding: 16px;
-    
+  padding: 13px;
 `;
 
 export const Like = styled.div`
@@ -60,5 +57,4 @@ export const ClothesText = styled.p`
   color: #333;
   margin-top: 8px;
   line-height: 1.4;
-    
 `;
