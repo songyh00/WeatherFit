@@ -4,11 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 로그인 요청 DTO
+ * 비밀번호 재설정 검증 DTO(로그인 전)
  */
 @Getter
 @Setter
-public class LoginRequestDto {
+public class PasswordResetVerificationRequestDto {
     private String username;
-    private String password;
+    private String email;
 }

@@ -1,50 +1,82 @@
 package com.weatherfit.backend.user.service;
 
+import com.weatherfit.backend.auth.JwtUtil;
 import com.weatherfit.backend.common.exception.CustomException;
 import com.weatherfit.backend.common.exception.ErrorCode;
+import com.weatherfit.backend.user.dto.UpdateProfileRequestDto;
+import com.weatherfit.backend.user.dto.UserProfileResponseDto;
 import com.weatherfit.backend.user.entity.User;
 import com.weatherfit.backend.user.repository.UserRepository;
-import com.weatherfit.backend.common.enumtype.Gender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * 사용자(User) 관련 서비스
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
     /**
-     * 사용자 프로필 수정 (이메일, 성별)
+     * 내 정보 조회
+     */
+    public UserProfileResponseDto getMyProfile(String token) {
+        log.info("🟡 내 정보 조회 요청");
+        Long userId = jwtUtil.extractUserId(token);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.warn("🟠 내 정보 조회 실패 (아이디 없음): userId={}", userId);
+                    throw new CustomException(ErrorCode.USER_NOT_FOUND);
+                });
+
+        log.info("🟢 내 정보 조회 성공: userId={}", userId);
+        return new UserProfileResponseDto(
+                user.getUsername(),
+                user.getEmail(),
+                user.getGender()
+        );
+    }
+
+    /**
+     * 내 정보 수정 (이메일, 성별)
      */
     @Transactional
-    public void updateProfile(Long userId, String newEmail, String newGender) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    public void updateProfile(String token, UpdateProfileRequestDto requestDto) {
+        log.info("🟡 내 정보 수정 요청");
+        Long userId = jwtUtil.extractUserId(token);
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.warn("🟠 사용자 정보 수정 실패 (아이디 없음): userId={}", userId);
+                    throw new CustomException(ErrorCode.USER_NOT_FOUND);
+                });
+
+        String newEmail = requestDto.getEmail();
         if (newEmail != null && !newEmail.isBlank()) {
-            userRepository.findByEmail(newEmail)
-                    .ifPresent(existingUser -> {
-                        throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
-                    });
+            if (newEmail.equalsIgnoreCase(user.getEmail())) {
+                log.warn("🟠 사용자 정보 수정 실패 (기존 이메일과 동일): userId={}, email={}", userId, newEmail);
+                throw new CustomException(ErrorCode.EMAIL_SAME_AS_CURRENT);
+            }
+
+            userRepository.findByEmail(newEmail).ifPresent(existingUser -> {
+                if (!existingUser.getId().equals(userId)) {
+                    log.warn("🟠 사용자 정보 수정 실패 (이메일 중복): userId={}, newEmail={}", userId, newEmail);
+                    throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
+                }
+            });
+
             user.setEmail(newEmail);
         }
 
-        if (newGender != null && !newGender.isBlank()) {
-            try {
-                user.setGender(Gender.valueOf(newGender));
-            } catch (IllegalArgumentException e) {
-                throw new CustomException(ErrorCode.INVALID_USER_GENDER);
-            }
+        if (requestDto.getGender() != null) {
+            user.setGender(requestDto.getGender());
         }
 
-        log.info("🔵 사용자 프로필 수정 완료: userId={}, newEmail={}, newGender={}", userId, newEmail, newGender);
+        log.info("🟢 사용자 정보 변경 성공: userId={} email={} gender={}",
+                userId, user.getEmail(), user.getGender());
     }
-
 }
