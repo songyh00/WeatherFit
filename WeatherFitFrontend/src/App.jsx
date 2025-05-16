@@ -14,6 +14,8 @@ import CustomerServiceCenter from "./pages/CustomerServiceCenter.jsx";
 import { HeaderBackground } from "./layout/header.style.js";
 import Footer from "./layout/Footer.jsx";
 import ForgotIdOrPassword from "./pages/ForgotIdOrPassword.jsx";
+import LocationSearch from "./components/LocationSearch.jsx";
+import {HeaderSpacer} from "./layout/mainPage.style.js";
 
 function Layout() {
     // 로그인 페이지면 헤더와 푸터를 안보이게 하기 위한 코드
@@ -23,6 +25,10 @@ function Layout() {
     return (
         <>
             {!hideHeaderFooter && <Header />}
+
+            <HeaderSpacer />
+
+            {(!hideHeaderFooter && location.pathname !== "/CustomerServiceCenter") && <LocationSearch />}
 
             <Routes>
                 <Route path="/" element={<MainPage />} />

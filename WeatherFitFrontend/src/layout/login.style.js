@@ -1,8 +1,11 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import {getSeason, theme} from "../components/theme.js";
+import {Link} from "react-router-dom";
 
+const season = getSeason();
+const currentTheme = theme[season];
 export const LoginWrapper = styled.form`
-    margin: 100px auto;
+    margin: 0 auto;
     width: 500px;
     text-align: center;
 `;
@@ -13,20 +16,18 @@ export const LoginSection = styled.div`
     border: 1px solid #ddd;
 `;
 
-export const LoginInput = styled.input.withConfig({
-    shouldForwardProp: (prop) => !['$borderColor', '$bgColor', '$focusColor'].includes(prop),
-})`
+export const LoginInput = styled.input`
     width: 464px;
     padding: 12px 15px;
     margin: 10px 0 0 0;
     font-size: 16px;
-    border: 2px solid ${(props) => props.$borderColor};
-    background-color: ${(props) => props.$bgColor};
+    border: 2px solid ${currentTheme.borderColor};
+    background-color: ${currentTheme.bgColor};
     border-radius: 8px;
     transition: 0.3s ease-in-out;
 
     &:focus {
-        border-color: ${(props) => props.$focusColor};
+        border-color: ${currentTheme.focusColor};
         outline: none;
         box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
     }
@@ -37,26 +38,24 @@ export const LoginInput = styled.input.withConfig({
     }
 `;
 
-export const LoginButton = styled.button.withConfig({
-    shouldForwardProp: (prop) => !['$borderColor', '$hoverBgColor', '$focusColor', '$textColor', '$bgColor'].includes(prop),
-})`
+export const LoginButton = styled.button`
     width: 464px;
     padding: 12px 15px;
     margin: 13px 0 0 0;
     font-size: 16px;
-    border: 2px solid ${(props) => props.$borderColor};
-    background-color: ${(props) => props.$borderColor};
-    color: ${(props) => props.$textColor || "#fff"};
+    border: 2px solid ${currentTheme.borderColor};
+    background-color: ${currentTheme.borderColor};
+    color: white;
     border-radius: 8px;
     cursor: pointer;
     transition: 0.3s ease-in-out;
 
     &:hover {
-        background-color: ${(props) => props.$hoverBgColor || props.$bgColor};
+        background-color: ${currentTheme.focusColor};
     }
 
     &:focus {
-        border-color: ${(props) => props.$focusColor};
+        border-color: ${currentTheme.focusColor};
         outline: none;
         box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
     }

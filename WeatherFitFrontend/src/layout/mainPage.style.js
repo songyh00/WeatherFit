@@ -3,9 +3,8 @@ import React from 'react';
 import {Link} from "react-router-dom";
 
 export const ContentsWrapper = styled.div`
-    padding: 176px 0 0 0;
     width: 80%;
-    margin: 30px auto 0 auto;
+    margin: 0 auto;
 `;
 
 export const Content = styled.div`
@@ -195,4 +194,8 @@ export const ServiceCard = styled(Link)`
         z-index: 1;
         text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
     }
+`;
+
+export const HeaderSpacer = styled.div`
+    height: 180px;    
 `;

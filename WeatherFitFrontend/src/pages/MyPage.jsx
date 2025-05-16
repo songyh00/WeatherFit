@@ -13,7 +13,7 @@ import { useState, useEffect } from 'react';
 
 
 const Wishlist = ({ items }) => (
-    <ContentsWrapper>
+    <>
         <Card>
             <Title>찜한 상품</Title>
             {items.length > 0 ? (
@@ -22,7 +22,7 @@ const Wishlist = ({ items }) => (
                 <p>찜한 상품이 없습니다.</p>
             )}
         </Card>
-    </ContentsWrapper>
+    </>
 );
 
 const ProfileEditor = () => {
@@ -37,7 +37,7 @@ const ProfileEditor = () => {
     };
 
     return (
-        <ContentsWrapper>
+        <>
             <Card>
                 <Title>내 정보 수정</Title>
                 <Input
@@ -85,7 +85,7 @@ const ProfileEditor = () => {
 
 
 
-        </ContentsWrapper>
+        </>
     );
 };
 

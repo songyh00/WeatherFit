@@ -98,7 +98,7 @@ const Header = () => {
                                 </>
                             ) : (
                                 <>
-                                    <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink>|
+                                    <UserActionsLink onClick={onClickLogo} to="/CustomerServiceCenter">고객센터</UserActionsLink>|
                                     <UserActionsLink to="/Login">로그인</UserActionsLink>|
                                     <UserActionsLink to="/JoinTheMembership">회원가입</UserActionsLink>
                                 </>
