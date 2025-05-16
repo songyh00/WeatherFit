@@ -11,16 +11,17 @@ import {
     UserActionsContainer,
     UserActionsLink
 } from './header.style.js';
-import { 
-    Link, 
+import {
+    Link,
+    useLocation,
     useNavigate
 } from 'react-router-dom'; // 🔥 useNavigate 추가
 import logo from "../assets/logo.png";
 import DefaultProfile from "../components/DefaultProfile.jsx";
 
 const Header = () => {
-    const [activeMenu, setActiveMenu] = useState("");
-    function  onClickLogo() {
+    let [activeMenu, setActiveMenu] = useState("");
+    function onClickLogo() {
         setActiveMenu("");
     }
     const username = localStorage.getItem('username'); // 🔥 로그인한 사용자 이름 가져오기
@@ -34,13 +35,28 @@ const Header = () => {
         window.location.reload(); // 새로고침(헤더 다시 그림)
     };
 
+    const location = useLocation();
+
+    // 메인페이지에서 이동했을때 스타일 안먹어서 해논 코드입니다
+    activeMenu = React.useMemo(() => {
+        const path = location.pathname.toLowerCase();
+
+        if (path.includes('/best')) return 'BEST';
+        if (path.includes('/suggestion')) return '추천';
+        if (path.includes('/outerwear')) return '아우터';
+        if (path.includes('/consultation')) return '상의';
+        if (path.includes('/pants')) return '하의';
+
+        return '';
+    }, [location.pathname]);
+
 
     return (
         <>
             <HeaderWrapper>
                 <HeaderContent>
                     <UserActionsContainer>
-                        <MainLogoLink to="/" onClick={onClickLogo}>
+                        <MainLogoLink to="/" onClick={() => onClickLogo("")}>
                             <img src={logo} alt="WeatherFit Logo" />
                         </MainLogoLink>
 
@@ -109,20 +125,41 @@ const Header = () => {
 
                 <HeaderNav>
                     <MainMenu>
-                        <MainMenuLink to="/Best" $active={activeMenu === "BEST"}
-                                      onClick={() => setActiveMenu("BEST")}>BEST</MainMenuLink>
-
-                        <MainMenuLink to="/Suggestion" $active={activeMenu === "추천"}
-                                      onClick={() => setActiveMenu("추천")}>추천</MainMenuLink>
-
-                        <MainMenuLink to="/Outerwear" $active={activeMenu === "아우터"}
-                                      onClick={() => setActiveMenu("아우터")}>아우터</MainMenuLink>
-
-                        <MainMenuLink to="/Consultation" $active={activeMenu === "상의"}
-                                      onClick={() => setActiveMenu("상의")}>상의</MainMenuLink>
-
-                        <MainMenuLink to="/Pants" $active={activeMenu === "하의"}
-                                      onClick={() => setActiveMenu("하의")}>하의</MainMenuLink>
+                        <MainMenuLink
+                            to="/Best"
+                            $active={activeMenu === "BEST"}
+                            onClick={() => setActiveMenu("BEST")}
+                        >
+                            BEST
+                        </MainMenuLink>
+                        <MainMenuLink
+                            to="/Suggestion"
+                            $active={activeMenu === "추천"}
+                            onClick={() => setActiveMenu("추천")}
+                        >
+                            추천
+                        </MainMenuLink>
+                        <MainMenuLink
+                            to="/Outerwear"
+                            $active={activeMenu === "아우터"}
+                            onClick={() => setActiveMenu("아우터")}
+                        >
+                            아우터
+                        </MainMenuLink>
+                        <MainMenuLink
+                            to="/Consultation"
+                            $active={activeMenu === "상의"}
+                            onClick={() => setActiveMenu("상의")}
+                        >
+                            상의
+                        </MainMenuLink>
+                        <MainMenuLink
+                            to="/Pants"
+                            $active={activeMenu === "하의"}
+                            onClick={() => setActiveMenu("하의")}
+                        >
+                            하의
+                        </MainMenuLink>
                     </MainMenu>
                 </HeaderNav>
             </HeaderWrapper>

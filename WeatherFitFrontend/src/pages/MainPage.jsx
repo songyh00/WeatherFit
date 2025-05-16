@@ -29,6 +29,7 @@ import bestimg from "../assets/infoImg/best.png";
 import recomimg from "../assets/infoImg/recomimg.png";
 import outerimg from "../assets/infoImg/outerimg.png";
 import clpaimg from "../assets/infoImg/clpaimg.png";
+import pants from "../assets/infoImg/pants.jpg";
 
 const MainPage = () => {
     const images = [Main1, Main2, Main3, Main4];
@@ -137,9 +138,13 @@ const MainPage = () => {
                         <h2>아우터</h2>
                         <img src={outerimg} alt="Outer" />
                     </ServiceCard>
-                    <ServiceCard to="Consultation">
-                        <h2>상의 & 하의</h2>
+                    <ServiceCard to="/Consultation">
+                        <h2>상의</h2>
                         <img src={clpaimg} alt="Top & Bottom" />
+                    </ServiceCard>
+                    <ServiceCard to="/Pants">
+                        <h2>하의</h2>
+                        <img src={pants} alt="Pants" />
                     </ServiceCard>
                 </ServiceGrid>
             </ContentsTitle>

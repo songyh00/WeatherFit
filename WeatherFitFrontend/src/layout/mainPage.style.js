@@ -146,16 +146,17 @@ export const RightText = styled.div`
 `;
 
 export const ServiceGrid = styled.div`
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); // 가로 4열
-    gap: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px; /* 카드 간 간격 */
     margin-top: 50px;
-    padding: 0 40px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); 
-   
+    padding: 20px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 `;
 
 export const ServiceCard = styled(Link)`
+
     position: relative;
     display: flex;
     flex-direction: column;
@@ -168,9 +169,9 @@ export const ServiceCard = styled(Link)`
     padding: 20px;
 
     img {
-        max-width: 135%;
-        height: auto;
-        object-fit: contain;
+        width: 182px;
+        height: 240px;
+        object-fit: cover;
         margin-bottom: 6px;
         transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
 
@@ -190,7 +191,7 @@ export const ServiceCard = styled(Link)`
         font-family: 'Noto Sans KR', sans-serif;
         color: white;
         font-weight: bold;
-        pointer-events: none; // 텍스트가 클릭 방해 안되게
+        pointer-events: none;
         z-index: 1;
         text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
     }
