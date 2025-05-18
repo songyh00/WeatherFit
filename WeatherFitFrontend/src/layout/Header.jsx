@@ -7,12 +7,17 @@ import {
     MainLogoLink,
     MainMenu,
     MainMenuLink,
+    ProfileContainer,
+    ProfileDropdown,
+    ProfileImage,
+    SvgWrapper,
     UserActions,
     UserActionsContainer,
     UserActionsLink
 } from './header.style.js';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from "../assets/logo.png";
+import DefaultProfile from "../components/DefaultProfile.jsx";
 
 const Header = () => {
     const [activeMenu, setActiveMenu] = useState("");
@@ -62,30 +67,58 @@ const Header = () => {
                     <UserActions>
                         {username ? (
                             <>
-                                <span style={{ fontSize: "11px" }}>{username}님</span>&nbsp;&nbsp;&nbsp;&nbsp;|
-                                <span
-                                    onClick={handleLogout}
-                                    style={{
-                                        cursor: 'pointer',
-                                        fontSize: "11px",
-                                        textDecoration: 'none',
-                                        color: 'inherit',
-                                        marginLeft: '12px',
-                                        marginRight: '12px'
-                                    }}
-                                >
-                                    로그아웃
-                                </span>
-                                |&nbsp;&nbsp;
-                                <UserActionsLink to="/MyPage">마이페이지</UserActionsLink>&nbsp;&nbsp;|
+                                <ProfileContainer>
+                                    <ProfileImage>
+                                        <DefaultProfile width={18} height={18} />
+                                    </ProfileImage>&nbsp;
+                                    <span style={{ fontSize: "11px" }}>
+                                        {username}님
+                                    </span>
+                                    <ProfileDropdown>
+                                        <SvgWrapper style={{ margin: '20px auto 0 auto' }}>
+                                            <ProfileImage>
+                                                <DefaultProfile />
+                                            </ProfileImage>
+                                        </SvgWrapper>
+
+                                        <div style={{ fontSize: "18px" }}>
+                                            {username}
+                                        </div>
+
+                                        <Link
+                                            to="/MyPage"
+                                            style={{
+                                                textDecoration: 'none',
+                                                color: '#000',
+                                                fontSize: '12px'
+                                            }}
+                                        >
+                                            마이페이지
+                                        </Link>
+
+                                        <div
+                                            onClick={handleLogout}
+                                            style={{
+                                                cursor: 'pointer',
+                                                fontSize: "11px",
+                                                textDecoration: 'none',
+                                                color: 'inherit',
+                                                marginLeft: '12px',
+                                                marginRight: '12px',
+                                                textAlign: 'right'
+                                            }}
+                                        >
+                                            로그아웃
+                                        </div>
+                                    </ProfileDropdown>
+                                </ProfileContainer>&nbsp;&nbsp;|
                                 <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink>
                             </>
                         ) : (
                             <>
-                                <UserActionsLink to="/Login">로그인</UserActionsLink>|&nbsp;
-                                <UserActionsLink to="/JoinTheMembership">회원가입</UserActionsLink>&nbsp;|&nbsp;&nbsp;
-                                <UserActionsLink to="/MyPage">마이페이지</UserActionsLink>&nbsp;&nbsp;|
-                                <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink>
+                                <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink>|
+                                <UserActionsLink to="/Login">로그인</UserActionsLink>|
+                                <UserActionsLink to="/JoinTheMembership">회원가입</UserActionsLink>
                             </>
                         )}
                     </UserActions>
