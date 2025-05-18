@@ -11,7 +11,6 @@ import {
 import logo from "../assets/logo.png";
 
 const Outerwear = () => {
-
     const [favorites, setFavorites] = useState([]);
 
     // localStorage에서 찜 목록 불러오기

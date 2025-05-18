@@ -90,6 +90,96 @@ const Best = () => {
                     </Content>
                 </Card>
 
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like
+                            liked={isFavorite(4)}
+                            onClick={() => toggleFavorite(4)}
+                        >
+                            {isFavorite(4) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                        </Like>
+                        <ClothesText>
+                            집업 셔츠
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like
+                            liked={isFavorite(5)}
+                            onClick={() => toggleFavorite(5)}
+                        >
+                            {isFavorite(5) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                        </Like>
+                        <ClothesText>
+                            맨투맨 티셔츠
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like
+                            liked={isFavorite(6)}
+                            onClick={() => toggleFavorite(6)}
+                        >
+                            {isFavorite(6) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                        </Like>
+                        <ClothesText>
+                            니트 티셔츠
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like
+                            liked={isFavorite(7)}
+                            onClick={() => toggleFavorite(7)}
+                        >
+                            {isFavorite(7) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                        </Like>
+                        <ClothesText>
+                            러닝 셔츠
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like
+                            liked={isFavorite(8)}
+                            onClick={() => toggleFavorite(8)}
+                        >
+                            {isFavorite(8) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                        </Like>
+                        <ClothesText>
+                            바람막이 재킷
+                        </ClothesText>
+                    </Content>
+                </Card>
+
+                <Card>
+                    <img src={logo} alt="WeatherFit Logo" />
+                    <Content>
+                        <Like
+                            liked={isFavorite(9)}
+                            onClick={() => toggleFavorite(9)}
+                        >
+                            {isFavorite(9) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                        </Like>
+                        <ClothesText>
+                            가디건
+                        </ClothesText>
+                    </Content>
+                </Card>
+
 
             </MainContents>
         </ContentsWrapper>
