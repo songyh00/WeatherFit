@@ -2,6 +2,7 @@ package com.weatherfit.backend.auth.controller;
 
 import com.weatherfit.backend.auth.dto.*;
 import com.weatherfit.backend.auth.service.AuthService;
+import com.weatherfit.backend.auth.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final JwtUtil jwtUtil;
 
     /**
      * 회원가입
@@ -82,7 +84,7 @@ public class AuthController {
     @PostMapping("/change-password")
     public ResponseEntity<Void> changeMyPassword(@RequestBody PasswordChangeRequestDto requestDto,
                                                  HttpServletRequest request) {
-        String token = request.getHeader("Authorization").substring(7);
+        String token = jwtUtil.cleanTokenFromHeader(request.getHeader("Authorization"));
         authService.changeMyPassword(token, requestDto);
         return ResponseEntity.ok().build();
     }
@@ -92,7 +94,7 @@ public class AuthController {
      */
     @DeleteMapping("/withdraw")
     public ResponseEntity<Void> withdraw(HttpServletRequest request) {
-        String token = request.getHeader("Authorization").substring(7);
+        String token = jwtUtil.cleanTokenFromHeader(request.getHeader("Authorization"));
         authService.withdraw(token);
         return ResponseEntity.ok().build();
     }

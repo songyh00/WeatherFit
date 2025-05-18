@@ -70,5 +70,4 @@ public class LocationUtil {
             this.y = y;
         }
     }
-
 }

@@ -22,7 +22,12 @@ public class KakaoAddressService {
     @Value("${kakao.api.key}")
     private String kakaoApiKey;
 
+    /**
+     * 입력된 주소를 위도/경도로 변환
+     */
     public double[] getCoordinates(String address) {
+        log.info("🟡 카카오 주소 변환 요청: {}", address);
+
         try {
             KakaoApiResponseDto response = webClient.get()
                     .uri(uriBuilder -> uriBuilder
@@ -38,18 +43,21 @@ public class KakaoAddressService {
 
             if (response != null && !response.getDocuments().isEmpty()) {
                 var doc = response.getDocuments().get(0);
-                double lat = Double.parseDouble(doc.getY());
-                double lng = Double.parseDouble(doc.getX());
-                log.info("🟢 주소 변환 성공: {}, {}, {}", address, lat, lng);
-                return new double[]{lat, lng};
+                double latitude = Double.parseDouble(doc.getY());
+                double longitude = Double.parseDouble(doc.getX());
+
+                log.info("🟢 주소 변환 성공: address={}, latitude={}, longitude={}",
+                        address, latitude, longitude);
+
+                return new double[]{latitude, longitude};
             } else {
-                log.warn("🔴 주소 변환 실패 (검색 결과 없음): {}", address);
+                log.error("🔴 주소 변환 실패: 검색 결과 없음, address={}", address);
                 throw new CustomException(ErrorCode.EXTERNAL_API_ERROR);
             }
+
         } catch (Exception e) {
-            log.error("🔴 카카오 API 오류: {}, {}", address, e.getMessage());
+            log.error("🔴 카카오 API 호출 예외 발생: address={}, error={}", address, e.getMessage(), e);
             throw new CustomException(ErrorCode.EXTERNAL_API_ERROR);
         }
     }
-
 }

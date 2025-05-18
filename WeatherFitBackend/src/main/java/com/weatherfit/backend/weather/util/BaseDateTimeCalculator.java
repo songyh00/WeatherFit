@@ -8,6 +8,8 @@ import java.time.format.DateTimeFormatter;
  */
 public class BaseDateTimeCalculator {
 
+    private static final DateTimeFormatter FCST_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+
     /**
      * baseDate, baseTime, targetDate를 담는 DTO 클래스
      * - baseDate : API 호출 기준 날짜
@@ -47,7 +49,7 @@ public class BaseDateTimeCalculator {
 
         // 3시간마다 발표된 가장 가까운 baseTime 선택
         for (int h : baseHours) {
-            if (hour < h || (hour == h && minute < 70)) { // 발표 1시간 10분 이내까지만 인정
+            if (hour < h || (hour == h && minute < 70)) {
                 break;
             }
             selectedHour = h;
@@ -58,13 +60,9 @@ public class BaseDateTimeCalculator {
             now = now.minusDays(1);
         }
 
-        // baseDate : API 요청 날짜
         String baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-
-        // baseTime : API 요청 시간 (ex: 0200, 0500, ...)
         String baseTime = String.format("%02d00", selectedHour);
 
-        // targetDate : 오늘 or 내일 데이터
         String targetDate = tomorrow
                 ? now.plusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"))
                 : now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -72,4 +70,14 @@ public class BaseDateTimeCalculator {
         return new DateTimeInfo(baseDate, baseTime, targetDate);
     }
 
+    /**
+     * fcstDate + fcstTime 문자열을 LocalDateTime 객체로 변환
+     *
+     * @param date 예: "20240518"
+     * @param time 예: "1400"
+     * @return LocalDateTime
+     */
+    public static LocalDateTime parseFcstDateTime(String date, String time) {
+        return LocalDateTime.parse(date + time, FCST_DATE_TIME_FORMATTER);
+    }
 }

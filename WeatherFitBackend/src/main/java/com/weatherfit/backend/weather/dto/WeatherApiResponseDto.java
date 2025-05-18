@@ -35,7 +35,5 @@ public class WeatherApiResponseDto {
         private String fcstDate;   // 예보 날짜 (형식: yyyyMMdd)
         private String fcstTime;   // 예보 시간 (형식: HHmm)
         private String fcstValue;  // 예보 값 (항목에 따라 값 의미 다름)
-
     }
-
 }

@@ -3,6 +3,7 @@ package com.weatherfit.backend.user.controller;
 import com.weatherfit.backend.user.dto.UpdateProfileRequestDto;
 import com.weatherfit.backend.user.dto.UserProfileResponseDto;
 import com.weatherfit.backend.user.service.UserService;
+import com.weatherfit.backend.auth.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +19,14 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final JwtUtil jwtUtil;
 
     /**
      * 내 정보 조회
      */
     @GetMapping("/profile")
     public ResponseEntity<UserProfileResponseDto> getMyProfile(HttpServletRequest request) {
-        String token = request.getHeader("Authorization").substring(7);
+        String token = jwtUtil.cleanTokenFromHeader(request.getHeader("Authorization"));
         return ResponseEntity.ok(userService.getMyProfile(token));
     }
 
@@ -34,7 +36,7 @@ public class UserController {
     @PutMapping("/change-profile")
     public ResponseEntity<Void> updateProfile(@RequestBody @Valid UpdateProfileRequestDto requestDto,
                                               HttpServletRequest request) {
-        String token = request.getHeader("Authorization").substring(7);
+        String token = jwtUtil.cleanTokenFromHeader(request.getHeader("Authorization"));
         userService.updateProfile(token, requestDto);
         return ResponseEntity.ok().build();
     }
