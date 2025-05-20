@@ -1,57 +1,103 @@
 import styled from 'styled-components';
-
-export const ContentsWrapper = styled.div`
-    padding: 176px 0 0 0;
-    width: 80%;
-    margin: 30px auto 0 auto;
-`;
+import {Link} from "react-router-dom";
 
 export const Container = styled.div`
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 2rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
+    font-weight: bold;
+    padding: 40px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+
 `;
 
-export const Card = styled.div`
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+export const Section = styled.section`
+    margin-bottom: 100px;
+    font-size: 16px;
+    
 `;
 
 export const Title = styled.h2`
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
+    font-size: 32px;
+    color: #333;
+    margin-top: 155px;
+    line-height: 1.4;
+    font-weight: bold;
+    padding-bottom: 8px;
+    text-align: center;
 `;
 
-export const Product = styled.div`
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #eee;
+export const InfoItem = styled.div`
+    font-size: 20px;
+    color: #333;
+    margin-top: 8px;
+    line-height: 1.4;
+    font-weight: bold;
+    padding-bottom:10px;
 `;
 
-export const Input = styled.input`
-  width: 100%;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+export const StyledLink = styled(Link)`
+    font-size: 20px;
+    color: #0077cc;
+    margin-top: 8px;
+    line-height: 1.4;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-block;
+    padding-right: 30px;
+    text-decoration: none;
 `;
 
-export const Button = styled.button`
-  padding: 0.6rem 1.2rem;
-  background-color: #0070f3;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
 
-  &:hover {
-    background-color: #0056c1;
-  }
+
+export const Emoji = styled.span`
+    margin-right: 5px;
+`;
+
+export const Carousel = styled.div`
+    display: flex;
+    overflow-x: auto;
+    gap: 14px;
+    padding: 12px 0;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+`;
+
+export const Photo = styled.div`
+    flex: 0 0 auto;
+    width: 100px;
+    height: 100px;
+    background: #e0e0e0;
+    border: 2px solid #aaa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    scroll-snap-align: start;
+    
+`;
+
+export const SectionTitle = styled.h3`
+    font-size: 28px;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 30px;
+`;
+
+export const CategoryTitle = styled.h4`
+    font-size: 16px;
+    color: #333;
+    margin-top: 20px;
+    line-height: 1.4;
+    font-weight: bold;
+    margin-bottom: 10px;
+`;
+
+export const Footer = styled.div`
+    font-size: 20px;
+    margin-top: 40px;
+    color: #0077cc;
+    line-height: 1.4;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+    
 `;

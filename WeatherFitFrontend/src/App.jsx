@@ -10,6 +10,8 @@ import Best from "./pages/Best.jsx";
 import Login from "./pages/Login.jsx";
 import JoinTheMembership from "./pages/JoinTheMembership.jsx";
 import MyPage from "./pages/MyPage.jsx";
+import MyPageInfo from "./pages/MyPageInfo.jsx";
+import MyPagePassword from "./pages/MyPagePassword.jsx";
 import CustomerServiceCenter from "./pages/CustomerServiceCenter.jsx";
 import { HeaderBackground } from "./layout/header.style.js";
 import Footer from "./layout/Footer.jsx";
@@ -45,6 +47,8 @@ function Layout() {
                 <Route path="/Login" element={<Login />} />
                 <Route path="/JoinTheMembership" element={<JoinTheMembership />} />
                 <Route path="/MyPage" element={<MyPage />} />
+                <Route path="/MyPageInfo" element={<MyPageInfo />} />
+                <Route path="/MyPagePassword" element={<MyPagePassword />} />
                 <Route path="/CustomerServiceCenter" element={<CustomerServiceCenter />} />
                 <Route path="/ForgotIdOrPassword" element={<ForgotIdOrPassword />} />
             </Routes>
