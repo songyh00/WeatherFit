@@ -32,7 +32,7 @@ function Layout() {
             <HeaderSpacer />
 
             {/* 지역검색창 */}
-            {((!hideHeaderFooter && location.pathname !== "/CustomerServiceCenter") && (!hideHeaderFooter && location.pathname !== "/MyPage")) && <LocationSearch />}
+            {(((!hideHeaderFooter && location.pathname !== "/CustomerServiceCenter") && (!hideHeaderFooter && location.pathname !== "/MyPage")) && (!hideHeaderFooter && location.pathname !== "/MyPage")) && <LocationSearch />}
             
             {/* 날씨 띄우는 공간 */}
             {(!hideHeaderFooter && location.pathname !== "/CustomerServiceCenter") && <WeatherSection />}
