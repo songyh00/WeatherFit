@@ -3,6 +3,7 @@ package com.weatherfit.backend.user.entity;
 import com.weatherfit.backend.common.enumtype.Gender;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -11,6 +12,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @Table(name = "users")
 public class User {
 
@@ -18,12 +20,23 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(nullable = false)
     private String password;
 
+    @Column(unique = true, nullable = false)
     private String email;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
+    /**
+     * 사용자 프로필 업데이트
+     */
+    public void updateProfile(String email, Gender gender) {
+        this.email = email;
+        this.gender = gender;
+    }
 }

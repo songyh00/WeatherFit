@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 /**
- * 코디 추천 결과를 담아 반환하는 DTO (Response DTO)
+ * 코디 추천 결과를 담아 반환하는 DTO
  */
 @Data
 @NoArgsConstructor
@@ -26,9 +26,10 @@ public class ClothesRecommendResponseDto {
     @Builder
     public static class RecommendedClothesDto {
         private Long id;           // 옷 ID
-        private String name;      // 옷 이름
-        private String category;  // 카테고리
+        private String category;   // 카테고리
+        private String name;       // 옷 이름
         private String imageUrl;   // 옷 이미지 URL
         private int likeCount;     // 좋아요 수
     }
+
 }

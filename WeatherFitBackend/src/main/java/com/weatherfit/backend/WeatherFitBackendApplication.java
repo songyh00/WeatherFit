@@ -20,4 +20,5 @@ public class WeatherFitBackendApplication {
         // Spring Boot 애플리케이션 실행
         SpringApplication.run(WeatherFitBackendApplication.class, args);
     }
+
 }
