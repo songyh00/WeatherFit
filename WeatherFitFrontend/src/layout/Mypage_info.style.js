@@ -25,6 +25,19 @@ export const Title = styled.h2`
   font-size: 1.5rem;
 `;
 
+export const MyPageText = styled.h2`
+  margin-bottom: 2.8rem;
+  font-size: 2rem;
+`;
+
+export const RegisterWrapper = styled.form`
+    width: 500px;
+    margin: 100px auto 0 auto;
+    text-align: center;
+    padding-top: 150px;
+    padding-bottom: 150px;
+`;
+
 
 export const Input = styled.input`
   width: 100%;

@@ -13,7 +13,7 @@ import {
     SectionTitle,
     CategoryTitle
 } from "../layout/Mypage.style.js";
-import {Button} from "../layout/Mypage_info.style.js";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 
 
@@ -24,9 +24,14 @@ const MyPage = () => {
     const [email, setEmail] = useState("test@gmail.com");
     const [gender, setGender] = useState("남자");
 
+    const navigate = useNavigate(); // ✅ 페이지 이동용
+
     const handleSubmit = () => {
-        alert(`회원 탈퇴가 완료되었습니다.`);
-        // 여기에 API 호출 등의 로직 추가 가능
+        if (window.confirm("정말로 회원 탈퇴하시겠습니까?")) {
+            // 탈퇴 API 호출 성공 시
+            alert("회원 탈퇴가 완료되었습니다.");
+            navigate("/");
+        }
     };
 
 
@@ -56,6 +61,7 @@ const MyPage = () => {
             <Section>
                 <SectionTitle>❤️ 내가 좋아요 누른 목록</SectionTitle>
 
+                {/*캐러셀 구현하기*/}
                 <div>
                     <CategoryTitle>👕 아우터</CategoryTitle>
                     <Carousel>
