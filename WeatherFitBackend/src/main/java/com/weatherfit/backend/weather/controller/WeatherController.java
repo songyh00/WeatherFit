@@ -15,30 +15,18 @@ import org.springframework.web.bind.annotation.*;
 public class WeatherController {
 
     @Autowired
-    private KakaoAddressService kakaoAddressService; // 주소 → 위도/경도 변환 서비스
+    private KakaoAddressService kakaoAddressService;
 
     @Autowired
-    private WeatherService weatherService;           // 날씨 데이터 조회 서비스
+    private WeatherService weatherService;
 
     /**
-     * 주소와 날짜를 기준으로 날씨 정보를 조회하는 API (날씨 예보용)
-     *
-     * @param address  조회할 주소
-     * @param tomorrow 오늘(false) / 내일(true) 여부
-     * @return 시간별 날씨 목록 + 최고/최저 기온
+     * 주소 기준으로 현재 시각부터 내일 23시까지의 날씨 데이터를 조회하는 API (날씨 예보용)
      */
     @GetMapping
-    public WeatherResponseDto getWeather(@RequestParam String address,
-                                         @RequestParam(defaultValue = "false") boolean tomorrow) {
-        // 1. 주소 → 위도/경도 변환
+    public WeatherResponseDto getWeather(@RequestParam String address) {
         double[] coordinates = kakaoAddressService.getCoordinates(address);
-        double latitude = coordinates[0];
-        double longitude = coordinates[1];
-
-        // 2. 위도/경도 → 격자 좌표 변환
-        LocationUtil.XY xy = LocationUtil.xyFromLatLng(latitude, longitude);
-
-        // 3. 날씨 예보 데이터 조회
-        return weatherService.getForecastForWeather(xy.x, xy.y, tomorrow);
+        LocationUtil.XY xy = LocationUtil.xyFromLatLng(coordinates[0], coordinates[1]);
+        return weatherService.getForecastFromNowToTomorrowNight(xy.x, xy.y);
     }
 }

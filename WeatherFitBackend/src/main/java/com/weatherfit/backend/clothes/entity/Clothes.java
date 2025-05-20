@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 옷(Clothes) 엔티티
+ * 옷 엔티티
  */
 @Entity
 @Getter
@@ -24,21 +24,21 @@ public class Clothes {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "image_url")
-    private String image;
-
     @Column(name = "gender")
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(name = "like_count")
-    private int likeCount;
+    @Column(name = "image_url")
+    private String image;
 
     @Column(name = "min_temperature")
     private int minTemperature;
 
     @Column(name = "max_temperature")
     private int maxTemperature;
+
+    @Column(name = "like_count")
+    private int likeCount;
 
     public void increaseLikeCount() {
         this.likeCount++;
@@ -49,4 +49,5 @@ public class Clothes {
             this.likeCount--;
         }
     }
+
 }

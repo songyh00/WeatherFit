@@ -38,4 +38,5 @@ public class Like {
         this.userId = userId;
         this.clothes = clothes;
     }
+
 }

@@ -15,22 +15,22 @@ import java.util.List;
 public interface ClothesRepository extends JpaRepository<Clothes, Long> {
 
     /**
-     * 카테고리와 성별 리스트에 해당하는 옷을 좋아요 수 내림차순으로 조회
+     * 단일 카테고리와 성별 리스트에 해당하는 옷을 좋아요 수 내림차순으로 조회
      */
     List<Clothes> findByCategoryAndGenderInOrderByLikeCountDesc(String category, List<String> genders);
 
     /**
-     * 여러 카테고리와 성별 리스트에 해당하는 옷을 좋아요 수 내림차순으로 조회
+     * 여러 카테고리(상의, 원피스)와 성별 리스트에 해당하는 옷을 좋아요 수 내림차순으로 조회
      */
     List<Clothes> findByCategoryInAndGenderInOrderByLikeCountDesc(List<String> categories, List<String> genders);
 
     /**
-     * 카테고리와 성별 리스트에 해당하는 옷을 정렬 없이 조회 (랜덤 추출용)
+     * 단일 카테고리와 성별 리스트에 해당하는 옷을 정렬 없이 조회 (랜덤 추출용)
      */
     List<Clothes> findByCategoryAndGenderIn(String category, List<String> genders);
 
     /**
-     * 여러 카테고리와 성별 리스트에 해당하는 옷을 정렬 없이 조회 (랜덤 추출용)
+     * 여러 카테고리(상의, 원피스)와 성별 리스트에 해당하는 옷을 정렬 없이 조회 (랜덤 추출용)
      */
     List<Clothes> findByCategoryInAndGenderIn(List<String> categories, List<String> genders);
 
@@ -42,4 +42,5 @@ public interface ClothesRepository extends JpaRepository<Clothes, Long> {
     @Query("UPDATE Clothes c SET c.likeCount = c.likeCount - 1 " +
             "WHERE c.id IN (SELECT l.clothes.id FROM Likes l WHERE l.userId = :userId)")
     void decreaseLikeCountByUserId(Long userId);
+
 }

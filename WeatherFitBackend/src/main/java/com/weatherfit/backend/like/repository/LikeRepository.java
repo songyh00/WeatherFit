@@ -32,4 +32,5 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
     @Modifying
     @Query("DELETE FROM Likes l WHERE l.userId = :userId")
     void deleteByUserId(Long userId);
+
 }

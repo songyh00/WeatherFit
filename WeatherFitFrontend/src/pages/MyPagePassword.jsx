@@ -7,30 +7,58 @@ import {
     Input,
     Button
 } from "../layout/Mypage_info.style.js";
-import { useState, useEffect } from 'react';
-
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ProfileEditor = () => {
     const [password, setPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [newPasswordConfirm, setNewPasswordConfirm] = useState('');
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = () => {
+        setError("");
+
         if (newPassword !== newPasswordConfirm) {
-            alert('새 비밀번호가 일치하지 않습니다.');
+            setError("새 비밀번호가 일치하지 않습니다.");
             return;
         }
 
-        alert('비밀번호가 변경되었습니다.');
-        // 여기에 API 호출 등의 로직 추가 가능
+        fetch('/api/auth/change-password', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({
+                oldPassword: password,
+                newPassword: newPassword,
+                newPasswordConfirm: newPasswordConfirm
+            })
+        })
+            .then(res => {
+                if (!res.ok) {
+                    return res.json().then(data => {
+                        throw new Error(data.message || "비밀번호 변경에 실패했습니다.");
+                    });
+                }
+                alert("비밀번호가 성공적으로 변경되었습니다.");
+                navigate("/MyPage");
+            })
+            .catch(err => {
+                console.error("변경 오류:", err);
+                setError(err.message);
+            });
     };
 
     return (
         <ContentsWrapper>
             <Card>
-                <Title>내 정보 수정</Title>
+                <Title>비밀번호 변경</Title>
+
                 <Input
-                    type="text"
+                    type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="기존 비밀번호"
@@ -47,33 +75,21 @@ const ProfileEditor = () => {
                     onChange={(e) => setNewPasswordConfirm(e.target.value)}
                     placeholder="새 비밀번호 확인"
                 />
-                
-                
+
+                {error && <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>}
 
                 <Button onClick={handleSubmit}>저장</Button>
             </Card>
-
-
-
         </ContentsWrapper>
     );
 };
 
 const MyPagePassword = () => {
-
-
-    // const [wishlist, setWishlist] = useState([]);
-
-    // useEffect(() => {
-    //     // 실제 데이터는 API로 대체
-    //     setWishlist(['레트로 체크 자켓', '풀오버 후드티', '빈티지 청바지', '집업 셔츠']);
-    // }, []);
-
     return (
         <Container>
             <ProfileEditor />
         </Container>
     );
-}
+};
 
 export default MyPagePassword;
