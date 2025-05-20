@@ -179,6 +179,10 @@ public class AuthService {
                     log.warn("🟠 비밀번호 변경 실패 (아이디 없음): userId={}", userId);
                     throw new CustomException(ErrorCode.USER_NOT_FOUND);
                 });
+        if (requestDto.getOldPassword() == null) {
+            log.warn("🟠 비밀번호 변경 실패 (기존 비밀번호 null): userId={}", userId);
+            throw new CustomException(ErrorCode.OLD_PASSWORD_REQUIRED);
+        }
 
         if (!passwordEncoder.matches(requestDto.getOldPassword(), user.getPassword())) {
             log.warn("🟠 비밀번호 변경 실패 (현재 비밀번호 불일치): userId={}", userId);

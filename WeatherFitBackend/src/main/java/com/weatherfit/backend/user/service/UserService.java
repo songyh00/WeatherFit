@@ -57,11 +57,7 @@ public class UserService {
 
         String newEmail = requestDto.getEmail();
         if (newEmail != null && !newEmail.isBlank()) {
-            if (newEmail.equalsIgnoreCase(user.getEmail())) {
-                log.warn("🟠 사용자 정보 수정 실패 (기존 이메일과 동일): userId={}, email={}", userId, newEmail);
-                throw new CustomException(ErrorCode.EMAIL_SAME_AS_CURRENT);
-            }
-
+            // ✅ 본인 이메일이 아니라면 중복 체크
             userRepository.findByEmail(newEmail).ifPresent(existingUser -> {
                 if (!existingUser.getId().equals(userId)) {
                     log.warn("🟠 사용자 정보 수정 실패 (이메일 중복): userId={}, newEmail={}", userId, newEmail);

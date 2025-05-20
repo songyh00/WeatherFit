@@ -12,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 public enum ErrorCode {
 
     // =========================
-    // 사용자(User) 관련 오류
-    // =========================
+// 사용자(User) 관련 오류
+// =========================
     USERNAME_ALREADY_EXISTS("이미 존재하는 아이디입니다."),
     EMAIL_ALREADY_EXISTS("이미 존재하는 이메일입니다."),
     INVALID_USER_GENDER("사용자 성별은 남자 또는 여자만 선택 가능합니다."),
@@ -22,6 +22,7 @@ public enum ErrorCode {
     EMAIL_NOT_MATCHED("이메일이 일치하지 않습니다."),
     EMAIL_SAME_AS_CURRENT("기존 이메일과 동일합니다."),
     NEW_PASSWORD_MISMATCH("새 비밀번호가 일치하지 않습니다."),
+    OLD_PASSWORD_REQUIRED("기존 비밀번호가 입력되지 않았습니다."),
 
     // =========================
     // 인증(Token) 관련 오류
