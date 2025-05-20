@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import React from 'react';
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 export const ContentsWrapper = styled.div`
     width: 80%;
@@ -26,15 +26,13 @@ export const Content = styled.div`
     }
 
     .left {
-        left: 10px;
-        
+        left: 20px;
     }
 
     .right {
-        right: 10px;
+        right: 20px;
     }
-
-    `;
+`;
 
 export const SliderContainer = styled.div`
     display: flex;
@@ -42,10 +40,11 @@ export const SliderContainer = styled.div`
     transform: ${({ sliderIndex }) => `translateX(-${sliderIndex * (100 / 3)}%)`};
     width: ${({ totalImages }) => `${totalImages * (100 / 3)}%`};
 `;
+
 export const StyledImageContainer = styled.div`
     position: relative;  // 텍스트를 겹치기 위해 추가
     flex: 0 0 calc(100% / 3); // 화면 너비의 1/3만큼씩 차지
-    padding: 0 2px; 
+    padding: 0 2px;
     box-sizing: border-box;
 
     .slide-label {
@@ -59,6 +58,7 @@ export const StyledImageContainer = styled.div`
         text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
         font-family: 'Noto Sans KR', sans-serif;
     }
+
     .image-credit {
         position: absolute;
         bottom: 8px;
@@ -77,12 +77,11 @@ export const StyledImageContainer = styled.div`
     &:hover .image-credit {
         opacity: 1;
     }
-
 `;
 
 export const StyledImage = styled.img`
     width: 100%;
-    height: 600px;
+    height: 500px;
     object-fit: cover;
     border-radius: 5px;
 `;
@@ -90,6 +89,7 @@ export const StyledImage = styled.img`
 export const ContentsTitle = styled.div`
     padding: 40px 40px;
     text-align: center;
+
     > h1 {
         padding: 40px 80px;
         font-family:'Noto Sans KR', sans-serif;
@@ -102,16 +102,12 @@ export const ImageTextWrapper = styled.div`
     align-items: center;
     margin: 40px 0;
 
-    // 전체 영역에 배경과 박스 효과 추가
     background: linear-gradient(135deg, #fdfbfb 50%, #ebedee 100%);
-    border: 2px solid #f2f2f2; 
-    border-radius: 20px;       
-    padding: 40px 30px;    
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); 
-
+    border: 2px solid #f2f2f2;
+    border-radius: 20px;
+    padding: 40px 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
-
-  
 
     @media (max-width: 768px) {
         flex-direction: column;
@@ -127,11 +123,11 @@ export const LeftImage = styled.div`
         width: 65%;
         height: auto;
         border-radius: 120px;
-        border: 8px solid ${({ borderColor }) => borderColor}; //테두리 색 사용
-        box-shadow: 0 3px 25px rgba(0, 0, 0, 0.3); 
-        transition: transform 0.4s ease-in-out; // 확대 ,회전 추가
+        border: 8px solid ${({ borderColor }) => borderColor};
+        box-shadow: 0 3px 25px rgba(0, 0, 0, 0.3);
+        transition: transform 0.4s ease-in-out;
 
-        &:hover { // 호버시 확대 회전
+        &:hover {
             transform: rotate(0.4deg) scale(1.03);
         }
     }
@@ -149,7 +145,7 @@ export const ServiceGrid = styled.div`
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
-    gap: 20px; /* 카드 간 간격 */
+    gap: 20px;
     margin-top: 50px;
     padding: 20px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
@@ -196,5 +192,5 @@ export const ServiceCard = styled(Link)`
 `;
 
 export const HeaderSpacer = styled.div`
-    height: 180px;    
+    height: 180px;
 `;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import '../App.css';
 import {
@@ -12,8 +12,11 @@ import {
     ImageTextWrapper,
     LeftImage,
     RightText,
-    SliderContainer
 } from "../layout/mainPage.style.js";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import { Navigation } from 'swiper/modules';
+
 import Main1 from "../assets/WeatherImg/spring.png";
 import Main2 from "../assets/WeatherImg/summer.png";
 import Main3 from "../assets/WeatherImg/autumn.png";
@@ -24,46 +27,38 @@ import Mainimg2 from "../assets/mainimg/SummerMainImg.png";
 import Mainimg3 from "../assets/mainimg/AutumnMainImg.png";
 import Mainimg4 from "../assets/mainimg/WinterMainImg.png";
 
-
 import bestimg from "../assets/infoImg/best.png";
 import recomimg from "../assets/infoImg/recomimg.png";
 import outerimg from "../assets/infoImg/outerimg.png";
 import clpaimg from "../assets/infoImg/clpaimg.png";
 import pants from "../assets/infoImg/pants.jpg";
+import {MyCaretLeftRectangle, MyCaretRightRectangle} from "../components/SliderBtns.jsx";
 
 const MainPage = () => {
     const images = [Main1, Main2, Main3, Main4];
     const [currentImage, setCurrentImage] = useState(0);
-    const borderColors = [ // 계절별 이미지 테두리 색상 넣음
+    const borderColors = [
         "#fcb5b5", // 봄
         "#a1dffb", // 여름
         "#f9c981", // 가을
         "#d0e4ef"  // 겨울
     ];
     const sliderImages = [
-        { src: Mainimg1, label: "봄",credit: "출처: 2-plan.co.kr"},
-        { src: Mainimg2, label: "여름",credit: "출처: 2-plan.co.kr" },
-        { src: Mainimg3, label: "가을",credit: "출처: 2-plan.co.kr" },
-        { src: Mainimg4, label: "겨울",credit: "출처: 2-plan.co.kr" }
+        { src: Mainimg1, label: "봄", credit: "출처: 2-plan.co.kr" },
+        { src: Mainimg2, label: "여름", credit: "출처: 2-plan.co.kr" },
+        { src: Mainimg3, label: "가을", credit: "출처: 2-plan.co.kr" },
+        { src: Mainimg4, label: "겨울", credit: "출처: 2-plan.co.kr" }
     ];
 
-    const [sliderIndex, setSliderIndex] = useState(0);
-    const totalSlides = images.length;
-    const visibleSlides = 3;
+    const prevRef = useRef(null);
+    const nextRef = useRef(null);
 
-    const goToPrev = () => {
-        setSliderIndex((prevIndex) =>
-            prevIndex <= 0 ? totalSlides - visibleSlides : prevIndex - 1
-        );
-    };
+    const [swiperReady, setSwiperReady] = useState(false);
+    const [swiperInstance, setSwiperInstance] = useState(null);
 
-    const goToNext = () => {
-        setSliderIndex((prevIndex) =>
-            prevIndex >= totalSlides - visibleSlides ? 0 : prevIndex + 1
-        );
-    };
-
-
+    useEffect(() => {
+        setSwiperReady(true);
+    }, []);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -73,36 +68,64 @@ const MainPage = () => {
         return () => clearInterval(interval);
     }, []);
 
+    // navigation 버튼 refs가 준비되고 swiperInstance가 있으면 navigation 다시 세팅
+    useEffect(() => {
+        if (swiperInstance && prevRef.current && nextRef.current) {
+            swiperInstance.params.navigation.prevEl = prevRef.current;
+            swiperInstance.params.navigation.nextEl = nextRef.current;
+
+            swiperInstance.navigation.destroy();
+            swiperInstance.navigation.init();
+            swiperInstance.navigation.update();
+        }
+    }, [swiperInstance]);
+
     return (
         <ContentsWrapper style={{ width: '70%' }}>
             <Content>
-                <IoIosArrowBack
-                    size={45}
-                    onClick={goToPrev}
-                    className="arrow-button left"
-                />
-                <SliderContainer
-                    $sliderIndex={sliderIndex}
-                    $totalImages={sliderImages.length}
-                >
-                    {sliderImages.map((item, idx) => (
-                        <StyledImageContainer key={idx}>
-                            <StyledImage src={item.src} alt={`slide-${idx}`} />
-                            <div className="slide-label">{item.label}</div>
-                            <div className="image-credit">{item.credit}</div> {/* 👈 출처 표시 */}
-                        </StyledImageContainer>
-                    ))}
-                </SliderContainer>
-                <IoIosArrowForward
-                    size={45}
-                    onClick={goToNext}
-                    className="arrow-button right"
-                />
+                {/* 좌측 아이콘 */}
+                <div ref={prevRef} className="arrow-button left">
+                    <MyCaretLeftRectangle className="custom-prev" />
+                </div>
+
+
+                {swiperReady && (
+                    <Swiper
+                        modules={[Navigation]}
+                        navigation={{
+                            prevEl: prevRef.current,
+                            nextEl: nextRef.current,
+                        }}
+                        onBeforeInit={(swiper) => {
+                            swiper.params.navigation.prevEl = prevRef.current;
+                            swiper.params.navigation.nextEl = nextRef.current;
+                        }}
+                        loop={true}
+                        slidesPerView={3}
+                        spaceBetween={10}
+                    >
+                        {sliderImages.map((item, idx) => (
+                            <SwiperSlide key={idx}>
+                                <StyledImageContainer>
+                                    <StyledImage src={item.src} alt={`slide-${idx}`} />
+                                    <div className="slide-label">{item.label}</div>
+                                    <div className="image-credit">{item.credit}</div>
+                                </StyledImageContainer>
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
+                )}
+
+                {/* 우측 아이콘 */}
+                <div ref={nextRef} className="arrow-button right">
+                    <MyCaretRightRectangle className="custom-next" />
+                </div>
             </Content>
+
             <ContentsTitle>
                 <h1>계절이 바뀔때 마다, 오늘 무슨 옷 입을지 고민되지 않으세요?</h1>
 
-                <ImageTextWrapper> {/*이미지랑 테두리 색상 넣음*/}
+                <ImageTextWrapper>
                     <LeftImage $borderColor={borderColors[currentImage]}>
                         <img src={images[currentImage]} alt="Main Slide" />
                     </LeftImage>
@@ -121,7 +144,7 @@ const MainPage = () => {
                 </ImageTextWrapper>
 
                 <h1>
-                    지금 계절또는 오늘의 날씨에 맞는 BEST 옷 추천부터<br/>
+                    지금 계절또는 오늘의 날씨에 맞는 BEST 옷 추천부터<br />
                     상의, 하의, 아우터까지 대신 골라드립니다!
                 </h1>
 
