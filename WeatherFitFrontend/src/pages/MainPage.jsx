@@ -54,8 +54,6 @@ const MainPage = () => {
     const nextRef = useRef(null);
 
     const [swiperReady, setSwiperReady] = useState(false);
-    const [swiperInstance, setSwiperInstance] = useState(null);
-
     useEffect(() => {
         setSwiperReady(true);
     }, []);
@@ -68,17 +66,6 @@ const MainPage = () => {
         return () => clearInterval(interval);
     }, []);
 
-    // navigation 버튼 refs가 준비되고 swiperInstance가 있으면 navigation 다시 세팅
-    useEffect(() => {
-        if (swiperInstance && prevRef.current && nextRef.current) {
-            swiperInstance.params.navigation.prevEl = prevRef.current;
-            swiperInstance.params.navigation.nextEl = nextRef.current;
-
-            swiperInstance.navigation.destroy();
-            swiperInstance.navigation.init();
-            swiperInstance.navigation.update();
-        }
-    }, [swiperInstance]);
 
     return (
         <ContentsWrapper style={{ width: '70%' }}>

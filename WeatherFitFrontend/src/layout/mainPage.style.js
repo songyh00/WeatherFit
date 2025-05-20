@@ -34,13 +34,6 @@ export const Content = styled.div`
     }
 `;
 
-export const SliderContainer = styled.div`
-    display: flex;
-    transition: transform 0.5s ease-in-out;
-    transform: ${({ sliderIndex }) => `translateX(-${sliderIndex * (100 / 3)}%)`};
-    width: ${({ totalImages }) => `${totalImages * (100 / 3)}%`};
-`;
-
 export const StyledImageContainer = styled.div`
     position: relative;  // 텍스트를 겹치기 위해 추가
     flex: 0 0 calc(100% / 3); // 화면 너비의 1/3만큼씩 차지
