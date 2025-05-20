@@ -74,7 +74,7 @@ const MainPage = () => {
     }, []);
 
     return (
-        <ContentsWrapper>
+        <ContentsWrapper style={{ width: '70%' }}>
             <Content>
                 <IoIosArrowBack
                     size={45}

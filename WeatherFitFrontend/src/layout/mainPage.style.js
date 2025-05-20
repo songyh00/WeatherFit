@@ -148,7 +148,7 @@ export const RightText = styled.div`
 export const ServiceGrid = styled.div`
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-around;
     gap: 20px; /* 카드 간 간격 */
     margin-top: 50px;
     padding: 20px;
@@ -156,7 +156,6 @@ export const ServiceGrid = styled.div`
 `;
 
 export const ServiceCard = styled(Link)`
-
     position: relative;
     display: flex;
     flex-direction: column;
@@ -166,7 +165,6 @@ export const ServiceCard = styled(Link)`
     text-decoration: none;
     color: inherit;
     overflow: hidden;
-    padding: 20px;
 
     img {
         width: 182px;

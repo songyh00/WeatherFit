@@ -16,6 +16,7 @@ import Footer from "./layout/Footer.jsx";
 import ForgotIdOrPassword from "./pages/ForgotIdOrPassword.jsx";
 import LocationSearch from "./components/LocationSearch.jsx";
 import {HeaderSpacer} from "./layout/mainPage.style.js";
+import WeatherSection from "./components/WeatherSection.jsx";
 
 function Layout() {
     // 로그인 페이지면 헤더와 푸터를 안보이게 하기 위한 코드
@@ -28,7 +29,11 @@ function Layout() {
 
             <HeaderSpacer />
 
+            {/* 지역검색창 */}
             {(!hideHeaderFooter && location.pathname !== "/CustomerServiceCenter") && <LocationSearch />}
+            
+            {/* 날씨 띄우는 공간 */}
+            {(!hideHeaderFooter && location.pathname !== "/CustomerServiceCenter") && <WeatherSection />}
 
             <Routes>
                 <Route path="/" element={<MainPage />} />
