@@ -14,7 +14,7 @@ export const HeaderWrapper = styled.div`
 `;
 
 export const HeaderContent = styled.div`
-    width: 80%;
+    width: 70%;
     margin: 0 auto;
     position: relative;
 `;
