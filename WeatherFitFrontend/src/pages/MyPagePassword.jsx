@@ -22,12 +22,32 @@ const ProfileEditor = () => {
     const handleSubmit = () => {
         setError("");
 
+        if (!password) {
+            setError("현재 비밀번호를 입력해주세요.");
+            return;
+        }
+
+        if (!newPassword) {
+            setError("새 비밀번호를 입력해주세요.");
+            return;
+        }
+
+        if (!newPasswordConfirm) {
+            setError("새 비밀번호를 다시 입력해주세요.");
+            return;
+        }
+
+        if (password === newPassword) {
+            setError("새 비밀번호는 현재 비밀번호와 달라야 합니다.");
+            return;
+        }
+
         if (newPassword !== newPasswordConfirm) {
             setError("새 비밀번호가 일치하지 않습니다.");
             return;
         }
 
-        fetch('/api/auth/change-password', {
+    fetch('/api/auth/change-password', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
