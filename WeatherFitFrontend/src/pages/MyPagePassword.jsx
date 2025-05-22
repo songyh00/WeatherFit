@@ -7,8 +7,9 @@ import {
     Input,
     Button
 } from "../layout/Mypage_info.style.js";
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
+import {getSeason, theme} from "../components/theme.js";
 
 const ProfileEditor = () => {
     const [password, setPassword] = useState('');
@@ -16,6 +17,7 @@ const ProfileEditor = () => {
     const [newPasswordConfirm, setNewPasswordConfirm] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const [season, setSeason] = useState(getSeason());
 
     const handleSubmit = () => {
         setError("");
@@ -51,6 +53,12 @@ const ProfileEditor = () => {
                 setError(err.message);
             });
     };
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setSeason(getSeason());
+        }, 1000 * 60 * 60 * 24);
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <ContentsWrapper>
@@ -62,23 +70,40 @@ const ProfileEditor = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="기존 비밀번호"
+                    $borderColor={theme[season].borderColor}
+                    $bgColor={theme[season].bgColor}
+                    $focusColor={theme[season].focusColor}
                 />
                 <Input
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="새 비밀번호"
+                    $borderColor={theme[season].borderColor}
+                    $bgColor={theme[season].bgColor}
+                    $focusColor={theme[season].focusColor}
                 />
                 <Input
                     type="password"
                     value={newPasswordConfirm}
                     onChange={(e) => setNewPasswordConfirm(e.target.value)}
                     placeholder="새 비밀번호 확인"
+                    $borderColor={theme[season].borderColor}
+                    $bgColor={theme[season].bgColor}
+                    $focusColor={theme[season].focusColor}
                 />
 
                 {error && <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>}
 
-                <Button onClick={handleSubmit}>저장</Button>
+                <Button
+                    onClick={handleSubmit}
+                    $borderColor={theme[season].borderColor}
+                    $bgColor={theme[season].bgColor}
+                    $focusColor={theme[season].focusColor}
+                    $hoverBgColor={theme[season].focusColor}
+                >
+                    저장
+                </Button>
             </Card>
         </ContentsWrapper>
     );

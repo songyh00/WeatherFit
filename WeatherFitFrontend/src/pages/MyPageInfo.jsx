@@ -7,14 +7,16 @@ import {
     Input,
     Button
 } from "../layout/Mypage_info.style.js";
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {getSeason, theme} from "../components/theme.js";
 
 const ProfileEditor = () => {
     const [email, setEmail] = useState('');
     const [gender, setGender] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const [season, setSeason] = useState(getSeason());
 
     // 🔹 기존 사용자 정보 가져오기
     useEffect(() => {
@@ -71,6 +73,12 @@ const ProfileEditor = () => {
                 console.error("수정 오류:", err);
             });
     };
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setSeason(getSeason());
+        }, 1000 * 60 * 60 * 24);
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <ContentsWrapper>
@@ -81,7 +89,10 @@ const ProfileEditor = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="이메일"
+                    $borderColor={theme[season].borderColor}
+                    $bgColor={theme[season].bgColor}
+                    $focusColor={theme[season].focusColor}
+                    placeholder="이메일을 입력해주세요"
                 />
 
                 <div style={{ margin: '10px 0' }}>
@@ -107,7 +118,15 @@ const ProfileEditor = () => {
 
                 {error && <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>}
 
-                <Button onClick={handleSubmit}>저장</Button>
+                <Button
+                    onClick={handleSubmit}
+                    $borderColor={theme[season].borderColor}
+                    $bgColor={theme[season].bgColor}
+                    $focusColor={theme[season].focusColor}
+                    $hoverBgColor={theme[season].focusColor}
+                >
+                    저장
+                </Button>
             </Card>
         </ContentsWrapper>
     );
