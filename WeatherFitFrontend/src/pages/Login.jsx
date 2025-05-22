@@ -83,7 +83,6 @@ const Login = () => {
                     $borderColor={theme[season].borderColor}
                     $bgColor={theme[season].bgColor}
                     $focusColor={theme[season].focusColor}
-                    $textColor={theme[season].textColor}
                     $hoverBgColor={theme[season].focusColor}
                 >
                     Login
