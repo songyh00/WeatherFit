@@ -84,10 +84,13 @@ public class UserService {
         String token = jwtUtil.cleanTokenFromHeader(request.getHeader("Authorization"));
         Long userId = jwtUtil.extractUserId(token);
 
-        return userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     log.warn("🟠 사용자 조회 실패 (토큰 기반): userId={}", userId);
                     throw new CustomException(ErrorCode.USER_NOT_FOUND);
                 });
+
+        log.info("🟢 사용자 조회 성공 (토큰 기반): userId={}", userId);
+        return user;
     }
 }

@@ -41,19 +41,24 @@ public class KakaoAddressService {
                     .bodyToMono(KakaoApiResponseDto.class)
                     .block();
 
-            if (response != null && !response.getDocuments().isEmpty()) {
-                var doc = response.getDocuments().get(0);
-                double latitude = Double.parseDouble(doc.getY());
-                double longitude = Double.parseDouble(doc.getX());
+            if (response == null) {
+                log.error("🟠 주소 변환 실패: 응답이 null, address={}", address);
+                throw new CustomException(ErrorCode.EXTERNAL_API_ERROR);
+            }
 
-                log.info("🟢 주소 변환 성공: address={}, latitude={}, longitude={}",
-                        address, latitude, longitude);
-
-                return new double[]{latitude, longitude};
-            } else {
+            if (response.getDocuments() == null || response.getDocuments().isEmpty()) {
                 log.error("🟠 주소 변환 실패: 검색 결과 없음, address={}", address);
                 throw new CustomException(ErrorCode.EXTERNAL_API_ERROR);
             }
+
+            var doc = response.getDocuments().get(0);
+            double latitude = Double.parseDouble(doc.getY());
+            double longitude = Double.parseDouble(doc.getX());
+
+            log.info("🟢 주소 변환 성공: address={}, latitude={}, longitude={}",
+                    address, latitude, longitude);
+
+            return new double[]{latitude, longitude};
 
         } catch (Exception e) {
             log.error("🔴 카카오 API 호출 예외 발생: address={}, error={}", address, e.getMessage(), e);

@@ -27,9 +27,6 @@ public class WeatherService {
     @Value("${weather.api.service-key}")
     private String serviceKey;
 
-    /**
-     * 코디 추천용 날씨 데이터 조회 (평균 온도만 반환)
-     */
     public ForecastDto getForecastForClothing(int nx, int ny, boolean tomorrow) {
         log.info("🟡 코디 추천용 날씨 예보 조회 요청: nx={}, ny={}, tomorrow={}", nx, ny, tomorrow);
         BaseDateTimeCalculator.DateTimeInfo dateTimeInfo = BaseDateTimeCalculator.getForecastDateTime(tomorrow);
@@ -37,9 +34,6 @@ public class WeatherService {
         return parseForecastDataForClothing(responseDto, dateTimeInfo.getTargetDate(), tomorrow);
     }
 
-    /**
-     * 날씨 예보용 데이터 조회 (현재 시각부터 내일 23시까지)
-     */
     public WeatherResponseDto getForecastFromNowToTomorrowNight(int nx, int ny) {
         log.info("🟡 날씨 예보용 데이터 조회 요청: nx={}, ny={}", nx, ny);
         BaseDateTimeCalculator.DateTimeInfo dateTimeInfo = BaseDateTimeCalculator.getForecastDateTime(false);
@@ -47,9 +41,6 @@ public class WeatherService {
         return parseForecastFromNowToTomorrow(responseDto);
     }
 
-    /**
-     * 기상청 API 호출
-     */
     private WeatherApiResponseDto fetchWeatherApi(int nx, int ny, BaseDateTimeCalculator.DateTimeInfo dateTimeInfo) {
         try {
             log.info("🟡 기상청 API 호출 시작: baseDate={}, baseTime={}, nx={}, ny={}",
@@ -73,6 +64,14 @@ public class WeatherService {
                     .bodyToMono(WeatherApiResponseDto.class)
                     .block();
 
+            if (response == null ||
+                    response.getResponse() == null ||
+                    response.getResponse().getBody() == null ||
+                    response.getResponse().getBody().getItems() == null) {
+                log.error("🟠 날씨 API 응답 구조 이상: 일부 필드가 null");
+                throw new CustomException(ErrorCode.EXTERNAL_API_ERROR);
+            }
+
             log.info("🟢 기상청 API 호출 성공");
             return response;
         } catch (Exception e) {
@@ -81,11 +80,8 @@ public class WeatherService {
         }
     }
 
-    /**
-     * 옷 코디 추천용 데이터 파싱 (평균 기온만)
-     */
     private ForecastDto parseForecastDataForClothing(WeatherApiResponseDto responseDto, String targetDate, boolean tomorrow) {
-        log.info("🟡 코디 추천용 데이터 파싱 시작: targetDate={}, tomorrow={}", targetDate, tomorrow);
+        log.info("🟡 코디 추천용 기온 데이터 파싱 시작: targetDate={}, tomorrow={}", targetDate, tomorrow);
 
         List<Integer> temps = new ArrayList<>();
         List<WeatherApiResponseDto.Item> items = responseDto.getResponse().getBody().getItems().getItem();
@@ -100,23 +96,24 @@ public class WeatherService {
             temps.add(Integer.parseInt(item.getFcstValue()));
         }
 
+        if (temps.isEmpty()) {
+            log.warn("🟠 코디 추천용 기온 데이터 없음: targetDate={}, tomorrow={}", targetDate, tomorrow);
+        }
+
         double averageTemp = temps.stream()
                 .mapToInt(Integer::intValue)
                 .average()
                 .orElse(0.0);
 
-        log.info("🟢 코디 추천용 평균 기온 계산 완료: {}°C", averageTemp);
+        log.info("🟢 코디 추천용 기온 계산 완료: {}°C", averageTemp);
 
         return ForecastDto.builder()
                 .averageTemperature((int) Math.round(averageTemp))
                 .build();
     }
 
-    /**
-     * 날씨 예보용 데이터 파싱 (현재 ~ 내일 23시까지) + 시간 순 정렬
-     */
     private WeatherResponseDto parseForecastFromNowToTomorrow(WeatherApiResponseDto responseDto) {
-        log.info("🟡 일반 날씨 예보 데이터 파싱 시작 (현재~내일 23시)");
+        log.info("🟡 시간별 예보 데이터 파싱 시작 (현재~내일 23시)");
 
         Map<LocalDateTime, HourlyTemperatureDto> hourlyMap = new HashMap<>();
         LocalDateTime now = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
@@ -156,11 +153,14 @@ public class WeatherService {
             hourlyTemperatures.add(entry.getValue());
         }
 
+        if (hourlyTemperatures.isEmpty()) {
+            log.warn("🟠 시간별 예보 데이터 없음: {} ~ {}", now, end);
+        }
 
         OptionalInt maxTemp = hourlyTemperatures.stream().mapToInt(HourlyTemperatureDto::getTemperature).max();
         OptionalInt minTemp = hourlyTemperatures.stream().mapToInt(HourlyTemperatureDto::getTemperature).min();
 
-        log.info("🟢 시간별 데이터 파싱 완료: {} ~ {} / 총 {}개",
+        log.info("🟢 시간별 예보 데이터 파싱 완료: {} ~ {} / 총 {}개",
                 now.format(DateTimeFormatter.ofPattern("yyyyMMdd HH:mm")),
                 end.format(DateTimeFormatter.ofPattern("yyyyMMdd HH:mm")),
                 hourlyTemperatures.size());
