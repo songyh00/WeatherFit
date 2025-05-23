@@ -14,7 +14,7 @@ export const SearchContainer = styled.div`
 
 export const SearchInput = styled.input`
     padding: 10px 15px;
-    width: 300px;
+    width: 315px;
     border: 2px solid ${currentTheme.borderColor};
     background-color: ${currentTheme.bgColor};
     outline: none;

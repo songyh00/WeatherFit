@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Header from "./layout/Header";
 import MainPage from "./pages/MainPage.jsx";
@@ -17,11 +17,25 @@ import { HeaderBackground } from "./layout/header.style.js";
 import Footer from "./layout/Footer.jsx";
 import ForgotIdOrPassword from "./pages/ForgotIdOrPassword.jsx";
 import LocationSearch from "./components/LocationSearch.jsx";
-import {HeaderSpacer} from "./layout/mainPage.style.js";
+import { HeaderSpacer } from "./layout/mainPage.style.js";
 import WeatherSection from "./components/WeatherSection.jsx";
 
 function Layout() {
-    // 로그인 페이지면 헤더와 푸터를 안보이게 하기 위한 코드
+    const [address, setAddress] = useState("");
+    const [weatherData, setWeatherData] = useState(null);
+
+    const fetchWeatherData = async (inputAddress) => {
+        try {
+            const res = await fetch(`/api/weather?address=${encodeURIComponent(inputAddress)}`);
+            const data = await res.json();
+            console.log("📦 받은 날씨 데이터:", data); // 이 부분 추가!
+            setAddress(inputAddress);
+            setWeatherData(data);
+        } catch (err) {
+            console.error("날씨 조회 실패:", err);
+        }
+    };
+
     const location = useLocation();
     const hideHeaderFooter = location.pathname === "/Login" || location.pathname === "/JoinTheMembership" || location.pathname === "/ForgotIdOrPassword";
 
@@ -33,22 +47,14 @@ function Layout() {
 
             {/* 지역검색창 */}
             {
-                (
-                    (!hideHeaderFooter && location.pathname !== "/CustomerServiceCenter") &&
-                    (!hideHeaderFooter && location.pathname !== "/MyPage") &&
-                    (!hideHeaderFooter && location.pathname !== "/MyPageInfo") &&
-                    (!hideHeaderFooter && location.pathname !== "/MyPagePassword")
-                ) && <LocationSearch />
+                (!hideHeaderFooter && !["/CustomerServiceCenter", "/MyPage", "/MyPageInfo", "/MyPagePassword"].includes(location.pathname)) &&
+                <LocationSearch onSearchComplete={fetchWeatherData} />
             }
-            
+
             {/* 날씨 띄우는 공간 */}
             {
-                (
-                    (!hideHeaderFooter && location.pathname !== "/CustomerServiceCenter") &&
-                    (!hideHeaderFooter && location.pathname !== "/MyPageInfo") &&
-                    (!hideHeaderFooter && location.pathname !== "/MyPagePassword")
-                )
-                && <WeatherSection />
+                (!hideHeaderFooter && !["/CustomerServiceCenter", "/MyPageInfo", "/MyPagePassword"].includes(location.pathname)) &&
+                <WeatherSection weatherData={weatherData} address={address} />
             }
 
             <Routes>

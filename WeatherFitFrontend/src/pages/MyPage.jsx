@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import '../App.css';
 import {
     Container, Section, Title, InfoItem, StyledLink,
@@ -8,33 +7,7 @@ import { Button } from "../layout/Mypage_info.style.js";
 import logo from "../assets/logo.png";
 
 const MyPage = () => {
-    const [id, setId] = useState("");
-    const [email, setEmail] = useState("");
-    const [gender, setGender] = useState("");
 
-    useEffect(() => {
-        fetch("/api/user/profile", {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            }
-        })
-            .then(res => {
-                if (!res.ok) throw new Error("사용자 정보 조회 실패");
-                return res.json();
-            })
-            .then(data => {
-                setId(data.username);
-                setEmail(data.email);
-                if (data.gender === "남자") setGender("남자");
-                else if (data.gender === "여자") setGender("여자");
-                else setGender("기타");
-            })
-            .catch(err => {
-                alert("사용자 정보를 불러올 수 없습니다.");
-                console.error(err);
-            });
-    }, []);
 
     const handleSubmit = () => {
         if (!window.confirm("정말로 회원 탈퇴하시겠습니까? 탈퇴 후 계정은 복구할 수 없습니다.")) return;
@@ -62,25 +35,6 @@ const MyPage = () => {
 
     return (
         <Container>
-            <Section>
-                <Title>[ 마이페이지 ]</Title>
-            </Section>
-
-            <Section>
-                <SectionTitle>📌 프로필</SectionTitle>
-                <InfoItem><span>🔸 아이디:</span> {id}</InfoItem>
-                <InfoItem><span>📧 이메일:</span> {email}</InfoItem>
-                <InfoItem>
-                    <span>{gender === "남자" ? "🚹" : "🚺"} 성별:</span> {gender}
-                </InfoItem>
-                <InfoItem>
-                    <Emoji>🛠️</Emoji>
-                    <StyledLink to="/MyPageInfo">[프로필 수정]</StyledLink>
-                    <Emoji>🔒</Emoji>
-                    <StyledLink to="/MyPagePassword">[비밀번호 변경]</StyledLink>
-                </InfoItem>
-            </Section>
-
             <Section>
                 <SectionTitle>❤️ 내가 좋아요 누른 목록</SectionTitle>
                 {/* 좋아요 이미지 파트는 동일하게 유지 */}

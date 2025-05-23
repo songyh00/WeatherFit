@@ -11,7 +11,7 @@ import {
     ServiceCard,
     ImageTextWrapper,
     LeftImage,
-    RightText,
+    RightText, LeftImg, StrongWeather,
 } from "../layout/mainPage.style.js";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -32,17 +32,20 @@ import recomimg from "../assets/infoImg/recomimg.png";
 import outerimg from "../assets/infoImg/outerimg.png";
 import clpaimg from "../assets/infoImg/clpaimg.png";
 import pants from "../assets/infoImg/pants.jpg";
+
 import {MyCaretLeftRectangle, MyCaretRightRectangle} from "../components/SliderBtns.jsx";
+import {getSeason, theme} from "../components/theme.js";
 
 const MainPage = () => {
     const images = [Main1, Main2, Main3, Main4];
     const [currentImage, setCurrentImage] = useState(0);
-    const borderColors = [
-        "#fcb5b5", // 봄
-        "#a1dffb", // 여름
-        "#f9c981", // 가을
-        "#d0e4ef"  // 겨울
-    ];
+    // const borderColors = [
+    //     "#fcb5b5", // 봄
+    //     "#a1dffb", // 여름
+    //     "#f9c981", // 가을
+    //     "#d0e4ef"  // 겨울
+    // ];
+    const [season, setSeason] = useState(getSeason());
     const sliderImages = [
         { src: Mainimg1, label: "봄", credit: "출처: 2-plan.co.kr" },
         { src: Mainimg2, label: "여름", credit: "출처: 2-plan.co.kr" },
@@ -60,11 +63,27 @@ const MainPage = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setCurrentImage((prevIndex) => (prevIndex + 1) % images.length);
-        }, 8000);
+            setSeason(getSeason());
+        }, 1000 * 60 * 60 * 24); // 하루마다 갱신
 
         return () => clearInterval(interval);
     }, []);
+    useEffect(() => {
+        const seasons = ['spring', 'summer', 'autumn', 'winter'];
+        let index = seasons.indexOf(getSeason());
+
+        const seasonInterval = setInterval(() => {
+            index = (index + 1) % seasons.length;
+            setSeason(seasons[index]);
+        }, 5000); // 10초마다 바뀜
+
+        return () => clearInterval(seasonInterval);
+    }, []);
+    useEffect(() => {
+        const seasons = ['spring', 'summer', 'autumn', 'winter'];
+        const index = seasons.indexOf(season);
+        setCurrentImage(index);
+    }, [season]);
 
 
     return (
@@ -113,17 +132,21 @@ const MainPage = () => {
                 <h1>계절이 바뀔때 마다, 오늘 무슨 옷 입을지 고민되지 않으세요?</h1>
 
                 <ImageTextWrapper>
-                    <LeftImage $borderColor={borderColors[currentImage]}>
-                        <img src={images[currentImage]} alt="Main Slide" />
+                    <LeftImage>
+                        <LeftImg
+                            $borderColor={theme[season].borderColor}
+                            src={images[currentImage]}
+                            alt="Main Slide"
+                        />
                     </LeftImage>
                     <RightText>
                         <p>
                             매일 반복되는 "뭐 입지?" 고민,<br /><br />
                             <strong>날씨에</strong> 딱 맞는 옷차림을 추천해드립니다.  <br />
-                            <strong style={{ color: "#ab618c" }}>봄</strong>·
-                            <strong style={{ color: "#f28b00" }}>여름</strong>·
-                            <strong style={{ color: "#5e2309" }}>가을</strong>·
-                            <strong style={{ color: "#6c7b80" }}>겨울</strong>,
+                            <StrongWeather $borderColor={theme[season].borderColor}>봄</StrongWeather>·
+                            <StrongWeather $borderColor={theme[season].borderColor}>여름</StrongWeather>·
+                            <StrongWeather $borderColor={theme[season].borderColor}>가을</StrongWeather>·
+                            <StrongWeather $borderColor={theme[season].borderColor}>겨울</StrongWeather>,
                             그리고 오늘 날씨까지 고려한 <br />
                             맞춤형 코디를 한눈에 확인해보세요!
                         </p>
