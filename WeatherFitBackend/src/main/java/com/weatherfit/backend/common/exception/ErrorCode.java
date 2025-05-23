@@ -19,7 +19,7 @@ public enum ErrorCode {
     INVALID_USER_GENDER("사용자 성별은 남자 또는 여자만 선택 가능합니다."),
     USER_NOT_FOUND("존재하지 않는 사용자입니다."),
     PASSWORD_MISMATCH("비밀번호가 틀렸습니다."),
-    EMAIL_NOT_MATCHED("이메일이 일치하지 않습니다."),
+    EMAIL_MISMATCHED("이메일이 일치하지 않습니다."),
     EMAIL_SAME_AS_CURRENT("기존 이메일과 동일합니다."),
     NEW_PASSWORD_MISMATCH("새 비밀번호가 일치하지 않습니다."),
     OLD_PASSWORD_REQUIRED("기존 비밀번호가 입력되지 않았습니다."),

@@ -51,7 +51,7 @@ public class KakaoAddressService {
 
                 return new double[]{latitude, longitude};
             } else {
-                log.error("🔴 주소 변환 실패: 검색 결과 없음, address={}", address);
+                log.error("🟠 주소 변환 실패: 검색 결과 없음, address={}", address);
                 throw new CustomException(ErrorCode.EXTERNAL_API_ERROR);
             }
 

@@ -86,8 +86,8 @@ public class AuthService {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
-                    log.warn("🟠 아이디 찾기 실패 (이메일 없음): email={}", email);
-                    throw new CustomException(ErrorCode.USER_NOT_FOUND);
+                    log.warn("🟠 아이디 찾기 실패 (이메일 불일치): email={}", email);
+                    throw new CustomException(ErrorCode.EMAIL_MISMATCHED);
                 });
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
@@ -113,7 +113,7 @@ public class AuthService {
 
         if (!user.getEmail().equalsIgnoreCase(requestDto.getEmail())) {
             log.warn("🟠 비밀번호 재설정 검증 실패 (이메일 불일치): username={}, email={}", requestDto.getUsername(), requestDto.getEmail());
-            throw new CustomException(ErrorCode.EMAIL_NOT_MATCHED);
+            throw new CustomException(ErrorCode.EMAIL_MISMATCHED);
         }
 
         log.info("🟢 비밀번호 재설정 검증 성공: username={}, email={}", requestDto.getUsername(), requestDto.getEmail());
@@ -133,7 +133,7 @@ public class AuthService {
                 });
 
         if (!requestDto.getNewPassword().equals(requestDto.getNewPasswordConfirm())) {
-            log.warn("🟠 비밀번호 재설정 실패 (비밀번호 불일치): username={}", requestDto.getUsername());
+            log.warn("🟠 비밀번호 재설정 실패 (새 비밀번호 불일치): username={}", requestDto.getUsername());
             throw new CustomException(ErrorCode.NEW_PASSWORD_MISMATCH);
         }
 
@@ -185,12 +185,12 @@ public class AuthService {
         }
 
         if (!passwordEncoder.matches(requestDto.getOldPassword(), user.getPassword())) {
-            log.warn("🟠 비밀번호 변경 실패 (현재 비밀번호 불일치): userId={}", userId);
+            log.warn("🟠 비밀번호 변경 실패 (기존 비밀번호 불일치): userId={}", userId);
             throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
         }
 
         if (!requestDto.getNewPassword().equals(requestDto.getNewPasswordConfirm())) {
-            log.warn("🟠 비밀번호 변경 실패 (비밀번호 불일치): userId={}", userId);
+            log.warn("🟠 비밀번호 변경 실패 (새 비밀번호 불일치): userId={}", userId);
             throw new CustomException(ErrorCode.NEW_PASSWORD_MISMATCH);
         }
 

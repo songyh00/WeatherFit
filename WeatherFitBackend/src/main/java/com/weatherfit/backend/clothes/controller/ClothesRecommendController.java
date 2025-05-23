@@ -4,6 +4,7 @@ import com.weatherfit.backend.auth.JwtUtil;
 import com.weatherfit.backend.clothes.dto.ClothesRecommendRequestDto;
 import com.weatherfit.backend.clothes.dto.ClothesRecommendResponseDto;
 import com.weatherfit.backend.clothes.service.ClothesService;
+import com.weatherfit.backend.user.service.UserService;
 import com.weatherfit.backend.user.entity.User;
 import com.weatherfit.backend.user.repository.UserRepository;
 import com.weatherfit.backend.weather.service.KakaoAddressService;
@@ -21,6 +22,7 @@ public class ClothesRecommendController {
     private final KakaoAddressService kakaoAddressService;
     private final WeatherService weatherService;
     private final ClothesService clothesService;
+    private final UserService userService;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
@@ -41,9 +43,7 @@ public class ClothesRecommendController {
         // 3. JWT에서 userId 추출 후, DB에서 최신 사용자 정보 조회
         String token = jwtUtil.cleanTokenFromHeader(request.getHeader("Authorization"));
         Long userId = jwtUtil.extractUserId(token);
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다.")); // 예외는 필요 시 CustomException으로 변경
-
+        User user = userService.getUserFromRequest(request);
         String gender = user.getGender().name();
 
         // 4. 코디 추천

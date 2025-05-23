@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Slf4j
@@ -155,10 +156,14 @@ public class WeatherService {
             hourlyTemperatures.add(entry.getValue());
         }
 
+
         OptionalInt maxTemp = hourlyTemperatures.stream().mapToInt(HourlyTemperatureDto::getTemperature).max();
         OptionalInt minTemp = hourlyTemperatures.stream().mapToInt(HourlyTemperatureDto::getTemperature).min();
 
-        log.info("🟢 시간별 데이터 파싱 완료: 총 {}개", hourlyTemperatures.size());
+        log.info("🟢 시간별 데이터 파싱 완료: {} ~ {} / 총 {}개",
+                now.format(DateTimeFormatter.ofPattern("yyyyMMdd HH:mm")),
+                end.format(DateTimeFormatter.ofPattern("yyyyMMdd HH:mm")),
+                hourlyTemperatures.size());
 
         return WeatherResponseDto.builder()
                 .hourlyTemperatures(hourlyTemperatures)
