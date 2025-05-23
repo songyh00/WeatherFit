@@ -29,10 +29,38 @@ const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const [id, setId] = useState("");
+    const [email, setEmail] = useState("");
+    const [gender, setGender] = useState("");
+
     // 🔹 로고 클릭 시 메뉴 초기화
     const onClickLogo = () => {
         setActiveMenu("");
     };
+
+    useEffect(() => {
+        fetch("/api/user/profile", {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            }
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("사용자 정보 조회 실패");
+                return res.json();
+            })
+            .then(data => {
+                setId(data.username);
+                setEmail(data.email);
+                if (data.gender === "남자") setGender("남자");
+                else if (data.gender === "여자") setGender("여자");
+                else setGender("기타");
+            })
+            .catch(err => {
+                alert("사용자 정보를 불러올 수 없습니다.");
+                console.error(err);
+            });
+    }, []);
 
     // 🔹 현재 URL 기준 자동 메뉴 활성화
     useEffect(() => {
@@ -90,53 +118,99 @@ const Header = () => {
                                         <ProfileImage>
                                             <DefaultProfile width={18} height={18} />
                                         </ProfileImage>&nbsp;
-                                        <span style={{ fontSize: "11px" }}>
+                                        <span style={{ fontSize: "11px"}}>
                                             {username}님
                                         </span>
-                                        <ProfileDropdown>
-                                            <SvgWrapper style={{ margin: '20px auto 0 auto' }}>
-                                                <ProfileImage>
-                                                    <DefaultProfile />
-                                                </ProfileImage>
-                                            </SvgWrapper>
-
-                                            <div style={{ fontSize: "18px" }}>
-                                                {username}
-                                            </div>
-
-                                            <Link
-                                                to="/MyPage"
-                                                style={{
-                                                    textDecoration: 'none',
-                                                    color: '#000',
-                                                    fontSize: '12px'
-                                                }}
-                                            >
-                                                마이페이지
-                                            </Link>
-
-                                            <div
-                                                onClick={handleLogout}
-                                                style={{
-                                                    cursor: 'pointer',
-                                                    fontSize: "11px",
-                                                    textDecoration: 'none',
-                                                    color: 'inherit',
-                                                    marginLeft: '12px',
-                                                    marginRight: '12px',
-                                                    textAlign: 'right'
-                                                }}
-                                            >
-                                                로그아웃
-                                            </div>
-                                        </ProfileDropdown>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'center', lineHeight: 1.2 }}>
+                                            <ProfileDropdown>
+                                                <SvgWrapper style={{ margin: '20px auto 0 auto' }}>
+                                                    <ProfileImage>
+                                                        <DefaultProfile />
+                                                    </ProfileImage>
+                                                </SvgWrapper>
+                                                <div
+                                                    style={{
+                                                        fontSize: "18px"
+                                                    }}
+                                                >
+                                                    {username}
+                                                </div>
+                                                <Link
+                                                    to="/MyPage"
+                                                    style={{
+                                                        textDecoration: 'none',
+                                                        color: '#000',
+                                                        fontSize: '12px'
+                                                    }}
+                                                >
+                                                    {email}
+                                                </Link><br /><br />
+                                                <Link
+                                                    to="/MyPage"
+                                                    style={{
+                                                        textDecoration: 'none',
+                                                        color: '#000',
+                                                        fontSize: '12px',
+                                                        lineHeight: '1.5'
+                                                    }}
+                                                >
+                                                    마이페이지
+                                                </Link><br />
+                                                <Link
+                                                    to="/MyPagePassword"
+                                                    style={{
+                                                        textDecoration: 'none',
+                                                        color: '#000',
+                                                        fontSize: '12px',
+                                                        lineHeight: '1.5'
+                                                    }}
+                                                >
+                                                    비밀번호 변경
+                                                </Link><br />
+                                                <Link
+                                                    to="/MyPageInfo"
+                                                    style={{
+                                                        textDecoration: 'none',
+                                                        color: '#000',
+                                                        fontSize: '12px',
+                                                        lineHeight: '1.5'
+                                                    }}
+                                                >
+                                                    내 정보 수정
+                                                </Link><br />
+                                                <div
+                                                    style={{
+                                                        textDecoration: 'none',
+                                                        color: '#000',
+                                                        fontSize: '12px',
+                                                        lineHeight: '1.5'
+                                                    }}
+                                                >
+                                                    성별: {gender}
+                                                </div><br />
+                                                <div
+                                                    onClick={handleLogout}
+                                                    style={{
+                                                        cursor: 'pointer',
+                                                        fontSize: "11px",
+                                                        textDecoration: 'none',
+                                                        color: 'inherit',
+                                                        textAlign: 'right',
+                                                        margin: '0 12px 8px 12px'
+                                                    }}
+                                                >
+                                                    로그아웃
+                                                </div>
+                                            </ProfileDropdown>
+                                        </div>
                                     </ProfileContainer>&nbsp;&nbsp;|
                                     <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink>
+
                                 </>
                             ) : (
                                 <>
-                                    <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink>|
-                                    <UserActionsLink to="/Login">로그인</UserActionsLink>|
+                                    <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink>{"|"}
+                                    <UserActionsLink to="/Login">로그인</UserActionsLink>{"|"}
                                     <UserActionsLink to="/JoinTheMembership">회원가입</UserActionsLink>
                                 </>
                             )}

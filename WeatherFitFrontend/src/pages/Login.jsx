@@ -13,6 +13,8 @@ import { getSeason, theme } from "../components/theme.js";
 import axios from 'axios';
 
 const Login = () => {
+
+
     const [season, setSeason] = useState(getSeason());
 
     const [username, setUsername] = useState('');
@@ -21,7 +23,7 @@ const Login = () => {
     const navigate = useNavigate();
 
     const handleLogin = async (event) => {
-        event.preventDefault();  // ✅ 폼 새로고침 막기
+        event.preventDefault();
         console.log('로그인 시도!');
 
         try {

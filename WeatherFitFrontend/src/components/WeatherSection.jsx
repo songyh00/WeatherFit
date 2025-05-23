@@ -1,5 +1,6 @@
 import React from 'react';
-import {WeatherSectionWrap} from "../layout/WeatherSection.style.js";
+import { WeatherSectionWrap } from "../layout/WeatherSection.style.js";
+import WeatherDisplay from "./WeatherType.jsx";
 
 const WeatherSection = ({ weatherData, address }) => {
     const now = new Date();
@@ -13,14 +14,25 @@ const WeatherSection = ({ weatherData, address }) => {
         w.month === month && w.day === day && w.time === fcstTime
     );
 
+    const baseWidth = 150;
+    const charWidth = 17;
+    const maxWidth = 300;
+    const calculatedWidth = Math.min(maxWidth, Math.max(baseWidth, address.length * charWidth));
+
+    console.log("calculatedWidth", calculatedWidth); // 값 확인
+
     if (!currentWeather) {
-        return <WeatherSectionWrap>지역을 검색해주세요</WeatherSectionWrap>;
+        return <WeatherSectionWrap width={calculatedWidth}>지역을 검색해주세요</WeatherSectionWrap>;
     }
 
     return (
-        <WeatherSectionWrap>
+        <WeatherSectionWrap width={calculatedWidth}>
             <p>{address}</p>
-            <p>날씨: {currentWeather.weatherType}</p>
+            <p>
+                날씨:&nbsp;
+                <WeatherDisplay weatherType={currentWeather.weatherType} />
+                {currentWeather.weatherType}
+            </p>
             <p>기온: {currentWeather.temperature}°C</p>
         </WeatherSectionWrap>
     );

@@ -100,7 +100,7 @@ export const ProfileDropdown = styled.div`
     position: absolute;
     top: 30px;
     right: 0;
-    width: 250px;
+    width: 210px;
     border-radius: 15px;
     background-color: #fff;
     text-align: center;
@@ -115,7 +115,6 @@ export const ProfileContainer = styled.div`
     align-items: center;
     &:hover ${ProfileDropdown} {
         display: block;
-        
     }
 `;
 
