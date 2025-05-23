@@ -2,7 +2,8 @@ import styled from 'styled-components';
 
 export const WeatherSectionWrap = styled.div`
     position: fixed;
-    top: 172.67px;
-    right: 0;
-    width: 200px;
+    top: 180px;
+    right: 10px;
+    width: 150px;
+    text-align: center;
 `;
