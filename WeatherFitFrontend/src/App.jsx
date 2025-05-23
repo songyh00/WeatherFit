@@ -28,6 +28,7 @@ function Layout() {
         try {
             const res = await fetch(`/api/weather?address=${encodeURIComponent(inputAddress)}`);
             const data = await res.json();
+            console.log("📦 받은 날씨 데이터:", data); // 이 부분 추가!
             setAddress(inputAddress);
             setWeatherData(data);
         } catch (err) {

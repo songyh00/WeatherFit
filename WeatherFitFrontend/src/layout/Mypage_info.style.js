@@ -5,7 +5,7 @@ const season = getSeason();
 const currentTheme = theme[season];
 
 export const ContentsWrapper = styled.div`
-    padding: 70px 0 70px 0;
+    padding: 50px 0 70px 0;
     width: 40%;
     margin: 30px auto 0 auto;
     

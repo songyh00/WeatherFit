@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 import { Link } from "react-router-dom";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { getSeason, theme } from "../components/theme.js";
+
+const season = getSeason();
+const currentTheme = theme[season];
 
 export const ContentsWrapper = styled.div`
     width: 80%;
@@ -111,18 +115,30 @@ export const ImageTextWrapper = styled.div`
 export const LeftImage = styled.div`
     flex: 1;
     padding-right: 30px;
+`;
 
-    img {
-        width: 65%;
-        height: auto;
-        border-radius: 120px;
-        border: 8px solid ${({ borderColor }) => borderColor};
-        box-shadow: 0 3px 25px rgba(0, 0, 0, 0.3);
-        transition: transform 0.4s ease-in-out;
+export const StrongWeather = styled.strong`
+    color: ${(props) => {
+        const seasonMap = {
+            '봄': theme.spring.borderColor,
+            '여름': theme.summer.borderColor,
+            '가을': theme.autumn.borderColor,
+            '겨울': theme.winter.borderColor,
+        };
+        return seasonMap[props.children] || '#000'; // fallback: 검정색
+    }};
+`;
 
-        &:hover {
-            transform: rotate(0.4deg) scale(1.03);
-        }
+export const LeftImg = styled.img`
+    width: 65%;
+    height: auto;
+    border-radius: 120px;
+    border: 8px solid ${props => props.$borderColor};
+    box-shadow: 0 3px 25px rgba(0, 0, 0, 0.3);
+    transition: transform 0.4s ease-in-out;
+
+    &:hover {
+        transform: rotate(0.4deg) scale(1.03);
     }
 `;
 
