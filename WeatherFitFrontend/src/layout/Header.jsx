@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-    HeaderBackground,
     HeaderContent,
     HeaderNav,
     HeaderWrapper,
@@ -26,54 +25,18 @@ import DefaultProfile from "../components/DefaultProfile.jsx";
 const Header = () => {
     const [activeMenu, setActiveMenu] = useState("");
     const [username, setUsername] = useState(null);
+    const [email, setEmail] = useState("");
+    const [gender, setGender] = useState("");
+    const [hoverKey, setHoverKey] = useState(0); // ✅ 드롭다운 리렌더링을 위한 key
+
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [id, setId] = useState("");
-    const [email, setEmail] = useState("");
-    const [gender, setGender] = useState("");
-
-    // 🔹 로고 클릭 시 메뉴 초기화
     const onClickLogo = () => {
         setActiveMenu("");
     };
 
-    useEffect(() => {
-        fetch("/api/user/profile", {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            }
-        })
-            .then(res => {
-                if (!res.ok) throw new Error("사용자 정보 조회 실패");
-                return res.json();
-            })
-            .then(data => {
-                setId(data.username);
-                setEmail(data.email);
-                if (data.gender === "남자") setGender("남자");
-                else if (data.gender === "여자") setGender("여자");
-                else setGender("기타");
-            })
-            .catch(err => {
-                alert("사용자 정보를 불러올 수 없습니다.");
-                console.error(err);
-            });
-    }, []);
-
-    // 🔹 현재 URL 기준 자동 메뉴 활성화
-    useEffect(() => {
-        const path = location.pathname.toLowerCase();
-        if (path.includes('/best')) setActiveMenu("BEST");
-        else if (path.includes('/suggestion')) setActiveMenu("추천");
-        else if (path.includes('/outerwear')) setActiveMenu("아우터");
-        else if (path.includes('/consultation')) setActiveMenu("상의");
-        else if (path.includes('/pants')) setActiveMenu("하의");
-        else setActiveMenu("");
-    }, [location.pathname]);
-
-    // 🔹 사용자 정보 불러오기
+    // 사용자 정보 요청
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) return;
@@ -89,11 +52,27 @@ const Header = () => {
             })
             .then(data => {
                 setUsername(data.username);
+                setEmail(data.email);
+                setGender(data.gender === "남자" ? "남자" : data.gender === "여자" ? "여자" : "기타");
             })
             .catch(err => {
                 console.error("❌ 사용자 정보 불러오기 실패:", err);
             });
-    }, []);
+    }, [location.pathname]);
+
+    useEffect(() => {
+        const path = location.pathname.toLowerCase();
+        if (path.includes('/best')) setActiveMenu("BEST");
+        else if (path.includes('/suggestion')) setActiveMenu("추천");
+        else if (path.includes('/outerwear')) setActiveMenu("아우터");
+        else if (path.includes('/consultation')) setActiveMenu("상의");
+        else if (path.includes('/pants')) setActiveMenu("하의");
+        else setActiveMenu("");
+    }, [location.pathname]);
+
+    const closeDropdown = () => {
+        setHoverKey(prev => prev + 1); // 강제로 리렌더링하여 hover 해제
+    };
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -103,132 +82,137 @@ const Header = () => {
     };
 
     return (
-        <>
-            <HeaderWrapper>
-                <HeaderContent>
-                    <UserActionsContainer>
-                        <MainLogoLink to="/" onClick={onClickLogo}>
-                            <img src={logo} alt="WeatherFit Logo" />
-                        </MainLogoLink>
+        <HeaderWrapper>
+            <HeaderContent>
+                <UserActionsContainer>
+                    <MainLogoLink to="/" onClick={onClickLogo}>
+                        <img src={logo} alt="WeatherFit Logo" />
+                    </MainLogoLink>
 
-                        <UserActions>
-                            {username ? (
-                                <>
-                                    <ProfileContainer>
-                                        <ProfileImage>
-                                            <DefaultProfile width={18} height={18} />
-                                        </ProfileImage>&nbsp;
-                                        <span style={{ fontSize: "11px"}}>
-                                            {username}님
-                                        </span>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'center', lineHeight: 1.2 }}>
-                                            <ProfileDropdown>
-                                                <SvgWrapper style={{ margin: '20px auto 0 auto' }}>
-                                                    <ProfileImage>
-                                                        <DefaultProfile />
-                                                    </ProfileImage>
-                                                </SvgWrapper>
-                                                <div
-                                                    style={{
-                                                        fontSize: "18px"
-                                                    }}
-                                                >
-                                                    {username}
-                                                </div>
-                                                <Link
-                                                    to="/MyPage"
-                                                    style={{
-                                                        textDecoration: 'none',
-                                                        color: '#000',
-                                                        fontSize: '12px'
-                                                    }}
-                                                >
-                                                    {email}
-                                                </Link><br /><br />
-                                                <Link
-                                                    to="/MyPage"
-                                                    style={{
-                                                        textDecoration: 'none',
-                                                        color: '#000',
-                                                        fontSize: '12px',
-                                                        lineHeight: '1.5'
-                                                    }}
-                                                >
-                                                    마이페이지
-                                                </Link><br />
-                                                <Link
-                                                    to="/MyPagePassword"
-                                                    style={{
-                                                        textDecoration: 'none',
-                                                        color: '#000',
-                                                        fontSize: '12px',
-                                                        lineHeight: '1.5'
-                                                    }}
-                                                >
-                                                    비밀번호 변경
-                                                </Link><br />
-                                                <Link
-                                                    to="/MyPageInfo"
-                                                    style={{
-                                                        textDecoration: 'none',
-                                                        color: '#000',
-                                                        fontSize: '12px',
-                                                        lineHeight: '1.5'
-                                                    }}
-                                                >
-                                                    내 정보 수정
-                                                </Link><br />
-                                                <div
-                                                    style={{
-                                                        textDecoration: 'none',
-                                                        color: '#000',
-                                                        fontSize: '12px',
-                                                        lineHeight: '1.5'
-                                                    }}
-                                                >
-                                                    성별: {gender}
-                                                </div><br />
-                                                <div
-                                                    onClick={handleLogout}
-                                                    style={{
-                                                        cursor: 'pointer',
-                                                        fontSize: "11px",
-                                                        textDecoration: 'none',
-                                                        color: 'inherit',
-                                                        textAlign: 'right',
-                                                        margin: '0 12px 8px 12px'
-                                                    }}
-                                                >
-                                                    로그아웃
-                                                </div>
-                                            </ProfileDropdown>
-                                        </div>
-                                    </ProfileContainer>&nbsp;&nbsp;|
-                                    <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink>
+                    <UserActions>
+                        {username ? (
+                            <>
+                                <ProfileContainer key={hoverKey}> {/* ✅ 드롭다운 닫기 위해 리렌더링 */}
+                                    <ProfileImage>
+                                        <DefaultProfile width={18} height={18} />
+                                    </ProfileImage>&nbsp;
+                                    <span style={{ fontSize: "11px" }}>
+                                        {username}님
+                                    </span>
+                                    <div style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '2px',
+                                        alignItems: 'center',
+                                        lineHeight: 1.2
+                                    }}>
+                                        <ProfileDropdown>
+                                            <SvgWrapper style={{ margin: '20px auto 0 auto' }}>
+                                                <ProfileImage>
+                                                    <DefaultProfile />
+                                                </ProfileImage>
+                                            </SvgWrapper>
 
-                                </>
-                            ) : (
-                                <>
-                                    <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink>{"|"}
-                                    <UserActionsLink to="/Login">로그인</UserActionsLink>{"|"}
-                                    <UserActionsLink to="/JoinTheMembership">회원가입</UserActionsLink>
-                                </>
-                            )}
-                        </UserActions>
-                    </UserActionsContainer>
-                </HeaderContent>
+                                            <div style={{ fontSize: "18px", marginTop: '5px' }}>{username}</div>
 
-                <HeaderNav>
-                    <MainMenu>
-                        <MainMenuLink to="/Best" $active={activeMenu === "BEST"} onClick={() => setActiveMenu("BEST")}>BEST</MainMenuLink>
-                        <MainMenuLink to="/Suggestion" $active={activeMenu === "추천"} onClick={() => setActiveMenu("추천")}>추천</MainMenuLink>
-                        <MainMenuLink to="/Outerwear" $active={activeMenu === "아우터"} onClick={() => setActiveMenu("아우터")}>아우터</MainMenuLink>
-                        <MainMenuLink to="/Consultation" $active={activeMenu === "상의"} onClick={() => setActiveMenu("상의")}>상의</MainMenuLink>
-                        <MainMenuLink to="/Pants" $active={activeMenu === "하의"} onClick={() => setActiveMenu("하의")}>하의</MainMenuLink>
-                    </MainMenu>
-                </HeaderNav>
-            </HeaderWrapper>
-        </>
+                                            <div style={{
+                                                fontSize: '12px',
+                                                color: '#000',
+                                                marginTop: '4px'
+                                            }}>
+                                                {email}
+                                            </div>
+
+                                            <div style={{
+                                                fontSize: '12px',
+                                                color: '#000',
+                                                marginTop: '4px'
+                                            }}>
+                                                성별: {gender}
+                                            </div>
+
+                                            <div style={{ height: '10px' }} />
+
+                                            <Link
+                                                to="/MyPage"
+                                                onClick={closeDropdown}
+                                                style={{
+                                                    textDecoration: 'none',
+                                                    color: '#000',
+                                                    fontSize: '12px',
+                                                    lineHeight: '1.5'
+                                                }}
+                                            >
+                                                마이페이지
+                                            </Link><br />
+
+                                            <Link
+                                                to="/MyPageInfo"
+                                                onClick={closeDropdown}
+                                                style={{
+                                                    textDecoration: 'none',
+                                                    color: '#000',
+                                                    fontSize: '12px',
+                                                    lineHeight: '1.5'
+                                                }}
+                                            >
+                                                내 정보 수정
+                                            </Link><br />
+
+                                            <Link
+                                                to="/MyPagePassword"
+                                                onClick={closeDropdown}
+                                                style={{
+                                                    textDecoration: 'none',
+                                                    color: '#000',
+                                                    fontSize: '12px',
+                                                    lineHeight: '1.5'
+                                                }}
+                                            >
+                                                비밀번호 변경
+                                            </Link>
+
+                                            <div
+                                                onClick={() => {
+                                                    handleLogout();
+                                                    closeDropdown();
+                                                }}
+                                                style={{
+                                                    cursor: 'pointer',
+                                                    fontSize: "11px",
+                                                    color: 'inherit',
+                                                    textAlign: 'right',
+                                                    margin: '12px 12px 8px 12px'
+                                                }}
+                                            >
+                                                로그아웃
+                                            </div>
+                                        </ProfileDropdown>
+                                    </div>
+                                </ProfileContainer>&nbsp;&nbsp;|
+                                <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink>
+                            </>
+                        ) : (
+                            <>
+                                <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink> {"|"}
+                                <UserActionsLink to="/Login">로그인</UserActionsLink> {"|"}
+                                <UserActionsLink to="/JoinTheMembership">회원가입</UserActionsLink>
+                            </>
+                        )}
+                    </UserActions>
+                </UserActionsContainer>
+            </HeaderContent>
+
+            <HeaderNav>
+                <MainMenu>
+                    <MainMenuLink to="/Best" $active={activeMenu === "BEST"} onClick={() => setActiveMenu("BEST")}>BEST</MainMenuLink>
+                    <MainMenuLink to="/Suggestion" $active={activeMenu === "추천"} onClick={() => setActiveMenu("추천")}>추천</MainMenuLink>
+                    <MainMenuLink to="/Outerwear" $active={activeMenu === "아우터"} onClick={() => setActiveMenu("아우터")}>아우터</MainMenuLink>
+                    <MainMenuLink to="/Consultation" $active={activeMenu === "상의"} onClick={() => setActiveMenu("상의")}>상의</MainMenuLink>
+                    <MainMenuLink to="/Pants" $active={activeMenu === "하의"} onClick={() => setActiveMenu("하의")}>하의</MainMenuLink>
+                </MainMenu>
+            </HeaderNav>
+        </HeaderWrapper>
     );
 };
 

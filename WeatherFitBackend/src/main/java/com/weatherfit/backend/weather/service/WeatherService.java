@@ -15,6 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
@@ -26,14 +27,51 @@ public class WeatherService {
     @Value("${weather.api.service-key}")
     private String serviceKey;
 
+    /** 캐시 구조 정의 */
+    private record CachedWeather<T>(T data, String baseDate, String baseTime, LocalDateTime cachedAt) {
+        boolean isSameBase(String date, String time) {
+            return this.baseDate.equals(date) && this.baseTime.equals(time);
+        }
+    }
+
+    /** 캐시 맵 */
+    private final Map<String, CachedWeather<WeatherResponseDto>> forecastCache = new ConcurrentHashMap<>();
+    private final Map<String, CachedWeather<ForecastDto>> clothingCache = new ConcurrentHashMap<>();
+
     /**
      * 코디 추천용 날씨 데이터 조회 (평균 온도만 반환)
      */
     public ForecastDto getForecastForClothing(int nx, int ny, boolean tomorrow) {
         log.info("🟡 코디 추천용 날씨 예보 조회 요청: nx={}, ny={}, tomorrow={}", nx, ny, tomorrow);
+
         BaseDateTimeCalculator.DateTimeInfo dateTimeInfo = BaseDateTimeCalculator.getForecastDateTime(tomorrow);
-        WeatherApiResponseDto responseDto = fetchWeatherApi(nx, ny, dateTimeInfo);
-        return parseForecastDataForClothing(responseDto, dateTimeInfo.getTargetDate(), tomorrow);
+        String key = nx + "," + ny + "," + tomorrow;
+
+        CachedWeather<ForecastDto> cached = clothingCache.get(key);
+        if (cached != null &&
+                cached.isSameBase(dateTimeInfo.getBaseDate(), dateTimeInfo.getBaseTime()) &&
+                cached.cachedAt().isAfter(LocalDateTime.now().minusHours(6))) {
+
+            log.info("🟢 [옷추천] 기준시간 동일 + 6시간 이내 → 캐시 사용: key={}", key);
+            return cached.data();
+        } else if (cached != null && !cached.cachedAt().isAfter(LocalDateTime.now().minusHours(6))) {
+            clothingCache.remove(key);
+            log.info("🟠 [옷추천] 캐시 만료 → 삭제됨: key={}", key);
+        }
+
+        try {
+            WeatherApiResponseDto responseDto = fetchWeatherApi(nx, ny, dateTimeInfo);
+            ForecastDto parsed = parseForecastDataForClothing(responseDto, dateTimeInfo.getTargetDate(), tomorrow);
+            clothingCache.put(key, new CachedWeather<>(parsed, dateTimeInfo.getBaseDate(), dateTimeInfo.getBaseTime(), LocalDateTime.now()));
+            log.info("🟢 [옷추천] 캐시 저장 완료: key={}, baseTime={}", key, dateTimeInfo.getBaseTime());
+            return parsed;
+        } catch (Exception e) {
+            if (cached != null) {
+                log.warn("🔴 [옷추천] API 실패 → 기존 캐시 사용: key={}", key);
+                return cached.data();
+            }
+            throw new CustomException(ErrorCode.EXTERNAL_API_ERROR);
+        }
     }
 
     /**
@@ -41,9 +79,36 @@ public class WeatherService {
      */
     public WeatherResponseDto getForecastFromNowToTomorrowNight(int nx, int ny) {
         log.info("🟡 날씨 예보용 데이터 조회 요청: nx={}, ny={}", nx, ny);
+
         BaseDateTimeCalculator.DateTimeInfo dateTimeInfo = BaseDateTimeCalculator.getForecastDateTime(false);
-        WeatherApiResponseDto responseDto = fetchWeatherApi(nx, ny, dateTimeInfo);
-        return parseForecastFromNowToTomorrow(responseDto);
+        String key = nx + "," + ny;
+
+        CachedWeather<WeatherResponseDto> cached = forecastCache.get(key);
+        if (cached != null &&
+                cached.isSameBase(dateTimeInfo.getBaseDate(), dateTimeInfo.getBaseTime()) &&
+                cached.cachedAt().isAfter(LocalDateTime.now().minusHours(6))) {
+
+            log.info("🟢 [예보] 기준시간 동일 + 6시간 이내 → 캐시 사용: key={}", key);
+            return cached.data();
+        } else if (cached != null && !cached.cachedAt().isAfter(LocalDateTime.now().minusHours(6))) {
+            // 오래된 캐시는 삭제
+            forecastCache.remove(key);
+            log.info("🟠 [예보] 캐시 만료 → 삭제됨: key={}", key);
+        }
+
+        try {
+            WeatherApiResponseDto responseDto = fetchWeatherApi(nx, ny, dateTimeInfo);
+            WeatherResponseDto parsed = parseForecastFromNowToTomorrow(responseDto);
+            forecastCache.put(key, new CachedWeather<>(parsed, dateTimeInfo.getBaseDate(), dateTimeInfo.getBaseTime(), LocalDateTime.now()));
+            log.info("🟢 [예보] 캐시 저장 완료: key={}, baseTime={}", key, dateTimeInfo.getBaseTime());
+            return parsed;
+        } catch (Exception e) {
+            if (cached != null) {
+                log.warn("🔴 [예보] API 실패 → 기존 캐시 사용: key={}", key);
+                return cached.data();
+            }
+            throw new CustomException(ErrorCode.EXTERNAL_API_ERROR);
+        }
     }
 
     /**

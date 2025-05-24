@@ -29,9 +29,11 @@ public class SecurityConfig {
                                 "/api/auth/change-password",
                                 "/api/auth/check-username",
                                 "/api/auth/check-email",
+                                "/api/auth/verify-reset-password",
+                                "/api/auth/reset-password",
                                 "/api/weather/**"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/user/change-profile").authenticated() // ✅ PUT 허용
+                        .requestMatchers(HttpMethod.PUT, "/api/user/change-profile").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);

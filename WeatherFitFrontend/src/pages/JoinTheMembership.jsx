@@ -12,7 +12,7 @@ const JoinTheMembership = () => {
     const [userName, setUserName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [selectedRadio, setSelectedRadio] = useState("MALE");
+    const [selectedRadio, setSelectedRadio] = useState(null); // 🔧 초기값 null로 수정
     const [isUserNameAvailable, setIsUserNameAvailable] = useState(false);
     const [isEmailAvailable, setIsEmailAvailable] = useState(false);
 
@@ -98,6 +98,9 @@ const JoinTheMembership = () => {
             alert("비밀번호를 입력해주세요.");
             passwordRef.current?.focus();
             return;
+        } else if (!selectedRadio) {
+            alert("성별을 선택해주세요."); // 🔧 추가
+            return;
         }
 
         if (!isUserNameAvailable) {
@@ -110,13 +113,11 @@ const JoinTheMembership = () => {
         }
 
         try {
-            const gender = selectedRadio;
-
             await axios.post("/api/auth/signup", {
                 username: userName,
                 password,
                 email,
-                gender,
+                gender: selectedRadio,
             });
 
             alert("회원가입이 완료되었습니다.");

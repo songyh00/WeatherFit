@@ -24,6 +24,17 @@ const Login = () => {
 
     const handleLogin = async (event) => {
         event.preventDefault();
+
+        if (!username.trim()) {
+            alert("아이디를 입력해주세요.");
+            return;
+        }
+
+        if (!password.trim()) {
+            alert("비밀번호를 입력해주세요.");
+            return;
+        }
+
         console.log('로그인 시도!');
 
         try {
