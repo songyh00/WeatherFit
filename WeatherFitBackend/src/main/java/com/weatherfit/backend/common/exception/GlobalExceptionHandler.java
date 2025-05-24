@@ -18,10 +18,13 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * 커스텀 예외 처리
+     */
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex) {
         ErrorCode errorCode = ex.getErrorCode();
-        HttpStatus status = HttpStatus.BAD_REQUEST;
+        HttpStatus status = HttpStatus.valueOf(errorCode.getStatus());
 
         ErrorResponse response = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
@@ -34,6 +37,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(response);
     }
 
+    /**
+     * JWT 토큰 만료 예외 처리
+     */
     @ExceptionHandler(ExpiredJwtException.class)
     public ResponseEntity<ErrorResponse> handleExpiredJwtException(ExpiredJwtException ex) {
         HttpStatus status = HttpStatus.UNAUTHORIZED;
@@ -49,6 +55,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(response);
     }
 
+    /**
+     * WebClient 예외 처리 (외부 API 실패)
+     */
     @ExceptionHandler(WebClientResponseException.class)
     public ResponseEntity<ErrorResponse> handleWebClientException(WebClientResponseException ex) {
         HttpStatus status = HttpStatus.BAD_GATEWAY;
@@ -64,21 +73,24 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(response);
     }
 
+    /**
+     * 그 외 모든 예외 처리
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
-        log.error("[서버 내부 오류]", ex);
+        log.error("🔴 서버 내부 오류 발생", ex);
 
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+        HttpStatus status = errorCode.getHttpStatus();
 
         ErrorResponse response = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(status.value())
                 .error(status.name())
-                .code("INTERNAL_SERVER_ERROR")
-                .message("서버 내부 오류가 발생했습니다.")
+                .code(errorCode.name())
+                .message(errorCode.getMessage())
                 .build();
 
         return ResponseEntity.status(status).body(response);
     }
-
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -75,7 +76,7 @@ public class WeatherService {
     }
 
     /**
-     * 날씨 예보용 데이터 조회 (현재 시각부터 내일 23시까지)
+     * 날씨 예보용 데이터 조회 (현재 ~ 내일 23시까지)
      */
     public WeatherResponseDto getForecastFromNowToTomorrowNight(int nx, int ny) {
         log.info("🟡 날씨 예보용 데이터 조회 요청: nx={}, ny={}", nx, ny);
@@ -91,7 +92,6 @@ public class WeatherService {
             log.info("🟢 [예보] 기준시간 동일 + 6시간 이내 → 캐시 사용: key={}", key);
             return cached.data();
         } else if (cached != null && !cached.cachedAt().isAfter(LocalDateTime.now().minusHours(6))) {
-            // 오래된 캐시는 삭제
             forecastCache.remove(key);
             log.info("🟠 [예보] 캐시 만료 → 삭제됨: key={}", key);
         }
@@ -111,9 +111,6 @@ public class WeatherService {
         }
     }
 
-    /**
-     * 기상청 API 호출
-     */
     private WeatherApiResponseDto fetchWeatherApi(int nx, int ny, BaseDateTimeCalculator.DateTimeInfo dateTimeInfo) {
         try {
             log.info("🟡 기상청 API 호출 시작: baseDate={}, baseTime={}, nx={}, ny={}",
@@ -137,6 +134,14 @@ public class WeatherService {
                     .bodyToMono(WeatherApiResponseDto.class)
                     .block();
 
+            if (response == null ||
+                    response.getResponse() == null ||
+                    response.getResponse().getBody() == null ||
+                    response.getResponse().getBody().getItems() == null) {
+                log.error("🟠 날씨 API 응답 구조 이상: 일부 필드가 null");
+                throw new CustomException(ErrorCode.EXTERNAL_API_ERROR);
+            }
+
             log.info("🟢 기상청 API 호출 성공");
             return response;
         } catch (Exception e) {
@@ -145,11 +150,8 @@ public class WeatherService {
         }
     }
 
-    /**
-     * 옷 코디 추천용 데이터 파싱 (평균 기온만)
-     */
     private ForecastDto parseForecastDataForClothing(WeatherApiResponseDto responseDto, String targetDate, boolean tomorrow) {
-        log.info("🟡 코디 추천용 데이터 파싱 시작: targetDate={}, tomorrow={}", targetDate, tomorrow);
+        log.info("🟡 코디 추천용 기온 데이터 파싱 시작: targetDate={}, tomorrow={}", targetDate, tomorrow);
 
         List<Integer> temps = new ArrayList<>();
         List<WeatherApiResponseDto.Item> items = responseDto.getResponse().getBody().getItems().getItem();
@@ -164,23 +166,24 @@ public class WeatherService {
             temps.add(Integer.parseInt(item.getFcstValue()));
         }
 
+        if (temps.isEmpty()) {
+            log.warn("🟠 코디 추천용 기온 데이터 없음: targetDate={}, tomorrow={}", targetDate, tomorrow);
+        }
+
         double averageTemp = temps.stream()
                 .mapToInt(Integer::intValue)
                 .average()
                 .orElse(0.0);
 
-        log.info("🟢 코디 추천용 평균 기온 계산 완료: {}°C", averageTemp);
+        log.info("🟢 코디 추천용 기온 계산 완료: {}°C", averageTemp);
 
         return ForecastDto.builder()
                 .averageTemperature((int) Math.round(averageTemp))
                 .build();
     }
 
-    /**
-     * 날씨 예보용 데이터 파싱 (현재 ~ 내일 23시까지) + 시간 순 정렬
-     */
     private WeatherResponseDto parseForecastFromNowToTomorrow(WeatherApiResponseDto responseDto) {
-        log.info("🟡 일반 날씨 예보 데이터 파싱 시작 (현재~내일 23시)");
+        log.info("🟡 시간별 예보 데이터 파싱 시작 (현재~내일 23시)");
 
         Map<LocalDateTime, HourlyTemperatureDto> hourlyMap = new HashMap<>();
         LocalDateTime now = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
@@ -220,10 +223,17 @@ public class WeatherService {
             hourlyTemperatures.add(entry.getValue());
         }
 
+        if (hourlyTemperatures.isEmpty()) {
+            log.warn("🟠 시간별 예보 데이터 없음: {} ~ {}", now, end);
+        }
+
         OptionalInt maxTemp = hourlyTemperatures.stream().mapToInt(HourlyTemperatureDto::getTemperature).max();
         OptionalInt minTemp = hourlyTemperatures.stream().mapToInt(HourlyTemperatureDto::getTemperature).min();
 
-        log.info("🟢 시간별 데이터 파싱 완료: 총 {}개", hourlyTemperatures.size());
+        log.info("🟢 시간별 예보 데이터 파싱 완료: {} ~ {} / 총 {}개",
+                now.format(DateTimeFormatter.ofPattern("yyyyMMdd HH:mm")),
+                end.format(DateTimeFormatter.ofPattern("yyyyMMdd HH:mm")),
+                hourlyTemperatures.size());
 
         return WeatherResponseDto.builder()
                 .hourlyTemperatures(hourlyTemperatures)
@@ -253,21 +263,21 @@ public class WeatherService {
     }
 
     private String getSkyDescription(String skyValue) {
-        switch (skyValue) {
-            case "1": return "맑음";
-            case "3": return "구름많음";
-            case "4": return "흐림";
-            default: return "맑음";
-        }
+        return switch (skyValue) {
+            case "1" -> "맑음";
+            case "3" -> "구름많음";
+            case "4" -> "흐림";
+            default -> "맑음";
+        };
     }
 
     private String getPrecipitationDescription(String ptyValue) {
-        switch (ptyValue) {
-            case "1": return "비";
-            case "2": return "비/눈";
-            case "3": return "눈";
-            case "4": return "소나기";
-            default: return "맑음";
-        }
+        return switch (ptyValue) {
+            case "1" -> "비";
+            case "2" -> "비/눈";
+            case "3" -> "눈";
+            case "4" -> "소나기";
+            default -> "맑음";
+        };
     }
 }
