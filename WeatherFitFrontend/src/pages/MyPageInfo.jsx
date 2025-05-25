@@ -86,16 +86,16 @@ const ProfileEditor = () => {
                     <RadioLabel>
                         <input
                             type="radio"
-                            value="남자"
-                            checked={gender === '남자'}
+                            value="MALE"
+                            checked={gender === 'MALE'}
                             onChange={(e) => setGender(e.target.value)}
                         /> 남자
                     </RadioLabel>
                     <RadioLabel>
                         <input
                             type="radio"
-                            value="여자"
-                            checked={gender === '여자'}
+                            value="FEMALE"
+                            checked={gender === 'FEMALE'}
                             onChange={(e) => setGender(e.target.value)}
                         /> 여자
                     </RadioLabel>

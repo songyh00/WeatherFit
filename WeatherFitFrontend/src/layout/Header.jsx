@@ -51,9 +51,10 @@ const Header = () => {
                 return res.json();
             })
             .then(data => {
+                console.log("✅ 서버에서 받은 성별 값:", data.gender);
                 setUsername(data.username);
                 setEmail(data.email);
-                setGender(data.gender === "남자" ? "남자" : data.gender === "여자" ? "여자" : "기타");
+                setGender(data.gender === "MALE" ? "남자" : data.gender === "FEMALE" ? "여자" : "기타");
             })
             .catch(err => {
                 console.error("❌ 사용자 정보 불러오기 실패:", err);
@@ -194,9 +195,9 @@ const Header = () => {
                             </>
                         ) : (
                             <>
-                                <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink> {"|"}
                                 <UserActionsLink to="/Login">로그인</UserActionsLink> {"|"}
-                                <UserActionsLink to="/JoinTheMembership">회원가입</UserActionsLink>
+                                <UserActionsLink to="/JoinTheMembership">회원가입</UserActionsLink> {"|"}
+                                <UserActionsLink to="/CustomerServiceCenter">고객센터</UserActionsLink>
                             </>
                         )}
                     </UserActions>
