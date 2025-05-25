@@ -1,35 +1,27 @@
 package com.weatherfit.backend.common.enumtype;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.weatherfit.backend.common.exception.CustomException;
+import com.weatherfit.backend.common.exception.ErrorCode;
 
 /**
  * 사용자 및 옷 성별 구분을 위한 Enum
  */
 public enum Gender {
-    MALE("남자"),
-    FEMALE("여자"),
-    UNISEX("공용");
+    MALE, FEMALE, UNISEX;
 
-    private final String description;
-
-    Gender(String description) {
-        this.description = description;
-    }
-
-    @JsonValue
-    public String getDescription() {
-        return description;
-    }
-
-    @JsonCreator
-    public static Gender from(String input) {
-        for (Gender gender : Gender.values()) {
-            if (gender.name().equalsIgnoreCase(input) || gender.description.equals(input)) {
-                return gender;
+    /**
+     * 회원가입 등 사용자 성별 입력 시 사용.
+     * UNISEX는 허용되지 않음.
+     */
+    public static Gender from(String value) {
+        try {
+            Gender gender = Gender.valueOf(value.toUpperCase());
+            if (gender == UNISEX) {
+                throw new CustomException(ErrorCode.INVALID_USER_GENDER);
             }
+            return gender;
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new CustomException(ErrorCode.BLANK_INPUT_NOT_ALLOWED);
         }
-        throw new IllegalArgumentException("지원하지 않는 성별입니다: " + input);
     }
-
 }

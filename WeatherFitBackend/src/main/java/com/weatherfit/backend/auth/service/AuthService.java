@@ -15,9 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * 회원 관련 비즈니스 로직을 처리하는 서비스
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,9 +26,6 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    /**
-     * 회원가입 처리
-     */
     public void signup(SignupRequestDto requestDto) {
         log.info("🟡 회원가입 시도: username={}", requestDto.getUsername());
 
@@ -44,8 +38,6 @@ public class AuthService {
             throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
-        String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
-
         Gender gender = Gender.from(requestDto.getGender());
         if (gender == Gender.UNISEX) {
             log.warn("🟠 회원가입 실패 (잘못된 성별 선택): username={}", requestDto.getUsername());
@@ -54,7 +46,7 @@ public class AuthService {
 
         User newUser = new User();
         newUser.setUsername(requestDto.getUsername());
-        newUser.setPassword(encodedPassword);
+        newUser.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         newUser.setEmail(requestDto.getEmail());
         newUser.setGender(gender);
 
@@ -62,25 +54,16 @@ public class AuthService {
         log.info("🟢 회원가입 성공: username={}", requestDto.getUsername());
     }
 
-    /**
-     * 아이디 중복확인
-     */
     public boolean isUsernameTaken(String username) {
         log.info("🟡 아이디 중복확인 요청: username={}", username);
         return userRepository.findByUsername(username).isPresent();
     }
 
-    /**
-     * 이메일 중복확인
-     */
     public boolean isEmailTaken(String email) {
         log.info("🟡 이메일 중복확인 요청: email={}", email);
         return userRepository.findByEmail(email).isPresent();
     }
 
-    /**
-     * 아이디 찾기
-     */
     public String findUsername(String email, String password) {
         log.info("🟡 아이디 찾기 요청: email={}", email);
 
@@ -99,9 +82,6 @@ public class AuthService {
         return user.getUsername();
     }
 
-    /**
-     * 비밀번호 재설정 검증(로그인 전)
-     */
     public void verifyUser(PasswordResetVerificationRequestDto requestDto) {
         log.info("🟡 비밀번호 재설정 검증 요청: username={}, email={}", requestDto.getUsername(), requestDto.getEmail());
 
@@ -113,15 +93,12 @@ public class AuthService {
 
         if (!user.getEmail().equalsIgnoreCase(requestDto.getEmail())) {
             log.warn("🟠 비밀번호 재설정 검증 실패 (이메일 불일치): username={}, email={}", requestDto.getUsername(), requestDto.getEmail());
-            throw new CustomException(ErrorCode.EMAIL_NOT_MATCHED);
+            throw new CustomException(ErrorCode.EMAIL_MISMATCHED);
         }
 
         log.info("🟢 비밀번호 재설정 검증 성공: username={}, email={}", requestDto.getUsername(), requestDto.getEmail());
     }
 
-    /**
-     * 비밀번호 재설정(로그인 전)
-     */
     @Transactional
     public void resetPassword(PasswordResetRequestDto requestDto) {
         log.info("🟡 비밀번호 재설정 요청(로그인 전): username={}", requestDto.getUsername());
@@ -137,14 +114,10 @@ public class AuthService {
             throw new CustomException(ErrorCode.NEW_PASSWORD_MISMATCH);
         }
 
-        String encodedPassword = passwordEncoder.encode(requestDto.getNewPassword());
-        user.setPassword(encodedPassword);
+        user.setPassword(passwordEncoder.encode(requestDto.getNewPassword()));
         log.info("🟢 비밀번호 재설정 성공(로그인 전): username={}", requestDto.getUsername());
     }
 
-    /**
-     * 로그인 처리
-     */
     public LoginResponseDto login(LoginRequestDto requestDto) {
         log.info("🟡 로그인 시도: username={}", requestDto.getUsername());
 
@@ -160,14 +133,11 @@ public class AuthService {
         }
 
         String token = jwtUtil.generateToken(user.getId());
-
         log.info("🟢 로그인 성공: username={}", user.getUsername());
+
         return new LoginResponseDto(token);
     }
 
-    /**
-     * 비밀번호 변경(로그인 후)
-     */
     @Transactional
     public void changeMyPassword(String token, PasswordChangeRequestDto requestDto) {
         log.info("🟡 비밀번호 변경 요청(로그인 후)");
@@ -179,6 +149,7 @@ public class AuthService {
                     log.warn("🟠 비밀번호 변경 실패 (아이디 없음): userId={}", userId);
                     throw new CustomException(ErrorCode.USER_NOT_FOUND);
                 });
+
         if (requestDto.getOldPassword() == null) {
             log.warn("🟠 비밀번호 변경 실패 (기존 비밀번호 null): userId={}", userId);
             throw new CustomException(ErrorCode.OLD_PASSWORD_REQUIRED);
@@ -194,14 +165,10 @@ public class AuthService {
             throw new CustomException(ErrorCode.NEW_PASSWORD_MISMATCH);
         }
 
-        String encodedNewPassword = passwordEncoder.encode(requestDto.getNewPassword());
-        user.setPassword(encodedNewPassword);
+        user.setPassword(passwordEncoder.encode(requestDto.getNewPassword()));
         log.info("🟢 비밀번호 변경 성공(로그인 후): userId={}", userId);
     }
 
-    /**
-     * 회원 탈퇴 처리
-     */
     @Transactional
     public void withdraw(String token) {
         Long userId = jwtUtil.extractUserId(token);

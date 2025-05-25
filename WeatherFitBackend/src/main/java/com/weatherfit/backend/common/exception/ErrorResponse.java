@@ -17,5 +17,4 @@ public class ErrorResponse {
     private String error;            // HTTP 상태명 (BAD_REQUEST 등)
     private String code;             // 커스텀 에러 코드 (ErrorCode Enum 이름)
     private String message;          // 에러 상세 메시지
-
 }

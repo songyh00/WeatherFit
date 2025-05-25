@@ -5,7 +5,7 @@ const LocationSearch = ({ onSearchComplete }) => {
     const [inputAddress, setInputAddress] = useState("");
     const [searchedAddress, setSearchedAddress] = useState("");
     const [isFocused, setIsFocused] = useState(false);
-    const inputRef = useRef(null); // 🔸 input DOM 접근용
+    const inputRef = useRef(null);
 
     const handleSearch = () => {
         const trimmed = inputAddress.trim();
@@ -16,37 +16,33 @@ const LocationSearch = ({ onSearchComplete }) => {
         setSearchedAddress(trimmed);
         onSearchComplete(trimmed);
         setInputAddress("");
-        inputRef.current.blur(); // 🔸 엔터 또는 버튼 클릭 후 포커스 해제
+        inputRef.current.blur();
     };
 
-    const handleBlur = () => {
-        setIsFocused(false);
-    };
-
-    const handleFocus = () => {
-        setIsFocused(true);
+    const handleSubmit = (e) => {
+        e.preventDefault(); // 🔸 폼 제출 기본 동작 방지
+        handleSearch();
     };
 
     return (
-        <SearchContainer>
-            <SearchInput
-                ref={inputRef} // 🔸 ref 연결
-                placeholder={
-                    isFocused
-                        ? "지역을 입력하세요 (예: 서울시 강남구)"
-                        : searchedAddress || "지역을 입력하세요 (예: 서울시 강남구)"
-                }
-                value={inputAddress}
-                onChange={(e) => setInputAddress(e.target.value)}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter") handleSearch();
-                }}
-            />
-            &nbsp;&nbsp;
-            <SearchButton onClick={handleSearch}>검색</SearchButton>
-        </SearchContainer>
+        <form onSubmit={handleSubmit}>
+            <SearchContainer>
+                <SearchInput
+                    ref={inputRef}
+                    placeholder={
+                        isFocused
+                            ? "지역을 입력하세요 (예: 서울시 강남구)"
+                            : searchedAddress || "지역을 입력하세요 (예: 서울시 강남구)"
+                    }
+                    value={inputAddress}
+                    onChange={(e) => setInputAddress(e.target.value)}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                />
+                &nbsp;&nbsp;
+                <SearchButton type="submit">검색</SearchButton>
+            </SearchContainer>
+        </form>
     );
 };
 

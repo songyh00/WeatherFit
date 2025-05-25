@@ -38,11 +38,9 @@ public class ClothesService {
      * 성별에 따라 조회할 성별 리스트 반환
      */
     private List<String> getGenderList(Gender genderEnum) {
-        if (genderEnum == Gender.FEMALE) {
-            return Arrays.asList("FEMALE", "UNISEX");
-        } else {
-            return Arrays.asList("MALE", "UNISEX");
-        }
+        return genderEnum == Gender.FEMALE
+                ? Arrays.asList("FEMALE", "UNISEX")
+                : Arrays.asList("MALE", "UNISEX");
     }
 
     /**
@@ -69,9 +67,7 @@ public class ClothesService {
         for (List<Clothes> group : grouped.values()) {
             Collections.shuffle(group);
             for (Clothes clothes : group) {
-                if (result.size() >= limit) {
-                    return result;
-                }
+                if (result.size() >= limit) return result;
                 result.add(clothes);
             }
         }
@@ -95,7 +91,10 @@ public class ClothesService {
                                                         String gender,
                                                         String bannerType,
                                                         boolean tomorrow) {
+        log.info("🟡 옷 추천 요청: gender={}, bannerType={}, tomorrow={}, avgTemp={}", gender, bannerType, tomorrow, averageTemperature);
+
         if (bannerType == null) {
+            log.warn("🟠 배너 타입이 null입니다");
             throw new CustomException(ErrorCode.INVALID_BANNER_TYPE);
         }
 
@@ -110,6 +109,7 @@ public class ClothesService {
      * 내일 코디 추천
      */
     private ClothesRecommendResponseDto recommendTomorrowClothes(double averageTemperature, Gender genderEnum, String bannerType) {
+        log.info("🟡 내일 코디 추천 실행: gender={}, bannerType={}", genderEnum, bannerType);
         return recommendByBanner(averageTemperature, genderEnum, bannerType);
     }
 
@@ -117,6 +117,7 @@ public class ClothesService {
      * 오늘 코디 추천
      */
     private ClothesRecommendResponseDto recommendTodayClothes(double averageTemperature, Gender genderEnum, String bannerType) {
+        log.info("🟡 오늘 코디 추천 실행: gender={}, bannerType={}", genderEnum, bannerType);
         return recommendByBanner(averageTemperature, genderEnum, bannerType);
     }
 
@@ -124,28 +125,35 @@ public class ClothesService {
      * 배너 타입에 따라 추천
      */
     private ClothesRecommendResponseDto recommendByBanner(double averageTemperature, Gender genderEnum, String bannerType) {
-        return switch (bannerType.toUpperCase()) {
-            case "BEST" -> recommendBest(averageTemperature, genderEnum);
-            case "RECOMMEND" -> recommendRandom(averageTemperature, genderEnum);
-            case "OUTER" -> recommendOuter(averageTemperature, genderEnum);
-            case "TOP" -> recommendTop(averageTemperature, genderEnum);
-            case "BOTTOM" -> recommendBottom(averageTemperature, genderEnum);
-            default -> throw new CustomException(ErrorCode.INVALID_BANNER_TYPE);
-        };
+        try {
+            return switch (bannerType.toUpperCase()) {
+                case "BEST" -> recommendBest(averageTemperature, genderEnum);
+                case "RECOMMEND" -> recommendRandom(averageTemperature, genderEnum);
+                case "OUTER" -> recommendOuter(averageTemperature, genderEnum);
+                case "TOP" -> recommendTop(averageTemperature, genderEnum);
+                case "BOTTOM" -> recommendBottom(averageTemperature, genderEnum);
+                default -> {
+                    log.warn("🟠 잘못된 배너 타입 요청: {}", bannerType);
+                    throw new CustomException(ErrorCode.INVALID_BANNER_TYPE);
+                }
+            };
+        } catch (Exception e) {
+            log.error("🔴 배너 추천 처리 중 오류 발생: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 
     /**
      * BEST 배너 추천 (좋아요 순)
      */
     private ClothesRecommendResponseDto recommendBest(double averageTemperature, Gender genderEnum) {
+        log.info("🟡 BEST 배너 추천 시작");
         List<Clothes> recommended = new ArrayList<>();
         boolean hot = isHot(averageTemperature);
         List<String> genderList = getGenderList(genderEnum);
 
         List<String> topCategories = new ArrayList<>(Collections.singletonList("상의"));
-        if (genderEnum == Gender.FEMALE) {
-            topCategories.add("원피스");
-        }
+        if (genderEnum == Gender.FEMALE) topCategories.add("원피스");
 
         if (!hot) {
             List<Clothes> outerList = clothesRepository.findByCategoryAndGenderInOrderByLikeCountDesc("아우터", genderList);
@@ -158,17 +166,16 @@ public class ClothesService {
         List<Clothes> pickedTop = pickTopClothes(topList, 3);
         recommended.addAll(pickedTop);
 
-        long dressCount = pickedTop.stream()
-                .filter(c -> "원피스".equals(c.getCategory()))
-                .count();
-
+        long dressCount = pickedTop.stream().filter(c -> "원피스".equals(c.getCategory())).count();
         int bottomCount = 3 - (int) dressCount;
+
         if (bottomCount > 0) {
             List<Clothes> bottomList = clothesRepository.findByCategoryAndGenderInOrderByLikeCountDesc("하의", genderList);
             bottomList = filterByTemperature(bottomList, averageTemperature);
             recommended.addAll(pickTopClothes(bottomList, bottomCount));
         }
 
+        log.info("🟢 BEST 추천 완료: 총 {}개", recommended.size());
         return buildResponse(recommended);
     }
 
@@ -176,14 +183,13 @@ public class ClothesService {
      * 추천 배너 (랜덤 추천)
      */
     private ClothesRecommendResponseDto recommendRandom(double averageTemperature, Gender genderEnum) {
+        log.info("🟡 RECOMMEND 배너 추천 시작");
         List<Clothes> recommended = new ArrayList<>();
         boolean hot = isHot(averageTemperature);
         List<String> genderList = getGenderList(genderEnum);
 
         List<String> topCategories = new ArrayList<>(Collections.singletonList("상의"));
-        if (genderEnum == Gender.FEMALE) {
-            topCategories.add("원피스");
-        }
+        if (genderEnum == Gender.FEMALE) topCategories.add("원피스");
 
         if (!hot) {
             List<Clothes> outerList = clothesRepository.findByCategoryAndGenderIn("아우터", genderList);
@@ -196,17 +202,16 @@ public class ClothesService {
         List<Clothes> pickedTop = pickRandomClothes(topList, 3);
         recommended.addAll(pickedTop);
 
-        long dressCount = pickedTop.stream()
-                .filter(c -> "원피스".equals(c.getCategory()))
-                .count();
-
+        long dressCount = pickedTop.stream().filter(c -> "원피스".equals(c.getCategory())).count();
         int bottomCount = 3 - (int) dressCount;
+
         if (bottomCount > 0) {
             List<Clothes> bottomList = clothesRepository.findByCategoryAndGenderIn("하의", genderList);
             bottomList = filterByTemperature(bottomList, averageTemperature);
             recommended.addAll(pickRandomClothes(bottomList, bottomCount));
         }
 
+        log.info("🟢 RECOMMEND 추천 완료: 총 {}개", recommended.size());
         return buildResponse(recommended);
     }
 
@@ -214,16 +219,18 @@ public class ClothesService {
      * 아우터 배너 추천
      */
     private ClothesRecommendResponseDto recommendOuter(double averageTemperature, Gender genderEnum) {
+        log.info("🟡 OUTER 배너 추천 시작");
         boolean hot = isHot(averageTemperature);
         List<String> genderList = getGenderList(genderEnum);
-
         List<Clothes> recommended = new ArrayList<>();
+
         if (!hot) {
             List<Clothes> outerList = clothesRepository.findByCategoryAndGenderIn("아우터", genderList);
             outerList = filterByTemperature(outerList, averageTemperature);
             recommended = pickRandomClothes(outerList, 3);
         }
 
+        log.info("🟢 OUTER 추천 완료: 총 {}개", recommended.size());
         return buildResponse(recommended);
     }
 
@@ -231,16 +238,17 @@ public class ClothesService {
      * 상의 배너 추천
      */
     private ClothesRecommendResponseDto recommendTop(double averageTemperature, Gender genderEnum) {
+        log.info("🟡 TOP 배너 추천 시작");
         List<String> categories = new ArrayList<>(Collections.singletonList("상의"));
-        if (genderEnum == Gender.FEMALE) {
-            categories.add("원피스");
-        }
+        if (genderEnum == Gender.FEMALE) categories.add("원피스");
+
         List<String> genderList = getGenderList(genderEnum);
 
         List<Clothes> topList = clothesRepository.findByCategoryInAndGenderIn(categories, genderList);
         topList = filterByTemperature(topList, averageTemperature);
         List<Clothes> recommended = pickRandomClothes(topList, 3);
 
+        log.info("🟢 TOP 추천 완료: 총 {}개", recommended.size());
         return buildResponse(recommended);
     }
 
@@ -248,11 +256,14 @@ public class ClothesService {
      * 하의 배너 추천
      */
     private ClothesRecommendResponseDto recommendBottom(double averageTemperature, Gender genderEnum) {
+        log.info("🟡 BOTTOM 배너 추천 시작");
         List<String> genderList = getGenderList(genderEnum);
+
         List<Clothes> bottomList = clothesRepository.findByCategoryAndGenderIn("하의", genderList);
         bottomList = filterByTemperature(bottomList, averageTemperature);
         List<Clothes> recommended = pickRandomClothes(bottomList, 3);
 
+        log.info("🟢 BOTTOM 추천 완료: 총 {}개", recommended.size());
         return buildResponse(recommended);
     }
 
@@ -271,11 +282,9 @@ public class ClothesService {
                             .likeCount(clothes.getLikeCount())
                             .build()
             );
-
         }
         return ClothesRecommendResponseDto.builder()
                 .recommendedClothes(recommended)
                 .build();
     }
-
 }

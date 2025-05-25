@@ -5,11 +5,13 @@ import {
     Container,
     Title,
     Input,
-    Button
+    Button,
+    RadioGroup,
+    RadioLabel
 } from "../layout/Mypage_info.style.js";
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {getSeason, theme} from "../components/theme.js";
+import { getSeason, theme } from "../components/theme.js";
 
 const ProfileEditor = () => {
     const [email, setEmail] = useState('');
@@ -18,7 +20,6 @@ const ProfileEditor = () => {
     const navigate = useNavigate();
     const [season, setSeason] = useState(getSeason());
 
-    // 🔹 기존 사용자 정보 가져오기
     useEffect(() => {
         fetch('/api/user/profile', {
             headers: {
@@ -26,28 +27,22 @@ const ProfileEditor = () => {
             }
         })
             .then(res => {
-                if (!res.ok) {
-                    throw new Error("사용자 정보 조회 실패");
-                }
+                if (!res.ok) throw new Error("사용자 정보 조회 실패");
                 return res.json();
             })
             .then(data => {
                 setEmail(data.email);
-                setGender(data.gender); // "남자" 또는 "여자"
+                setGender(data.gender);
             })
             .catch(err => {
                 console.error("사용자 정보 불러오기 실패", err);
             });
     }, []);
 
-    // 🔹 저장 처리
     const handleSubmit = () => {
         setError("");
 
-        const dto = {
-            email: email,
-            gender: gender // 그대로 "남자"/"여자" 전송
-        };
+        const dto = { email, gender };
 
         fetch('/api/user/change-profile', {
             method: "PUT",
@@ -58,25 +53,19 @@ const ProfileEditor = () => {
             body: JSON.stringify(dto)
         })
             .then(res => {
-                if (res.status === 409) {
-                    throw new Error("이미 사용 중인 이메일입니다.");
-                }
-                if (!res.ok) {
-                    throw new Error("프로필 수정에 실패했습니다.");
-                }
-
+                if (res.status === 409) throw new Error("이미 사용 중인 이메일입니다.");
+                if (!res.ok) throw new Error("프로필 수정에 실패했습니다.");
                 alert("프로필이 수정되었습니다.");
-                navigate("/MyPage");
+                navigate("/");
             })
             .catch(err => {
                 setError(err.message);
                 console.error("수정 오류:", err);
             });
     };
+
     useEffect(() => {
-        const interval = setInterval(() => {
-            setSeason(getSeason());
-        }, 1000 * 60 * 60 * 24);
+        const interval = setInterval(() => setSeason(getSeason()), 1000 * 60 * 60 * 24);
         return () => clearInterval(interval);
     }, []);
 
@@ -84,7 +73,6 @@ const ProfileEditor = () => {
         <ContentsWrapper>
             <Card>
                 <Title>내 정보 수정</Title>
-
                 <Input
                     type="email"
                     value={email}
@@ -94,30 +82,25 @@ const ProfileEditor = () => {
                     $focusColor={theme[season].focusColor}
                     placeholder="이메일을 입력해주세요"
                 />
-
-                <div style={{ margin: '10px 0' }}>
-                    <label style={{ marginRight: '10px' }}>
+                <RadioGroup>
+                    <RadioLabel>
                         <input
                             type="radio"
-                            value="남자"
-                            checked={gender === '남자'}
+                            value="MALE"
+                            checked={gender === 'MALE'}
                             onChange={(e) => setGender(e.target.value)}
-                        />
-                        남성
-                    </label>
-                    <label>
+                        /> 남자
+                    </RadioLabel>
+                    <RadioLabel>
                         <input
                             type="radio"
-                            value="여자"
-                            checked={gender === '여자'}
+                            value="FEMALE"
+                            checked={gender === 'FEMALE'}
                             onChange={(e) => setGender(e.target.value)}
-                        />
-                        여성
-                    </label>
-                </div>
-
+                        /> 여자
+                    </RadioLabel>
+                </RadioGroup>
                 {error && <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>}
-
                 <Button
                     onClick={handleSubmit}
                     $borderColor={theme[season].borderColor}

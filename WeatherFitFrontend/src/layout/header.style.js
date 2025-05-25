@@ -102,12 +102,19 @@ export const ProfileDropdown = styled.div`
     right: 0;
     width: 210px;
     border-radius: 15px;
-    background-color: #fff;
+
+    /* ✅ 반투명 + 흐림 효과 */
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+
     text-align: center;
     box-shadow:
             0 2px 4px rgba(0, 0, 0, 0.08),
             0 8px 16px rgba(0, 0, 0, 0.12);
+
     display: none;
+    pointer-events: auto;
+    z-index: 999;
 `;
 
 export const ProfileContainer = styled.div`

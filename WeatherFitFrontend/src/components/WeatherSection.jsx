@@ -1,8 +1,19 @@
 import React from 'react';
-import { WeatherSectionWrap } from "../layout/WeatherSection.style.js";
+import {
+    WeatherCardWrap,
+    RegionText,
+    WeatherText,
+    IconAndTempRow,
+    IconBox,
+    TemperatureBig,
+    TimeLabel
+} from "../layout/WeatherSection.style.js";
 import WeatherDisplay from "./WeatherType.jsx";
 
 const WeatherSection = ({ weatherData, address }) => {
+    const defaultAddress = "서울시 종로구";
+    const targetAddress = address?.trim() ? address : defaultAddress;
+
     const now = new Date();
     const hour = now.getHours();
     const fcstTime = String(hour).padStart(2, '0') + '00';
@@ -14,27 +25,24 @@ const WeatherSection = ({ weatherData, address }) => {
         w.month === month && w.day === day && w.time === fcstTime
     );
 
-    const baseWidth = 150;
-    const charWidth = 17;
-    const maxWidth = 300;
-    const calculatedWidth = Math.min(maxWidth, Math.max(baseWidth, address.length * charWidth));
-
-    console.log("calculatedWidth", calculatedWidth); // 값 확인
-
     if (!currentWeather) {
-        return <WeatherSectionWrap width={calculatedWidth}>지역을 검색해주세요</WeatherSectionWrap>;
+        return <WeatherCardWrap>날씨 정보를 불러올 수 없습니다.</WeatherCardWrap>;
     }
 
+    const displayTime = `${month}월 ${day}일 ${hour < 12 ? '오전' : '오후'} ${hour % 12 === 0 ? 12 : hour % 12}시`;
+
     return (
-        <WeatherSectionWrap width={calculatedWidth}>
-            <p>{address}</p>
-            <p>
-                날씨:&nbsp;
-                <WeatherDisplay weatherType={currentWeather.weatherType} />
-                {currentWeather.weatherType}
-            </p>
-            <p>기온: {currentWeather.temperature}°C</p>
-        </WeatherSectionWrap>
+        <WeatherCardWrap>
+            <RegionText>{targetAddress}</RegionText>
+            <WeatherText>{currentWeather.weatherType}</WeatherText>
+            <IconAndTempRow>
+                <IconBox>
+                    <WeatherDisplay weatherType={currentWeather.weatherType} />
+                </IconBox>
+                <TemperatureBig>{currentWeather.temperature}°</TemperatureBig>
+            </IconAndTempRow>
+            <TimeLabel>{displayTime}</TimeLabel>
+        </WeatherCardWrap>
     );
 };
 

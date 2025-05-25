@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Header from "./layout/Header";
 import MainPage from "./pages/MainPage.jsx";
@@ -19,6 +19,7 @@ import ForgotIdOrPassword from "./pages/ForgotIdOrPassword.jsx";
 import LocationSearch from "./components/LocationSearch.jsx";
 import { HeaderSpacer } from "./layout/mainPage.style.js";
 import WeatherSection from "./components/WeatherSection.jsx";
+import FindPw from "./pages/FindPw.jsx";
 
 function Layout() {
     const [address, setAddress] = useState("");
@@ -27,33 +28,47 @@ function Layout() {
     const fetchWeatherData = async (inputAddress) => {
         try {
             const res = await fetch(`/api/weather?address=${encodeURIComponent(inputAddress)}`);
+            if (!res.ok) throw new Error("날씨 요청 실패");
             const data = await res.json();
-            console.log("📦 받은 날씨 데이터:", data); // 이 부분 추가!
+            console.log("📦 받은 날씨 데이터:", data);
             setAddress(inputAddress);
             setWeatherData(data);
         } catch (err) {
-            console.error("날씨 조회 실패:", err);
+            console.error("❌ 날씨 조회 실패:", err);
+            setAddress(inputAddress);
+            setWeatherData(null);
         }
     };
 
+    // ✅ 앱 처음 진입 시 기본 지역 "서울시 종로구"로 날씨 요청
+    useEffect(() => {
+        fetchWeatherData("서울시 종로구");
+    }, []);
+
     const location = useLocation();
-    const hideHeaderFooter = location.pathname === "/Login" || location.pathname === "/JoinTheMembership" || location.pathname === "/ForgotIdOrPassword";
+
+    const hideHeaderFooter = (
+        location.pathname === "/Login" ||
+        location.pathname === "/JoinTheMembership" ||
+        location.pathname === "/ForgotIdOrPassword"
+    );
 
     return (
         <>
             {!hideHeaderFooter && <Header />}
-
             <HeaderSpacer />
 
-            {/* 지역검색창 */}
+            {/* 지역 검색창 */}
             {
-                (!hideHeaderFooter && !["/CustomerServiceCenter", "/MyPage", "/MyPageInfo", "/MyPagePassword"].includes(location.pathname)) &&
+                (!hideHeaderFooter &&
+                    !["/CustomerServiceCenter", "/MyPage", "/MyPageInfo", "/MyPagePassword"].includes(location.pathname)) &&
                 <LocationSearch onSearchComplete={fetchWeatherData} />
             }
 
-            {/* 날씨 띄우는 공간 */}
+            {/* 날씨 정보 표시 */}
             {
-                (!hideHeaderFooter && !["/CustomerServiceCenter", "/MyPageInfo", "/MyPagePassword"].includes(location.pathname)) &&
+                (!hideHeaderFooter &&
+                    !["/CustomerServiceCenter", "/MyPageInfo", "/MyPagePassword"].includes(location.pathname)) &&
                 <WeatherSection weatherData={weatherData} address={address} />
             }
 

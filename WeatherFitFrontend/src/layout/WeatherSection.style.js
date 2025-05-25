@@ -1,28 +1,56 @@
-// WeatherSection.style.js
 import styled from 'styled-components';
-import { getSeason, theme } from "../components/theme.js";
 
-const season = getSeason();
-const currentTheme = theme[season];
-
-export const WeatherSectionWrap = styled.div`
+export const WeatherCardWrap = styled.div`
     position: fixed;
-    top: 180px;
-    right: 10px;
-    width: ${(props) => (props.width ? `${props.width}px` : '150px')};
-    padding: 20px;
-    border: 1.5px solid ${currentTheme.borderColor};
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
+    top: 270px;
+    right: 20px;
+    width: 160px;
+    height: 167px;
+    background: linear-gradient(to bottom, #dfefff, #ffffff);
+    border-radius: 20px;
+    padding: 20px 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     text-align: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
-    user-select: none;
-    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Segoe UI', sans-serif;
+    z-index: 999;
+`;
 
-    p {
-        margin: 10px 0;
-        font-size: 1rem;
-        line-height: 1.3;
+export const RegionText = styled.div`
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
+`;
+
+export const WeatherText = styled.div`
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 5px;
+`;
+
+export const IconAndTempRow = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+`;
+
+export const IconBox = styled.div`
+    svg {
+        width: 42px;
+        height: 42px;
     }
+`;
+
+export const TemperatureBig = styled.div`
+    font-size: 36px;
+    font-weight: bold;
+    color: #111;
+`;
+
+export const TimeLabel = styled.div`
+    font-size: 13px;
+    margin-top: 20px;
+    color: #888;
 `;
