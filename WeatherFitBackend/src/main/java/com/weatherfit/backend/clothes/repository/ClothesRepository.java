@@ -42,5 +42,4 @@ public interface ClothesRepository extends JpaRepository<Clothes, Long> {
     @Query("UPDATE Clothes c SET c.likeCount = c.likeCount - 1 " +
             "WHERE c.id IN (SELECT l.clothes.id FROM Likes l WHERE l.userId = :userId)")
     void decreaseLikeCountByUserId(Long userId);
-
 }

@@ -26,35 +26,35 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final ClothesRepository clothesRepository;
 
-    /**
-     * 좋아요 토글
-     */
     @Transactional
     public void toggleLike(Long userId, Long clothesId) {
-        Clothes clothes = clothesRepository.findById(clothesId)
-                .orElseThrow(() -> new CustomException(ErrorCode.CLOTHES_NOT_FOUND));
+        log.info("🟡 좋아요 토글 요청: userId={}, clothesId={}", userId, clothesId);
 
-        Like like = likeRepository.findByUserIdAndClothesId(userId, clothesId)
-                .orElse(null);
+        Clothes clothes = clothesRepository.findById(clothesId)
+                .orElseThrow(() -> {
+                    log.error("🔴 존재하지 않는 의류: clothesId={}", clothesId);
+                    return new CustomException(ErrorCode.CLOTHES_NOT_FOUND);
+                });
+
+        Like like = likeRepository.findByUserIdAndClothesId(userId, clothesId).orElse(null);
 
         if (like != null) {
             clothes.decreaseLikeCount();
             likeRepository.delete(like);
-            log.info("🟡 좋아요 취소: userId={}, clothesId={}", userId, clothesId);
+            log.info("🟢 좋아요 취소 완료: userId={}, clothesId={}", userId, clothesId);
         } else {
             clothes.increaseLikeCount();
             Like newLike = new Like(userId, clothes);
             likeRepository.save(newLike);
-            log.info("🟢 좋아요 추가: userId={}, clothesId={}", userId, clothesId);
+            log.info("🟢 좋아요 추가 완료: userId={}, clothesId={}", userId, clothesId);
         }
     }
 
-    /**
-     * 내가 좋아요한 옷 리스트 조회
-     */
     public List<LikeDto> getMyLikes(Long userId) {
+        log.info("🟡 좋아요 리스트 조회 요청: userId={}", userId);
+
         List<Like> likes = likeRepository.findByUserId(userId);
-        log.info("🔵 좋아요 목록 조회: userId={}, 좋아요 개수={}", userId, likes.size());
+        log.info("🟢 좋아요 목록 조회 완료: userId={}, 총 {}개", userId, likes.size());
 
         return likes.stream()
                 .map(like -> {
@@ -68,5 +68,4 @@ public class LikeService {
                 })
                 .collect(Collectors.toList());
     }
-
 }

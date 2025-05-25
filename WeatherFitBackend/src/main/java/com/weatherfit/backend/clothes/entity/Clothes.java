@@ -49,5 +49,4 @@ public class Clothes {
             this.likeCount--;
         }
     }
-
 }

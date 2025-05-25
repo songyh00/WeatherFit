@@ -183,7 +183,7 @@ public class WeatherService {
     }
 
     private WeatherResponseDto parseForecastFromNowToTomorrow(WeatherApiResponseDto responseDto) {
-        log.info("🟡 시간별 예보 데이터 파싱 시작 (현재~내일 23시)");
+        log.info("🟡 날씨 예보용 기상 데이터 파싱 시작 (현재~내일 23시)");
 
         Map<LocalDateTime, HourlyTemperatureDto> hourlyMap = new HashMap<>();
         LocalDateTime now = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);

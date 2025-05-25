@@ -4,6 +4,7 @@ import com.weatherfit.backend.auth.JwtUtil;
 import com.weatherfit.backend.like.dto.LikeDto;
 import com.weatherfit.backend.like.service.LikeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,26 +20,30 @@ public class LikeController {
     private final LikeService likeService;
     private final JwtUtil jwtUtil;
 
+    public record ApiResponse(String message) {}
+
     /**
      * 좋아요 추가 또는 취소
      */
     @PostMapping("/{clothesId}")
-    public String toggleLike(@RequestHeader("Authorization") String token,
-                             @PathVariable Long clothesId) {
+    public ResponseEntity<ApiResponse> toggleLike(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long clothesId) {
 
         Long userId = jwtUtil.extractUserId(token);
         likeService.toggleLike(userId, clothesId);
-        return "좋아요 상태가 변경되었습니다.";
+        return ResponseEntity.ok(new ApiResponse("좋아요 상태가 변경되었습니다."));
     }
 
     /**
      * 내가 좋아요한 옷 리스트 조회 (마이페이지용)
      */
     @GetMapping("/mypage")
-    public List<LikeDto> getMyLikes(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<LikeDto>> getMyLikes(
+            @RequestHeader("Authorization") String token) {
 
         Long userId = jwtUtil.extractUserId(token);
-        return likeService.getMyLikes(userId);
+        List<LikeDto> likes = likeService.getMyLikes(userId);
+        return ResponseEntity.ok(likes);
     }
-
 }

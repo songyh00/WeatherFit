@@ -15,5 +15,4 @@ public class LikeDto {
     private String imageUrl;  // 옷 이미지 URL
     private String name;      // 옷 이름
     private String category;  // 옷 카테고리 (아우터, 상의, 하의, 원피스)
-
 }

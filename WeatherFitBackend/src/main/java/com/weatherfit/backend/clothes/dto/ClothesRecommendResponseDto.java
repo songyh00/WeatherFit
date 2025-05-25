@@ -31,5 +31,4 @@ public class ClothesRecommendResponseDto {
         private String imageUrl;   // 옷 이미지 URL
         private int likeCount;     // 좋아요 수
     }
-
 }
