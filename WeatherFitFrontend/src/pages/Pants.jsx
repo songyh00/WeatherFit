@@ -6,7 +6,7 @@ import {
     Card,
     Content,
     Like,
-    ClothesText
+    ClothesText, Wimg
 } from "../layout/Best.style.js";
 import logo from "../assets/logo.png";
 
@@ -38,7 +38,9 @@ const Pants = () => {
             <MainContents>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={logo} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(1)}
@@ -53,7 +55,9 @@ const Pants = () => {
                 </Card>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={logo} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(2)}
@@ -68,7 +72,9 @@ const Pants = () => {
                 </Card>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={logo} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(3)}

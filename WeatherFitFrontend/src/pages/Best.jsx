@@ -8,7 +8,7 @@ import {
     Card,
     Content,
     Like,
-    ClothesText
+    ClothesText, Wimg
 
 
 } from "../layout/Best.style.js";
@@ -46,7 +46,9 @@ const Best = () => {
             <MainContents>
 
                 <Card>
+                    <Wimg>
                     <img src={logo} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(1)}
@@ -61,7 +63,9 @@ const Best = () => {
                 </Card>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={logo} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(2)}
@@ -76,7 +80,9 @@ const Best = () => {
                 </Card>
 
                 <Card>
+                    <Wimg>
                     <img src={logo} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(3)}
@@ -91,7 +97,9 @@ const Best = () => {
                 </Card>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={logo} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(4)}
@@ -106,7 +114,9 @@ const Best = () => {
                 </Card>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={logo} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(5)}
@@ -121,7 +131,9 @@ const Best = () => {
                 </Card>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={logo} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(6)}
@@ -136,7 +148,9 @@ const Best = () => {
                 </Card>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={logo} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(7)}
@@ -151,7 +165,9 @@ const Best = () => {
                 </Card>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={logo} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(8)}
@@ -166,7 +182,9 @@ const Best = () => {
                 </Card>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={logo} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(9)}
