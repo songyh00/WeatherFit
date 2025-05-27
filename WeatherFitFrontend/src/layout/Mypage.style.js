@@ -63,16 +63,25 @@ export const Carousel = styled.div`
 
 export const Photo = styled.div`
     flex: 0 0 auto;
-    width: 100px;
-    height: 100px;
+    width: 300px;
+    height: 380px;
     background: #e0e0e0;
     border: 2px solid #aaa;
     display: flex;
     justify-content: center;
     align-items: center;
     scroll-snap-align: start;
-    
+    overflow: hidden;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
 `;
+
+
 
 export const SectionTitle = styled.h3`
     font-size: 28px;
@@ -101,3 +110,40 @@ export const Footer = styled.div`
     text-decoration: none;
     
 `;
+
+
+
+
+
+
+
+
+export const CarouselContainer = styled.div`
+    position: relative;
+    width: 120%;
+    margin: 0;
+    padding-left: 4px;
+`;
+
+export const ArrowButton = styled.button`
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    ${({ position }) => position === "left" ? "left: -8px;" : "right: -8px;"}
+    background-color: rgba(240, 240, 240, 0.9);
+    border: 1px solid #ccc;
+    font-size: 14px;
+    padding: 4px 6px;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 50%;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+
+    &:hover {
+        background-color: rgba(200, 200, 200, 0.8);
+    }
+`;
+
+
+

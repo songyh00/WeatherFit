@@ -11,10 +11,15 @@ import {
     Photo,
     Footer,
     SectionTitle,
-    CategoryTitle
+    CategoryTitle,
+    CarouselContainer,
+    ArrowButton
 } from "../layout/Mypage.style.js";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
+import fit from "../assets/웨더핏 옷사진/웨더핏 상의/남자 반팔(1) 로고반팔 그레이.jpg";
+import fit2 from "../assets/웨더핏 옷사진/웨더핏 아우터/남자 가을코트(1) 니트 후드 더플 코트.jpg"
+import fit3 from "../assets/웨더핏 옷사진/웨더핏 하의/남자 반바지(1) 데님 반바지.jpeg"
 
 
 const MyPage = () => {
@@ -33,6 +38,38 @@ const MyPage = () => {
             navigate("/");
         }
     };
+
+
+
+
+    const CarouselWrapper = ({ children }) => {
+        const carouselRef = React.useRef(null);
+        const itemWidth = 114; // 100px (photo width) + 14px (gap)
+
+        const scrollLeft = () => {
+            if (carouselRef.current) {
+                carouselRef.current.scrollBy({ left: -itemWidth * 3, behavior: "smooth" });
+            }
+        };
+
+        const scrollRight = () => {
+            if (carouselRef.current) {
+                carouselRef.current.scrollBy({ left: itemWidth * 3, behavior: "smooth" });
+            }
+        };
+
+        return (
+            <CarouselContainer>
+                <ArrowButton onClick={scrollLeft} position="left">◀</ArrowButton>
+                <Carousel ref={carouselRef}>
+                    {children}
+                </Carousel>
+                <ArrowButton onClick={scrollRight} position="right">▶</ArrowButton>
+            </CarouselContainer>
+        );
+    };
+
+
 
 
     return (
@@ -64,30 +101,32 @@ const MyPage = () => {
                 {/*캐러셀 구현하기*/}
                 <div>
                     <CategoryTitle>👕 아우터</CategoryTitle>
-                    <Carousel>
+                    <CarouselWrapper>
+                        <Photo><img src={fit} alt="WeatherFit Logo" /></Photo>
+                        <Photo><img src={fit2} alt="WeatherFit Logo" /></Photo>
+                        <Photo><img src={fit3} alt="WeatherFit Logo" /></Photo>
                         <Photo><img src={logo} alt="WeatherFit Logo" /></Photo>
-                        <Photo><img src={logo} alt="WeatherFit Logo" /></Photo>
-                        <Photo><img src={logo} alt="WeatherFit Logo" /></Photo>
-                        <Photo><img src={logo} alt="WeatherFit Logo" /></Photo>
-                    </Carousel>
+                    </CarouselWrapper>
                 </div>
 
                 <div>
                     <CategoryTitle>👔 상의</CategoryTitle>
-                    <Carousel>
+                    <CarouselWrapper>
+                        <Photo><img src={fit} alt="WeatherFit Logo" /></Photo>
+                        <Photo><img src={fit2} alt="WeatherFit Logo" /></Photo>
+                        <Photo><img src={fit3} alt="WeatherFit Logo" /></Photo>
                         <Photo><img src={logo} alt="WeatherFit Logo" /></Photo>
-                        <Photo><img src={logo} alt="WeatherFit Logo" /></Photo>
-                        <Photo><img src={logo} alt="WeatherFit Logo" /></Photo>
-                    </Carousel>
+                    </CarouselWrapper>
                 </div>
 
                 <div>
                     <CategoryTitle>👖 하의</CategoryTitle>
-                    <Carousel>
+                    <CarouselWrapper>
+                        <Photo><img src={fit} alt="WeatherFit Logo" /></Photo>
+                        <Photo><img src={fit2} alt="WeatherFit Logo" /></Photo>
+                        <Photo><img src={fit3} alt="WeatherFit Logo" /></Photo>
                         <Photo><img src={logo} alt="WeatherFit Logo" /></Photo>
-                        <Photo><img src={logo} alt="WeatherFit Logo" /></Photo>
-                        <Photo><img src={logo} alt="WeatherFit Logo" /></Photo>
-                    </Carousel>
+                    </CarouselWrapper>
                 </div>
             </Section>
 

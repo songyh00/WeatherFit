@@ -8,16 +8,21 @@ import {
     Card,
     Content,
     Like,
-    ClothesText
+    ClothesText,
+    Wimg
 
 
 } from "../layout/Best.style.js";
 import logo from "../assets/logo.png";
+import fit from "../assets/웨더핏 옷사진/웨더핏 상의/남자 반팔(1) 로고반팔 그레이.jpg";
+import fit2 from "../assets/웨더핏 옷사진/웨더핏 아우터/남자 가을코트(1) 니트 후드 더플 코트.jpg"
+import fit3 from "../assets/웨더핏 옷사진/웨더핏 하의/남자 반바지(1) 데님 반바지.jpeg"
 
 const Best = () => {
 
     // 찜 목록 상태 관리
     const [favorites, setFavorites] = useState([]);
+    const [fits, setFits] = useState("Best 임시 데이터");
 
     // localStorage에서 찜 목록 불러오기
     useEffect(() => {
@@ -42,11 +47,14 @@ const Best = () => {
     const isFavorite = (id) => favorites.includes(id);
 
     return (
+
         <ContentsWrapper>
             <MainContents>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={fit} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(1)}
@@ -55,13 +63,15 @@ const Best = () => {
                             {isFavorite(1) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
                         </Like>
                         <ClothesText>
-                            레트로 체크자켓
+                            {fits}
                         </ClothesText>
                     </Content>
                 </Card>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                    <img src={fit2} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(2)}
@@ -70,13 +80,15 @@ const Best = () => {
                             {isFavorite(2) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
                         </Like>
                         <ClothesText>
-                            풀오버 후드티
+                            {fits}
                         </ClothesText>
                     </Content>
                 </Card>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                    <img src={fit3} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(3)}
@@ -85,13 +97,15 @@ const Best = () => {
                             {isFavorite(3) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
                         </Like>
                         <ClothesText>
-                            빈티지 청바지
+                            {fits}
                         </ClothesText>
                     </Content>
                 </Card>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={fit} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(4)}
@@ -100,13 +114,15 @@ const Best = () => {
                             {isFavorite(4) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
                         </Like>
                         <ClothesText>
-                            집업 셔츠
+                            {fits}
                         </ClothesText>
                     </Content>
                 </Card>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={fit} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(5)}
@@ -115,13 +131,15 @@ const Best = () => {
                             {isFavorite(5) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
                         </Like>
                         <ClothesText>
-                            맨투맨 티셔츠
+                            {fits}
                         </ClothesText>
                     </Content>
                 </Card>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={fit} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(6)}
@@ -130,13 +148,15 @@ const Best = () => {
                             {isFavorite(6) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
                         </Like>
                         <ClothesText>
-                            니트 티셔츠
+                            {fits}
                         </ClothesText>
                     </Content>
                 </Card>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={fit} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(7)}
@@ -145,13 +165,15 @@ const Best = () => {
                             {isFavorite(7) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
                         </Like>
                         <ClothesText>
-                            러닝 셔츠
+                            {fits}
                         </ClothesText>
                     </Content>
                 </Card>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={fit} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(8)}
@@ -160,13 +182,15 @@ const Best = () => {
                             {isFavorite(8) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
                         </Like>
                         <ClothesText>
-                            바람막이 재킷
+                            {fits}
                         </ClothesText>
                     </Content>
                 </Card>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={fit} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(9)}
@@ -175,7 +199,7 @@ const Best = () => {
                             {isFavorite(9) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
                         </Like>
                         <ClothesText>
-                            가디건
+                            {fits}
                         </ClothesText>
                     </Content>
                 </Card>

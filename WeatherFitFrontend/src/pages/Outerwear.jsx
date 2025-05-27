@@ -6,12 +6,14 @@ import {
     Card,
     Content,
     Like,
-    ClothesText
+    ClothesText, Wimg
 } from "../layout/Best.style.js";
 import logo from "../assets/logo.png";
+import fit from "../assets/웨더핏 옷사진/웨더핏 상의/남자 반팔(1) 로고반팔 그레이.jpg";
 
 const Outerwear = () => {
     const [favorites, setFavorites] = useState([]);
+    const [fits, setFits] = useState("아우터 임시데이터");
 
     // localStorage에서 찜 목록 불러오기
     useEffect(() => {
@@ -38,7 +40,9 @@ const Outerwear = () => {
             <MainContents>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={fit} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(1)}
@@ -47,13 +51,15 @@ const Outerwear = () => {
                             {isFavorite(1) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
                         </Like>
                         <ClothesText>
-                            아우터 1
+                            {fits}
                         </ClothesText>
                     </Content>
                 </Card>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={fit} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(2)}
@@ -62,13 +68,15 @@ const Outerwear = () => {
                             {isFavorite(2) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
                         </Like>
                         <ClothesText>
-                            아우터 2
+                            {fits}
                         </ClothesText>
                     </Content>
                 </Card>
 
                 <Card>
-                    <img src={logo} alt="WeatherFit Logo" />
+                    <Wimg>
+                        <img src={fit} alt="WeatherFit Logo" />
+                    </Wimg>
                     <Content>
                         <Like
                             liked={isFavorite(3)}
@@ -77,7 +85,7 @@ const Outerwear = () => {
                             {isFavorite(3) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
                         </Like>
                         <ClothesText>
-                            아우터 3
+                            {fits}
                         </ClothesText>
                     </Content>
                 </Card>
