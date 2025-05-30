@@ -15,7 +15,7 @@ import {
 } from "../layout/mainPage.style.js";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import { Navigation } from 'swiper/modules';
+import {Navigation, Pagination} from 'swiper/modules';
 
 import Main1 from "../assets/WeatherImg/spring.png";
 import Main2 from "../assets/WeatherImg/summer.png";
@@ -35,6 +35,7 @@ import pants from "../assets/infoImg/pants.jpg";
 
 import {MyCaretLeftRectangle, MyCaretRightRectangle} from "../components/SliderBtns.jsx";
 import {getSeason, theme} from "../components/theme.js";
+import {GlobalStyle, GlobalStyleMainPage} from "../layout/Mypage.style.js";
 
 const MainPage = () => {
     const images = [Main1, Main2, Main3, Main4];
@@ -89,27 +90,16 @@ const MainPage = () => {
     return (
         <ContentsWrapper style={{ width: '70%' }}>
             <Content>
-                {/* 좌측 아이콘 */}
-                <div ref={prevRef} className="arrow-button left">
-                    <MyCaretLeftRectangle className="custom-prev" />
-                </div>
-
-
                 {swiperReady && (
                     <Swiper
-                        modules={[Navigation]}
-                        navigation={{
-                            prevEl: prevRef.current,
-                            nextEl: nextRef.current,
-                        }}
-                        onBeforeInit={(swiper) => {
-                            swiper.params.navigation.prevEl = prevRef.current;
-                            swiper.params.navigation.nextEl = nextRef.current;
-                        }}
+                        modules={[Navigation, Pagination]}
+                        pagination={false}
+                        navigation={true}
                         loop={true}
                         slidesPerView={3}
                         spaceBetween={10}
                     >
+                        <GlobalStyleMainPage />
                         {sliderImages.map((item, idx) => (
                             <SwiperSlide key={idx}>
                                 <StyledImageContainer>
@@ -121,11 +111,6 @@ const MainPage = () => {
                         ))}
                     </Swiper>
                 )}
-
-                {/* 우측 아이콘 */}
-                <div ref={nextRef} className="arrow-button right">
-                    <MyCaretRightRectangle className="custom-next" />
-                </div>
             </Content>
 
             <ContentsTitle>
