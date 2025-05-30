@@ -1,12 +1,9 @@
-import styled from 'styled-components';
-import {Link} from "react-router-dom";
+import styled, {createGlobalStyle} from 'styled-components';
 
 export const Container = styled.div`
     font-weight: bold;
-    padding: 40px 20px;
-    max-width: 800px;
     margin: 0 auto;
-
+    width: 800px;
 `;
 
 export const Section = styled.section`
@@ -25,61 +22,6 @@ export const Title = styled.h2`
     text-align: center;
 `;
 
-export const InfoItem = styled.div`
-    font-size: 20px;
-    color: #333;
-    margin-top: 8px;
-    line-height: 1.4;
-    font-weight: bold;
-    padding-bottom:10px;
-`;
-
-export const StyledLink = styled(Link)`
-    font-size: 20px;
-    color: #0077cc;
-    margin-top: 8px;
-    line-height: 1.4;
-    font-weight: bold;
-    cursor: pointer;
-    display: inline-block;
-    padding-right: 30px;
-    text-decoration: none;
-`;
-
-
-
-export const Emoji = styled.span`
-    margin-right: 5px;
-`;
-
-export const Carousel = styled.div`
-    display: flex;
-    overflow-x: auto;
-    gap: 14px;
-    padding: 12px 0;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-`;
-
-export const Photo = styled.div`
-    flex: 0 0 auto;
-    width: 300px;
-    height: 380px;
-    background: #e0e0e0;
-    border: 2px solid #aaa;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    scroll-snap-align: start;
-    overflow: hidden;
-
-    img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
-`;
 
 export const SectionTitle = styled.h3`
     font-size: 28px;
@@ -88,15 +30,6 @@ export const SectionTitle = styled.h3`
     margin: 30px 0;
     padding-bottom: 20px;
 
-`;
-
-export const CategoryTitle = styled.h4`
-    font-size: 16px;
-    color: #333;
-    margin-top: 20px;
-    line-height: 1.4;
-    font-weight: bold;
-    margin-bottom: 10px;
 `;
 
 export const Footer = styled.div`
@@ -108,33 +41,37 @@ export const Footer = styled.div`
     cursor: pointer;
     display: inline-block;
     text-decoration: none;
-
 `;
 
-export const CarouselContainer = styled.div`
-    position: relative;
-    width: 120%;
-    margin: 0;
-    padding-left: 4px;
-`;
-
-export const ArrowButton = styled.button`
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    ${({ position }) => position === "left" ? "left: -8px;" : "right: -8px;"}
-    background-color: rgba(240, 240, 240, 0.9);
-    border: 1px solid #ccc;
-    font-size: 14px;
-    padding: 4px 6px;
-    cursor: pointer;
-    font-weight: bold;
-    border-radius: 50%;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-    z-index: 10;
-
-    &:hover {
-        background-color: rgba(200, 200, 200, 0.8);
+export const GlobalStyle = createGlobalStyle`
+    .swiper-button-prev,
+    .swiper-button-next {
+        color: white;
     }
 `;
 
+export const GlobalStyleMainPage = createGlobalStyle`
+    .swiper-button-prev,
+    .swiper-button-next {
+        color: white;
+        width: 50px;      /* 버튼 가로 크기 */
+        height: 50px;     /* 버튼 세로 크기 */
+        border-radius: 25px;  /* 둥근 모서리 */
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .swiper-button-prev {
+        left: 10px;
+    }
+    .swiper-button-next {
+        right: 10px;
+    }
+
+
+    .swiper-button-prev::after,
+    .swiper-button-next::after {
+        font-size: 50px; 
+        font-weight: bold;
+    }
+`;
