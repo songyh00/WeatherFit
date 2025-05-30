@@ -19,6 +19,7 @@ import ForgotIdOrPassword from "./pages/ForgotIdOrPassword.jsx";
 import LocationSearch from "./components/LocationSearch.jsx";
 import { HeaderSpacer } from "./layout/mainPage.style.js";
 import WeatherSection from "./components/WeatherSection.jsx";
+import Source from "./pages/Source.jsx";
 import FindPw from "./pages/FindPw.jsx";
 
 function Layout() {
@@ -86,6 +87,7 @@ function Layout() {
                 <Route path="/MyPagePassword" element={<MyPagePassword />} />
                 <Route path="/CustomerServiceCenter" element={<CustomerServiceCenter />} />
                 <Route path="/ForgotIdOrPassword" element={<ForgotIdOrPassword />} />
+                <Route path="/source" element={<Source />} />
             </Routes>
 
             {!hideHeaderFooter && <Footer />}

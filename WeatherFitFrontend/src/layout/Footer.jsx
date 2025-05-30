@@ -34,7 +34,7 @@ const Footer = () => {
                         <FooterList>
                             <FooterItem><FooterLink to="/Best">상품 문의</FooterLink></FooterItem>
                             <FooterItem><FooterLink to="/CustomerServiceCenter">고객센터</FooterLink></FooterItem>
-                            <FooterItem><FooterLink to="/Best">1:1 문의</FooterLink></FooterItem>
+                            <FooterItem><FooterLink to="/Source">출처</FooterLink></FooterItem>
                         </FooterList>
                     </FooterCol>
                     <FooterCol>
