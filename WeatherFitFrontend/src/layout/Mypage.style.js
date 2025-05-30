@@ -7,9 +7,8 @@ export const Container = styled.div`
 `;
 
 export const Section = styled.section`
-    margin-bottom: 100px;
+    margin-bottom: 70px;
     font-size: 16px;
-
 `;
 
 export const Title = styled.h2`
@@ -57,7 +56,7 @@ export const GlobalStyleMainPage = createGlobalStyle`
         width: 50px;      /* 버튼 가로 크기 */
         height: 50px;     /* 버튼 세로 크기 */
         border-radius: 25px;  /* 둥근 모서리 */
-        top: 50%;
+        top: 55%;
         transform: translateY(-50%);
     }
 
