@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+
 import Header from "./layout/Header";
 import MainPage from "./pages/MainPage.jsx";
 import Pants from "./pages/Pants.jsx";
@@ -21,6 +22,10 @@ import WeatherSection from "./components/WeatherSection.jsx";
 import Source from "./pages/Source.jsx";
 import FindPw from "./pages/FindPw.jsx";
 
+// ✅ API Hook import
+import { useWeatherApi } from './api/weather';
+import { useRecommendApi } from './api/recommend';
+
 function Layout() {
     const [address, setAddress] = useState(() => localStorage.getItem("address") || "서울시 종로구");
     const [selectedDate, setSelectedDate] = useState(() => localStorage.getItem("selectedDate") || "today");
@@ -30,61 +35,8 @@ function Layout() {
     const location = useLocation();
     const isLoggedIn = !!localStorage.getItem("token");
 
-    const fetchWeatherData = async (inputAddress, isTomorrow) => {
-        try {
-            const res = await fetch(`/api/weather?address=${encodeURIComponent(inputAddress)}${isTomorrow ? "&tomorrow=true" : ""}`);
-            if (!res.ok) throw new Error("날씨 요청 실패");
-            const data = await res.json();
-            setWeatherData(data);
-        } catch (err) {
-            console.error("❌ 날씨 조회 실패:", err);
-            setWeatherData(null);
-        }
-    };
-
-    const fetchClothesRecommendation = async (inputAddress, isTomorrow) => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("로그인이 필요합니다.");
-            return;
-        }
-
-        const pathToBannerType = {
-            "/Best": "BEST",
-            "/Suggestion": "RECOMMEND",
-            "/Outerwear": "OUTER",
-            "/Consultation": "TOP",
-            "/Pants": "BOTTOM"
-        };
-
-        const bannerType = pathToBannerType[location.pathname];
-        if (!bannerType) return;
-
-        try {
-            setIsLoading(true);
-            const res = await fetch(`/api/recommend`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    address: inputAddress,
-                    tomorrow: isTomorrow,
-                    bannerType: bannerType,
-                }),
-            });
-
-            if (!res.ok) throw new Error("코디 추천 실패");
-            const data = await res.json();
-            setRecommendationData(data);
-        } catch (err) {
-            console.error("❌ 코디 추천 실패:", err);
-            setRecommendationData(null);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const { fetchWeather } = useWeatherApi();
+    const { fetchRecommendation } = useRecommendApi();
 
     const handleSearch = async (inputAddress, selectedDate) => {
         const isTomorrow = selectedDate === "tomorrow";
@@ -94,11 +46,26 @@ function Layout() {
         localStorage.setItem("address", inputAddress);
         localStorage.setItem("selectedDate", selectedDate);
 
-        await fetchWeatherData(inputAddress, isTomorrow);
+        const weather = await fetchWeather(inputAddress, isTomorrow);
+        setWeatherData(weather);
 
         const recommendPages = ["/Best", "/Suggestion", "/Outerwear", "/Consultation", "/Pants"];
         if (recommendPages.includes(location.pathname) && isLoggedIn) {
-            await fetchClothesRecommendation(inputAddress, isTomorrow);
+            const pathToBannerType = {
+                "/Best": "BEST",
+                "/Suggestion": "RECOMMEND",
+                "/Outerwear": "OUTER",
+                "/Consultation": "TOP",
+                "/Pants": "BOTTOM"
+            };
+            const bannerType = pathToBannerType[location.pathname];
+
+            if (bannerType) {
+                setIsLoading(true);
+                const recommendation = await fetchRecommendation(inputAddress, isTomorrow, bannerType);
+                setRecommendationData(recommendation);
+                setIsLoading(false);
+            }
         }
     };
 
@@ -110,7 +77,22 @@ function Layout() {
         const isTomorrow = selectedDate === "tomorrow";
         const recommendPages = ["/Best", "/Suggestion", "/Outerwear", "/Consultation", "/Pants"];
         if (recommendPages.includes(location.pathname) && isLoggedIn) {
-            fetchClothesRecommendation(address, isTomorrow);
+            const pathToBannerType = {
+                "/Best": "BEST",
+                "/Suggestion": "RECOMMEND",
+                "/Outerwear": "OUTER",
+                "/Consultation": "TOP",
+                "/Pants": "BOTTOM"
+            };
+            const bannerType = pathToBannerType[location.pathname];
+
+            if (bannerType) {
+                setIsLoading(true);
+                fetchRecommendation(address, isTomorrow, bannerType).then(data => {
+                    setRecommendationData(data);
+                    setIsLoading(false);
+                });
+            }
         }
     }, [location.pathname]);
 

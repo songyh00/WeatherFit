@@ -8,22 +8,32 @@ import {
     ClothesText,
     Wimg
 } from "../layout/Best.style.js";
+import { useLikeApi } from "../api/like";
 
 const Suggestion = ({ recommendationData, isLoading }) => {
+    const { getMyLikes, toggleLike } = useLikeApi();
     const [favorites, setFavorites] = useState([]);
 
     useEffect(() => {
-        const storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
-        setFavorites(storedFavorites);
+        const fetchFavorites = async () => {
+            const liked = await getMyLikes(); // ✅ 객체 리스트
+            const likedIds = liked.map(item => item.id); // ID만 추출
+            setFavorites(likedIds);
+        };
+        fetchFavorites();
     }, []);
 
-    const toggleFavorite = (id) => {
-        const updatedFavorites = favorites.includes(id)
-            ? favorites.filter((favoriteId) => favoriteId !== id)
-            : [...favorites, id];
-
-        setFavorites(updatedFavorites);
-        localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+    const handleToggleFavorite = async (id) => {
+        try {
+            await toggleLike(id); // ✅ 토글 API 호출
+            setFavorites(prev =>
+                prev.includes(id)
+                    ? prev.filter(favId => favId !== id)
+                    : [...prev, id]
+            );
+        } catch (err) {
+            console.error("❌ 좋아요 처리 실패:", err);
+        }
     };
 
     const isFavorite = (id) => favorites.includes(id);
@@ -40,7 +50,7 @@ const Suggestion = ({ recommendationData, isLoading }) => {
                 <Content>
                     <Like
                         liked={isFavorite(item.id)}
-                        onClick={() => toggleFavorite(item.id)}
+                        onClick={() => handleToggleFavorite(item.id)}
                     >
                         {isFavorite(item.id) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
                     </Like>
@@ -54,7 +64,6 @@ const Suggestion = ({ recommendationData, isLoading }) => {
         return recommendationData?.recommendedClothes?.filter(item => item.category === category) || [];
     };
 
-    // ✅ 상의 + 원피스 묶기
     const getTopAndOnePiece = () => {
         return recommendationData?.recommendedClothes?.filter(
             item => item.category === "상의" || item.category === "원피스"

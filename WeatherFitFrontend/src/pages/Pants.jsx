@@ -8,22 +8,32 @@ import {
     ClothesText,
     Wimg
 } from "../layout/Best.style.js";
+import { useLikeApi } from "../api/like";
 
 const Pants = ({ recommendationData, isLoading }) => {
+    const { getMyLikes, toggleLike } = useLikeApi(); // ✅ toggleLike 사용
     const [favorites, setFavorites] = useState([]);
 
     useEffect(() => {
-        const storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
-        setFavorites(storedFavorites);
+        const fetchFavorites = async () => {
+            const liked = await getMyLikes(); // ✅ 전체 객체 받음
+            const likedIds = liked.map(item => item.id); // ID만 추출
+            setFavorites(likedIds);
+        };
+        fetchFavorites();
     }, []);
 
-    const toggleFavorite = (id) => {
-        const updatedFavorites = favorites.includes(id)
-            ? favorites.filter((favoriteId) => favoriteId !== id)
-            : [...favorites, id];
-
-        setFavorites(updatedFavorites);
-        localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+    const handleToggleFavorite = async (id) => {
+        try {
+            await toggleLike(id); // ✅ 토글 API 호출
+            setFavorites(prev =>
+                prev.includes(id)
+                    ? prev.filter(favId => favId !== id)
+                    : [...prev, id]
+            );
+        } catch (err) {
+            console.error("❌ 좋아요 처리 실패:", err);
+        }
     };
 
     const isFavorite = (id) => favorites.includes(id);
@@ -40,7 +50,7 @@ const Pants = ({ recommendationData, isLoading }) => {
                 <Content>
                     <Like
                         liked={isFavorite(item.id)}
-                        onClick={() => toggleFavorite(item.id)}
+                        onClick={() => handleToggleFavorite(item.id)}
                     >
                         {isFavorite(item.id) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
                     </Like>
