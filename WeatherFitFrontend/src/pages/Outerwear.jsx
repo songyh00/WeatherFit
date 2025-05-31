@@ -1,97 +1,88 @@
 import React, { useState, useEffect } from "react";
-import '../App.css';
 import {
     ContentsWrapper,
     MainContents,
     Card,
     Content,
     Like,
-    ClothesText, Wimg
+    ClothesText,
+    Wimg
 } from "../layout/Best.style.js";
-import logo from "../assets/logo.png";
+import { useLikeApi } from "../api/like";
 
-const Outerwear = () => {
+const Outerwear = ({ recommendationData, isLoading }) => {
+    const { getMyLikes, toggleLike } = useLikeApi(); // ✅ 통합된 토글 API
     const [favorites, setFavorites] = useState([]);
 
-    // localStorage에서 찜 목록 불러오기
+    // ✅ 좋아요 ID만 저장
     useEffect(() => {
-        const storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
-        setFavorites(storedFavorites);
+        const fetchFavorites = async () => {
+            const liked = await getMyLikes();
+            const likedIds = liked.map(item => item.id);
+            setFavorites(likedIds);
+        };
+        fetchFavorites();
     }, []);
 
-    // 찜 상태 토글
-    const toggleFavorite = (id) => {
-        const updatedFavorites = favorites.includes(id)
-            ? favorites.filter((favoriteId) => favoriteId !== id)
-            : [...favorites, id];
-
-        // 찜 목록을 localStorage에 저장
-        setFavorites(updatedFavorites);
-        localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+    const handleToggleFavorite = async (id) => {
+        try {
+            await toggleLike(id);
+            setFavorites(prev =>
+                prev.includes(id)
+                    ? prev.filter(favId => favId !== id)
+                    : [...prev, id]
+            );
+        } catch (err) {
+            console.error("❌ 좋아요 처리 실패:", err);
+        }
     };
 
     const isFavorite = (id) => favorites.includes(id);
 
+    const renderCategoryCards = (list) => {
+        return list.map((item, idx) => (
+            <Card key={`${item.category}-${idx}`}>
+                <Wimg>
+                    <img
+                        src={item.imageUrl}
+                        alt={item.name}
+                    />
+                </Wimg>
+                <Content>
+                    <Like
+                        liked={isFavorite(item.id)}
+                        onClick={() => handleToggleFavorite(item.id)}
+                    >
+                        {isFavorite(item.id) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                    </Like>
+                    <ClothesText>{item.name}</ClothesText>
+                </Content>
+            </Card>
+        ));
+    };
+
+    const getOuterwears = () => {
+        return recommendationData?.recommendedClothes?.filter(item => item.category === "아우터") || [];
+    };
+
+    const outerwearList = getOuterwears();
 
     return (
         <ContentsWrapper>
             <MainContents>
+                {!isLoading && recommendationData && outerwearList.length > 0 && (
+                    renderCategoryCards(outerwearList)
+                )}
 
-                <Card>
-                    <Wimg>
-                        <img src={logo} alt="WeatherFit Logo" />
-                    </Wimg>
-                    <Content>
-                        <Like
-                            liked={isFavorite(1)}
-                            onClick={() => toggleFavorite(1)}
-                        >
-                            {isFavorite(1) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
-                        </Like>
-                        <ClothesText>
-                            아우터 1
-                        </ClothesText>
-                    </Content>
-                </Card>
-
-                <Card>
-                    <Wimg>
-                        <img src={logo} alt="WeatherFit Logo" />
-                    </Wimg>
-                    <Content>
-                        <Like
-                            liked={isFavorite(2)}
-                            onClick={() => toggleFavorite(2)}
-                        >
-                            {isFavorite(2) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
-                        </Like>
-                        <ClothesText>
-                            아우터 2
-                        </ClothesText>
-                    </Content>
-                </Card>
-
-                <Card>
-                    <Wimg>
-                        <img src={logo} alt="WeatherFit Logo" />
-                    </Wimg>
-                    <Content>
-                        <Like
-                            liked={isFavorite(3)}
-                            onClick={() => toggleFavorite(3)}
-                        >
-                            {isFavorite(3) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
-                        </Like>
-                        <ClothesText>
-                            아우터 3
-                        </ClothesText>
-                    </Content>
-                </Card>
-
-
+                {!isLoading && recommendationData && outerwearList.length === 0 && (
+                    <p style={{ fontSize: "1.1rem", marginTop: "20px", textAlign: "center" }}>
+                        아우터를 입기엔 날씨가 덥습니다.<br />
+                        그래도 입으시려면 얇은 아우터를 추천드립니다 🙂
+                    </p>
+                )}
             </MainContents>
         </ContentsWrapper>
     );
-}
+};
 
 export default Outerwear;
