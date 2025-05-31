@@ -87,7 +87,7 @@ INSERT INTO clothes (category, name, gender, image_url, min_temperature, max_tem
                                                                                               ('상의', '스프라이트 카라 티셔츠_차콜그레이', 'MALE', '/images/스프라이트 카라 티셔츠_차콜그레이.jpg', 15, 50),
                                                                                               ('상의', '럭비 카라 셔츠_다크그레이', 'MALE', '/images/럭비 카라 셔츠_다크그레이.jpg', 15, 50),
                                                                                               ('상의', '스트라이프 카라 오버핏 티셔츠_크림', 'FEMALE', '/images/스트라이프 카라 오버핏 티셔츠_크림.jpg', 15, 50),
-                                                                                              ('상의', '반집업 카라 티셔츠_그레이', 'FEMALE', '/images/반집업 카라 티셔츠_그레이.jpg', 15, 50),
+                                                                                              ('상의', '오버핏 카라 티셔츠_아이보리', 'FEMALE', '/images/오버핏 카라 티셔츠_아이보리.jpg', 15, 50),
                                                                                               ('상의', 'M로고 반팔_다크그레이', 'MALE', '/images/M로고 반팔_다크그레이.jpg', 20, 50),
                                                                                               ('상의', 'M로고 반팔_블랙', 'MALE', '/images/M로고 반팔_블랙.jpg', 20, 50),
                                                                                               ('상의', 'M로고 반팔_화이트', 'MALE', '/images/M로고 반팔_화이트.jpg', 20, 50),

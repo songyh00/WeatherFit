@@ -14,14 +14,14 @@ const LocationSearch = ({ onSearchComplete }) => {
 
     // 🔸 저장된 검색값 불러오기
     useEffect(() => {
-        const savedAddress = localStorage.getItem("savedAddress") || "서울시 종로구";
+        const savedAddress = localStorage.getItem("savedAddress");
         const savedDate = localStorage.getItem("savedDate") || "today";
-        setInputAddress(""); // 입력창은 비우고
-        setSearchedAddress(savedAddress);
+
+        setInputAddress(savedAddress || ""); // 검색창에 보여줄 입력값 설정
+        setSearchedAddress(savedAddress || "");
         setSelectedDate(savedDate);
 
-        // 초기 로딩 시 한 번만 검색
-        onSearchComplete(savedAddress, savedDate);
+        onSearchComplete(savedAddress || "서울시 종로구", savedDate);
     }, []);
 
     const handleSearch = () => {
@@ -31,11 +31,11 @@ const LocationSearch = ({ onSearchComplete }) => {
             return;
         }
 
-        setSearchedAddress(trimmed);
-        setInputAddress("");
+        setSearchedAddress(trimmed);   // placeholder용 주소 설정
+        setInputAddress(trimmed);      // 입력창에 그대로 유지 ← ✅ 핵심 변경
         inputRef.current.blur();
 
-        // 🔸 로컬스토리지에 저장
+        // 저장
         localStorage.setItem("savedAddress", trimmed);
         localStorage.setItem("savedDate", selectedDate);
 
@@ -52,11 +52,7 @@ const LocationSearch = ({ onSearchComplete }) => {
             <SearchContainer>
                 <SearchInput
                     ref={inputRef}
-                    placeholder={
-                        isFocused
-                            ? "지역을 입력하세요 (예: 서울시 강남구)"
-                            : searchedAddress || "지역을 입력하세요 (예: 서울시 강남구)"
-                    }
+                    placeholder="지역을 입력하세요 (예: 서울시 강남구)"
                     value={inputAddress}
                     onChange={(e) => setInputAddress(e.target.value)}
                     onFocus={() => setIsFocused(true)}
@@ -70,8 +66,8 @@ const LocationSearch = ({ onSearchComplete }) => {
                         const newDate = e.target.value;
                         setSelectedDate(newDate);
                         localStorage.setItem("savedDate", newDate);
-                        // 날짜만 바꿔도 자동으로 검색
-                        const addressToUse = searchedAddress || "서울시 종로구";
+
+                        const addressToUse = inputAddress.trim() || "서울시 종로구";
                         onSearchComplete(addressToUse, newDate);
                     }}
                     style={{ padding: "8px", fontSize: "14px" }}

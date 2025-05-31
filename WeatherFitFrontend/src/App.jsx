@@ -1,4 +1,3 @@
-// ✅ App.jsx 전체 수정
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Header from "./layout/Header";
@@ -27,6 +26,7 @@ function Layout() {
     const [selectedDate, setSelectedDate] = useState(() => localStorage.getItem("selectedDate") || "today");
     const [weatherData, setWeatherData] = useState(null);
     const [recommendationData, setRecommendationData] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const location = useLocation();
     const isLoggedIn = !!localStorage.getItem("token");
 
@@ -37,7 +37,7 @@ function Layout() {
             const data = await res.json();
             setWeatherData(data);
         } catch (err) {
-            console.error("❌ 날시 조회 실패:", err);
+            console.error("❌ 날씨 조회 실패:", err);
             setWeatherData(null);
         }
     };
@@ -49,9 +49,19 @@ function Layout() {
             return;
         }
 
-        const bannerType = location.pathname.replace("/", "").toLowerCase();
+        const pathToBannerType = {
+            "/Best": "BEST",
+            "/Suggestion": "RECOMMEND",
+            "/Outerwear": "OUTER",
+            "/Consultation": "TOP",
+            "/Pants": "BOTTOM"
+        };
+
+        const bannerType = pathToBannerType[location.pathname];
+        if (!bannerType) return;
 
         try {
+            setIsLoading(true);
             const res = await fetch(`/api/recommend`, {
                 method: "POST",
                 headers: {
@@ -67,11 +77,12 @@ function Layout() {
 
             if (!res.ok) throw new Error("코디 추천 실패");
             const data = await res.json();
-            console.log("✅ 추천 받은 데이터:", data);
             setRecommendationData(data);
         } catch (err) {
             console.error("❌ 코디 추천 실패:", err);
             setRecommendationData(null);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -130,11 +141,11 @@ function Layout() {
 
             <Routes>
                 <Route path="/" element={<MainPage />} />
-                <Route path="/Best" element={isLoggedIn ? <Best recommendationData={recommendationData} /> : <Navigate to="/Login" replace />} />
-                <Route path="/Suggestion" element={isLoggedIn ? <Suggestion recommendationData={recommendationData} /> : <Navigate to="/Login" replace />} />
-                <Route path="/Outerwear" element={isLoggedIn ? <Outerwear recommendationData={recommendationData} /> : <Navigate to="/Login" replace />} />
-                <Route path="/Consultation" element={isLoggedIn ? <Consultation /> : <Navigate to="/Login" replace />} />
-                <Route path="/Pants" element={isLoggedIn ? <Pants recommendationData={recommendationData} /> : <Navigate to="/Login" replace />} />
+                <Route path="/Best" element={isLoggedIn ? <Best recommendationData={recommendationData} isLoading={isLoading} /> : <Navigate to="/Login" replace />} />
+                <Route path="/Suggestion" element={isLoggedIn ? <Suggestion recommendationData={recommendationData} isLoading={isLoading} /> : <Navigate to="/Login" replace />} />
+                <Route path="/Outerwear" element={isLoggedIn ? <Outerwear recommendationData={recommendationData} isLoading={isLoading} /> : <Navigate to="/Login" replace />} />
+                <Route path="/Consultation" element={isLoggedIn ? <Consultation recommendationData={recommendationData} isLoading={isLoading} /> : <Navigate to="/Login" replace />} />
+                <Route path="/Pants" element={isLoggedIn ? <Pants recommendationData={recommendationData} isLoading={isLoading} /> : <Navigate to="/Login" replace />} />
                 <Route path="/Login" element={<Login />} />
                 <Route path="/JoinTheMembership" element={<JoinTheMembership />} />
                 <Route path="/MyPage" element={<MyPage />} />

@@ -55,13 +55,20 @@ const Best = ({ recommendationData, isLoading }) => {
         return recommendationData?.recommendedClothes?.filter(item => item.category === category) || [];
     };
 
+    // ✅ 상의 + 원피스 조합
+    const getTopAndOnePiece = () => {
+        return recommendationData?.recommendedClothes?.filter(
+            item => item.category === "상의" || item.category === "원피스"
+        ) || [];
+    };
+
     return (
         <ContentsWrapper>
             <MainContents>
                 {!isLoading && recommendationData && (
                     <>
                         {renderCategoryCards(getClothesByCategory("아우터"))}
-                        {renderCategoryCards(getClothesByCategory("상의"))}
+                        {renderCategoryCards(getTopAndOnePiece())}
                         {renderCategoryCards(getClothesByCategory("하의"))}
                     </>
                 )}

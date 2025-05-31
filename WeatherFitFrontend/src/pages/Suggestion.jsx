@@ -1,200 +1,82 @@
 import React, { useState, useEffect } from "react";
-import '../App.css';
 import {
     ContentsWrapper,
     MainContents,
     Card,
     Content,
     Like,
-    ClothesText, Wimg
+    ClothesText,
+    Wimg
 } from "../layout/Best.style.js";
-import logo from "../assets/logo.png";
 
-const Suggestion = () => {
-
-
-    // 찜 목록 상태 관리
+const Suggestion = ({ recommendationData, isLoading }) => {
     const [favorites, setFavorites] = useState([]);
 
-    // localStorage에서 찜 목록 불러오기
     useEffect(() => {
         const storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
         setFavorites(storedFavorites);
     }, []);
 
-    // 찜 상태 토글
     const toggleFavorite = (id) => {
         const updatedFavorites = favorites.includes(id)
             ? favorites.filter((favoriteId) => favoriteId !== id)
             : [...favorites, id];
 
-        // 찜 목록을 localStorage에 저장
         setFavorites(updatedFavorites);
         localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
     };
+
     const isFavorite = (id) => favorites.includes(id);
 
+    const renderCategoryCards = (list) => {
+        return list.map((item, idx) => (
+            <Card key={`${item.category}-${idx}`}>
+                <Wimg>
+                    <img
+                        src={item.imageUrl}
+                        alt={item.name}
+                    />
+                </Wimg>
+                <Content>
+                    <Like
+                        liked={isFavorite(item.id)}
+                        onClick={() => toggleFavorite(item.id)}
+                    >
+                        {isFavorite(item.id) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
+                    </Like>
+                    <ClothesText>{item.name}</ClothesText>
+                </Content>
+            </Card>
+        ));
+    };
+
+    const getClothesByCategory = (category) => {
+        return recommendationData?.recommendedClothes?.filter(item => item.category === category) || [];
+    };
+
+    // ✅ 상의 + 원피스 묶기
+    const getTopAndOnePiece = () => {
+        return recommendationData?.recommendedClothes?.filter(
+            item => item.category === "상의" || item.category === "원피스"
+        ) || [];
+    };
 
     return (
         <ContentsWrapper>
             <MainContents>
-
-                <Card>
-                    <Wimg>
-                        <img src={logo} alt="WeatherFit Logo" />
-                    </Wimg>
-                    <Content>
-                        <Like
-                            liked={isFavorite(1)}
-                            onClick={() => toggleFavorite(1)}
-                        >
-                            {isFavorite(1) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
-                        </Like>
-                        <ClothesText>
-                            아우터 1
-                        </ClothesText>
-                    </Content>
-                </Card>
-
-                <Card>
-                    <Wimg>
-                        <img src={logo} alt="WeatherFit Logo" />
-                    </Wimg>
-                    <Content>
-                        <Like
-                            liked={isFavorite(2)}
-                            onClick={() => toggleFavorite(2)}
-                        >
-                            {isFavorite(2) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
-                        </Like>
-                        <ClothesText>
-                            아우터 2
-                        </ClothesText>
-                    </Content>
-                </Card>
-
-                <Card>
-                    <Wimg>
-                        <img src={logo} alt="WeatherFit Logo" />
-                    </Wimg>
-                    <Content>
-                        <Like
-                            liked={isFavorite(3)}
-                            onClick={() => toggleFavorite(3)}
-                        >
-                            {isFavorite(3) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
-                        </Like>
-                        <ClothesText>
-                            아우터 3
-                        </ClothesText>
-                    </Content>
-                </Card>
-
-                <Card>
-                    <Wimg>
-                        <img src={logo} alt="WeatherFit Logo" />
-                    </Wimg>
-                    <Content>
-                        <Like
-                            liked={isFavorite(4)}
-                            onClick={() => toggleFavorite(4)}
-                        >
-                            {isFavorite(4) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
-                        </Like>
-                        <ClothesText>
-                            상의 1
-                        </ClothesText>
-                    </Content>
-                </Card>
-
-                <Card>
-                    <Wimg>
-                        <img src={logo} alt="WeatherFit Logo" />
-                    </Wimg>
-                    <Content>
-                        <Like
-                            liked={isFavorite(5)}
-                            onClick={() => toggleFavorite(5)}
-                        >
-                            {isFavorite(5) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
-                        </Like>
-                        <ClothesText>
-                            상의 2
-                        </ClothesText>
-                    </Content>
-                </Card>
-
-                <Card>
-                    <Wimg>
-                        <img src={logo} alt="WeatherFit Logo" />
-                    </Wimg>
-                    <Content>
-                        <Like
-                            liked={isFavorite(6)}
-                            onClick={() => toggleFavorite(6)}
-                        >
-                            {isFavorite(6) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
-                        </Like>
-                        <ClothesText>
-                            상의 3
-                        </ClothesText>
-                    </Content>
-                </Card>
-
-                <Card>
-                    <Wimg>
-                        <img src={logo} alt="WeatherFit Logo" />
-                    </Wimg>
-                    <Content>
-                        <Like
-                            liked={isFavorite(7)}
-                            onClick={() => toggleFavorite(7)}
-                        >
-                            {isFavorite(7) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
-                        </Like>
-                        <ClothesText>
-                            하의 1
-                        </ClothesText>
-                    </Content>
-                </Card>
-
-                <Card>
-                    <Wimg>
-                        <img src={logo} alt="WeatherFit Logo" />
-                    </Wimg>
-                    <Content>
-                        <Like
-                            liked={isFavorite(8)}
-                            onClick={() => toggleFavorite(8)}
-                        >
-                            {isFavorite(8) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
-                        </Like>
-                        <ClothesText>
-                            하의 2
-                        </ClothesText>
-                    </Content>
-                </Card>
-
-                <Card>
-                    <Wimg>
-                        <img src={logo} alt="WeatherFit Logo" />
-                    </Wimg>
-                    <Content>
-                        <Like
-                            liked={isFavorite(9)}
-                            onClick={() => toggleFavorite(9)}
-                        >
-                            {isFavorite(9) ? '찜 했습니다 ❤️' : '찜하기 🤍'}
-                        </Like>
-                        <ClothesText>
-                            하의 3
-                        </ClothesText>
-                    </Content>
-                </Card>
-
+                {!isLoading && recommendationData && (
+                    <>
+                        {renderCategoryCards(getClothesByCategory("아우터"))}
+                        {renderCategoryCards(getTopAndOnePiece())}
+                        {renderCategoryCards(getClothesByCategory("하의"))}
+                    </>
+                )}
+                {!isLoading && recommendationData?.recommendedClothes?.length === 0 && (
+                    <p>추천된 옷이 없습니다.</p>
+                )}
             </MainContents>
         </ContentsWrapper>
     );
-}
+};
 
 export default Suggestion;
