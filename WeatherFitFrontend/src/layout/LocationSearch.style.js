@@ -46,3 +46,17 @@ export const SearchButton = styled.button`
         box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
     }
 `;
+
+export const DateSelect = styled.select`
+    padding: 8px;
+    font-size: 14px;
+    border: 2px solid ${currentTheme.borderColor};
+    background-color: ${currentTheme.bgColor};
+    color: black;
+    border-radius: 8px;
+
+    &:focus {
+        outline: none;
+        border-color: ${currentTheme.focusColor};
+    }
+`;

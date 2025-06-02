@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
+    DateSelect,
     SearchButton,
     SearchContainer,
     SearchInput
 } from "../layout/LocationSearch.style.js";
+import { getSeason, theme } from "./theme.js";
 
 const LocationSearch = ({ onSearchComplete }) => {
+    const [season, setSeason] = useState(getSeason());
     const [inputAddress, setInputAddress] = useState("");
     const [searchedAddress, setSearchedAddress] = useState("");
     const [isFocused, setIsFocused] = useState(false);
@@ -23,6 +26,14 @@ const LocationSearch = ({ onSearchComplete }) => {
 
         onSearchComplete(savedAddress || "서울시 종로구", savedDate);
     }, []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setSeason(getSeason());
+        }, 1000 * 60 * 60 * 24);
+        return () => clearInterval(interval);
+    }, []);
+
 
     const handleSearch = () => {
         const trimmed = inputAddress.trim();
@@ -60,8 +71,7 @@ const LocationSearch = ({ onSearchComplete }) => {
                 />
                 &nbsp;&nbsp;
 
-                <select
-                    value={selectedDate}
+                <DateSelect
                     onChange={(e) => {
                         const newDate = e.target.value;
                         setSelectedDate(newDate);
@@ -70,11 +80,13 @@ const LocationSearch = ({ onSearchComplete }) => {
                         const addressToUse = inputAddress.trim() || "서울시 종로구";
                         onSearchComplete(addressToUse, newDate);
                     }}
-                    style={{ padding: "8px", fontSize: "14px" }}
+                    $borderColor={theme[season].borderColor}
+                    $bgColor={theme[season].bgColor}
+                    $focusColor={theme[season].focusColor}
                 >
                     <option value="today">오늘</option>
                     <option value="tomorrow">내일</option>
-                </select>
+                </DateSelect>
 
                 &nbsp;&nbsp;
                 <SearchButton type="submit">검색</SearchButton>
