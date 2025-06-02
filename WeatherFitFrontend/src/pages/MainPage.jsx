@@ -30,7 +30,7 @@ import Mainimg4 from "../assets/mainimg/WinterMainImg.png";
 import bestimg from "../assets/infoImg/best.png";
 import recomimg from "../assets/infoImg/recomimg.png";
 import outerimg from "../assets/infoImg/outerimg.png";
-import clpaimg from "../assets/infoImg/clpaimg.png";
+import clpaimg from "../assets/infoImg/clpaimg.jpg";
 import pants from "../assets/infoImg/pants.jpg";
 
 import {MyCaretLeftRectangle, MyCaretRightRectangle} from "../components/SliderBtns.jsx";
