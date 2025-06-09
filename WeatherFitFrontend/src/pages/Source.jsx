@@ -1,0 +1,195 @@
+import React from 'react';
+
+export default function Source() {
+    const sources = {
+        아우터: [
+            { title: '롱패딩_블랙', url: 'https://www.musinsa.com/products/4267189' },
+            { title: '하입 덕 다운 패딩_블랙', url: 'https://www.musinsa.com/products/2804513?source=M_MUSINSA&src_ar=magaz&src_tm=1691861396' },
+            { title: '크로스 라인 패딩_웜 그레이', url: 'https://www.wishbucket.io/items/655749' },
+            { title: '눕시 패딩_블랙', url: 'https://www.thenorthfacekorea.co.kr/product/NJ1DQ51J' },
+            { title: '웰론 글로시 패딩_블랙', url: 'https://www.musinsa.com/products/4267189' },
+            { title: '눕시 패딩_크림', url: 'https://m.a-bly.com/goods/27373270' },
+            { title: '레더 크롭 조끼패딩_블랙', url: 'https://m.a-bly.com/goods/11616289' },
+            { title: '3버튼 체스터필드 싱글 코트_블랙', url: 'https://www.musinsa.com/products/2826071' },
+            { title: '멜톤 울 코트_브라운', url: 'https://ptry.co.kr/product/detail.html?product_no=1263' },
+            { title: '더블 울 하프 코트_차콜', url: 'https://m.a-bly.com/goods/33204295' },
+            { title: '벨티드 울 코트_블랙', url: 'https://www.cos.com/ko-kr/women/view-all/product.belted-double-faced-wool-coat-black.1097894006.html' },
+            { title: '후드 양털 떡볶이 숏코트_베이지', url: 'https://m.a-bly.com/goods/31315514' },
+            { title: '오버사이즈 리얼 무스탕_블랙', url: 'https://www.musinsa.com/products/1576765' },
+            { title: '크랙 시어링 무스탕_브라운', url: 'https://noirlarmes.com/m-outer/?idx=1000' },
+            { title: '오버핏 시어링 무스탕_브라운', url: 'https://www.wconcept.co.kr/Product/304130000' },
+            { title: '스웨이드 무스탕_베이지', url: 'https://www.wconcept.co.kr/Product/303894632' },
+            { title: '니트 후드 더플 코트_브라운', url: 'https://simio.kr/product/%EB%8B%88%ED%8A%B8-%ED%9B%84%EB%93%9C-%EB%8D%94%ED%94%8C-%EC%BD%94%ED%8A%B8-2color/3117/category/24/display/1/' },
+            { title: '오버핏 트렌치 롱코트_브라운', url: 'https://www.lookpin.co.kr/products/2908417' },
+            { title: '오버핏 트렌치 코트_아이보리', url: 'https://hacie.co.kr/product/hacie-x-italy-classic-cotton-oversize-trench-coat-3colors/709/' },
+            { title: '하프 트렌치 숏코트_베이지', url: 'https://www.musinsa.com/products/4471601' },
+            { title: '양 가죽 자켓_다크브라운', url: 'https://recto.co/product/epaulet-lambs-leather-jumper-dark-brown/5753/' },
+            { title: '가죽 자켓_블랙', url: 'https://www.wconcept.co.kr/Product/306392257' },
+            { title: '가죽 자켓_다크브라운', url: 'https://www.sivillage.com/goods/initDetailGoods.siv?goods_no=2403392741' },
+            { title: '밴딩 크롭 레더 자켓_브라운', url: 'https://m.a-bly.com/goods/10652118' },
+            { title: '스탠다드 플리스 집업 자켓_블랙', url: 'https://www.musinsa.com/products/1696735' },
+            { title: '스탠다드 플리스 집업 자켓_아이보리', url: 'https://www.musinsa.com/products/2711775' },
+            { title: '스웨이드 지퍼 블루종 자켓_올리브브라운', url: 'https://kream.co.kr/products/385190?base_product_id=385223' },
+            { title: '미니멀 코튼 블루종 자켓_베이지', url: 'https://mood-inside.co.kr/product/detail.html?product_no=8987&cate_no=43&display_group=1' },
+            { title: '블루종 스웨이드 자켓_블랙', url: 'https://www.musinsa.com/products/3390508' },
+            { title: '세미크롭 밴딩집업_브라운', url: 'https://m.a-bly.com/goods/43085315' },
+            { title: '레더 블루종 자켓_블랙', url: 'https://maenique.com/product/%EC%97%94%ED%86%A0%EB%8B%88-%EB%A0%88%EB%8D%94-%EB%B8%94%EB%A3%A8%EC%A2%85-%EC%9E%90%EC%BC%93/8205/category/26/display/1/' },
+            { title: '빈티지 워싱 코튼 크롭 자켓_와인', url: 'https://www.musinsa.com/products/4717168' },
+            { title: '셔링 데님 자켓_미드블루', url: 'https://suare.co.kr/product/detail.html?product_no=2629&cate_no=25&display_group=1' },
+            { title: '트러커 데님 자켓_인디고', url: 'https://areuban.com/product/western-indigo-trucker-jacketcement-black/1116/category/70/display/1/' },
+            { title: '빈티지 데님 자켓_더스티블루', url: 'https://m.a-bly.com/goods/15729460' },
+            { title: '빈티지 워싱 데님 자켓_블루', url: 'https://m.a-bly.com/goods/15358747' },
+            { title: '레트로 체크 자켓_베이지', url: 'https://colorless.co.kr/product/ac9b8a36-d95a-44f4-9888-15e953f6507a' },
+            { title: '원버튼 블레이저 자켓_블랙', url: 'https://simio.kr/product/%EB%B9%85%EB%8C%80%EB%94%94-%EB%B8%94%EB%A0%88%EC%9D%B4%EC%A0%B8-2color/1939/category/24/display/1/' },
+            { title: '루즈핏 싱글 미디 자켓_베이지', url: 'https://maenique.com/product/%EC%95%8C%EB%8D%B0%ED%8A%B8-%EB%A3%A8%EC%A6%88%ED%95%8F-%EC%8B%B1%EA%B8%80-%EB%AF%B8%EB%94%94-%EC%9E%90%EC%BC%93/8166/category/43/display/1/' },
+            { title: '세미오버핏 싱글 블레이저 자켓_블랙', url: 'https://m.a-bly.com/goods/16001552' },
+            { title: '크로매틱 워셔블 가디건_그레이', url: 'https://suare.co.kr/product/detail.html?product_no=3141&cate_no=174&display_group=1' },
+            { title: '레인 드롭 니트 가디건_블랙', url: 'https://suare.co.kr/product/detail.html?product_no=3137&cate_no=25&display_group=1' },
+            { title: '레이어드 가디건_그레이', url: 'https://linenne.kr/product/layered-cardigan-2color/2973/category/1/display/2/' },
+            { title: '리본 페이트 니트가디건_그린', url: 'https://m.a-bly.com/goods/3942691' },
+            { title: '풀 집업 가디건_아이보리', url: 'https://www.musinsa.com/products/4322446?is_retargeting=true&source_caller=sdk&af_siteid=1003139529&shortlink=diafmlxh&af_referrer_uid=1689967957460-3115954&pid=af_app_invites&af_referrer_customer_id=ganada674&af_channel=mobile_share' },
+            { title: '심볼 사이드 트랙자켓_브라운', url: 'https://www.musinsa.com/products/4743689' },
+            { title: '투웨이 스웻 후드 집업_그레이', url: 'https://www.musinsa.com/products/1778404' },
+            { title: '웨이트 니트 후드 집업_베이지', url: 'https://www.kolonmall.com/Product/K1726194684724057NO01' },
+            { title: '스트라이프 단가라 울 후드 집업_브라운', url: 'https://m.a-bly.com/goods/39301538' },
+            { title: '페인팅 오버핏 후드 집업_메란지그레이', url: 'https://m.a-bly.com/goods/44085923' },
+            { title: '하이드후드 트랙 자켓_블랙', url: 'https://milloarchive.com/product/detail.html?product_no=2029&cate_no=104&display_group=1' },
+            { title: '타슬란 윈드 테이커 자켓_라이트그레이', url: 'https://www.musinsa.com/products/3455882' },
+            { title: '우븐 윈드브레이커_화이트', url: 'https://www.adidas.co.kr/%EC%97%90%EC%84%BC%EC%85%9C-3s-%EC%9A%B0%EB%B8%90-%EC%9C%88%EB%93%9C%EB%B8%8C%EB%A0%88%EC%9D%B4%EC%BB%A4/IC0560.html' },
+            { title: '오버핏 윈드브레이커 자켓_블랙', url: 'https://www.musinsa.com/products/3820861' },
+        ],
+        상의: [
+            {title: "스프라이트 모헤어 니트_네이비", url: "https://milloarchive.com/product/detail.html?product_no=2723&cate_no=108&display_group=1"},
+            {title: "브이넥 케이블 니트_베이지", url: "https://simio.kr/product/%EB%B8%8C%EC%9D%B4%EB%84%A5-%EC%BC%80%EC%9D%B4%EB%B8%94-%EB%8B%88%ED%8A%B8-5color/1976/category/33/display/1/"},
+            {title: "빈티지 라운드 니트티_화이트", url: "https://simio.kr/product/%EB%A0%88%ED%84%B0%EB%A7%81-%EB%B9%88%ED%8B%B0%EC%A7%80-%EB%9D%BC%EC%9A%B4%EB%93%9C-%EB%8B%88%ED%8A%B8%ED%8B%B0-3color/1666/category/33/display/1/"},
+            {title: "니티드 스웨트 셔츠_원더화이트", url: "https://www.musinsa.com/products/4702437"},
+            {title: "메쉬 루즈핏 니트_화이트", url: "https://m.a-bly.com/goods/8203349"},
+            {title: "브이넥 맨투맨_블랙", url: "https://m.a-bly.com/goods/11650571"},
+            {title: "라프라 맨투맨_카키", url: "https://product.29cm.co.kr/catalog/1234640?categoryLargeCode=272100100&categoryMediumCode=272103100&sort=RECOMMEND&defaultSort=RECOMMEND&sortOrder=DESC&page=5&categorySmallCode=272103107"},
+            {title: "레글런 스웨트셔츠_블랙", url: "https://product.29cm.co.kr/catalog/2137285?categoryLargeCode=272100100&categoryMediumCode=272103100&sort=RECOMMEND&defaultSort=RECOMMEND&sortOrder=DESC&page=5&categorySmallCode=272103107"},
+            {title: "스웨트 맨투맨_그레이", url: "https://www.musinsa.com/products/3578482"},
+            {title: "나그랑 오버핏 맨투맨_와인", url: "https://m.a-bly.com/goods/9773224"},
+            {title: "후리스 맨투맨_크림", url: "https://m.a-bly.com/goods/11930836"},
+            {title: "루즈핏 맨투맨_그레이", url: "https://m.a-bly.com/goods/37932409"},
+            {title: "무지 후드 티셔츠_블랙", url: "https://product.29cm.co.kr/catalog/936680?keyword=%ED%9B%84%EB%93%9C&sort=RECOMMEND&defaultSort=RECOMMEND&sortOrder=DESC&page=3"},
+            {title: "로고 후드 티셔츠_그레이", url: "https://product.29cm.co.kr/catalog/1879888?keyword=%ED%9B%84%EB%93%9C%ED%8B%B0&sort=RECOMMEND&defaultSort=RECOMMEND&sortOrder=DESC&keywordTypes=&page=10"},
+            {title: "셔링 후드 티셔츠_그레이", url: "https://m.a-bly.com/goods/10268175"},
+            {title: "아방핏 후드 티셔츠_네이비", url: "https://m.a-bly.com/goods/30430181"},
+            {title: "체크 셔츠_그레이", url: "https://www.musinsa.com/products/4118673"},
+            {title: "루즈핏 린넨 오픈 카라 셔츠_화이트", url: "https://www.musinsa.com/products/3271408"},
+            {title: "루즈핏 린넨 오픈 카라 셔츠_블랙", url: "https://www.musinsa.com/products/3271408"},
+            {title: "오버핏 옥스포드 셔츠_화이트", url: "https://www.musinsa.com/products/5085932"},
+            {title: "오버핏 옥스포드 셔츠_라이트 블루", url: "https://www.musinsa.com/products/5085932"},
+            {title: "워크 셔츠_카키", url: "https://m.whatalook.kr/product/%EB%8B%B9%EC%9D%BC%EC%B6%9C%EA%B3%A0-%EC%B9%98%EB%B0%94-%ED%8C%A8%EC%B9%98-%EC%9B%8C%ED%81%AC-%EC%85%94%EC%B8%A0-6color/1331/category/25/display/2/?utm_medium=paid&utm_source=ig&utm_id=120214315013040129&utm_content=120214347101960129&utm_term=120214347101880129&utm_campaign=120214315013040129"},
+            {title: "스프라이프 셔츠_스카이블루", url: "https://product.29cm.co.kr/catalog/2496520?categoryLargeCode=272100100&categoryMediumCode=272103100&sort=RECOMMEND&defaultSort=RECOMMEND&sortOrder=DESC&page=1"},
+            {title: "오프 셔츠_화이트", url: "https://m.a-bly.com/goods/16308099"},
+            {title: "프릴 레이스 블라우스_화이트", url: "https://m.a-bly.com/goods/39900193"},
+            {title: "스트라이프 셔츠_핑크", url: "https://product.29cm.co.kr/catalog/3027084?categoryLargeCode=268100100&categoryMediumCode=268103100&sort=RECOMMEND&defaultSort=RECOMMEND&sortOrder=DESC&page=2"},
+            {title: "클래식 롱 슬리브_화이트", url: "https://www.musinsa.com/products/2074910"},
+            {title: "스트라이프 롱 슬리브_블랙", url: "https://www.musinsa.com/products/4966655"},
+            {title: "언발 나시 티셔츠_카키", url: "https://m.a-bly.com/goods/11792543?referrer=shopppable-ably"},
+            {title: "레이어드 티셔츠_그레이", url: "https://m.a-bly.com/goods/17881356"},
+            {title: "골지 버튼 라운드 티셔츠_네이비", url: "https://zigzag.kr/catalog/products/160104273"},
+            {title: "스프라이트 카라 티셔츠_차콜그레이", url: "https://milloarchive.com/product/detail.html?product_no=3052&cate_no=108&display_group=1"},
+            {title: "럭비 카라 셔츠_다크그레이", url: "https://www.musinsa.com/products/4873413"},
+            {title: "스트라이프 카라 오버핏 티셔츠_크림", url: "https://m.a-bly.com/goods/39756355"},
+            {title: "오버핏 카라 티셔츠_아이보리", url: "https://m.a-bly.com/goods/4605038"},
+            {title: "M로고 반팔_다크그레이", url: "https://areuban.com/product/salvador-dali-melting-clock-t-shirtsmelting-black/1288/category/79/display/1/"},
+            {title: "M로고 반팔_블랙", url: "https://m.lakickz.com/product/%EC%8A%A4%ED%8B%B0%EA%B7%B8%EB%A7%88-blur-stgm-semi-oversized-t-shirts-black/61689/category/247/display/1/#start"},
+            {title: "M로고 반팔_화이트", url: "https://www.kolonmall.com/Product/K1744014536541014NO01"},
+            {title: "M로고 반팔_그레이", url: "https://g-room.kr/product/%EB%A7%A5%EC%8B%9C-%EB%AF%B8%EC%85%98-%ED%95%98%ED%94%84-%ED%8B%B0%EC%85%94%EC%B8%A0/644/category/26/display/1/"},
+            {title: "M로고 반팔_딥레드", url: "https://milloarchive.com/product/detail.html?product_no=2273&cate_no=108&display_group=1"},
+            {title: "M무지 반팔_화이트", url: "https://www.kolonmall.com/Product/MOTAM25301WHX"},
+            {title: "M무지 반팔_블랙", url: "https://www.kolonmall.com/Product/MOTAM25301BKX"},
+            {title: "리본 꽃자수 퍼프 소매_아이보리", url: "https://m.a-bly.com/goods/16306580"},
+            {title: "U넥 스트랩 반팔_블랙", url: "https://m.a-bly.com/goods/21443182"},
+            {title: "W로고 반팔_차콜", url: "https://www.musinsa.com/products/5064162"},
+            {title: "W로고 반팔_화이트", url: "https://product.29cm.co.kr/catalog/2636180?categoryLargeCode=268100100&categoryMediumCode=268103100&sort=RECOMMEND&defaultSort=RECOMMEND&sortOrder=DESC&page=1"},
+            {title: "W로고 반팔_네이비", url: "https://product.29cm.co.kr/catalog/1947450?categoryLargeCode=268100100&categoryMediumCode=268103100&sort=RECOMMEND&defaultSort=RECOMMEND&sortOrder=DESC&page=3"},
+            {title: "크롭 반팔_차콜", url: "https://product.29cm.co.kr/catalog/2652048?categoryLargeCode=268100100&categoryMediumCode=268103100&sort=RECOMMEND&defaultSort=RECOMMEND&sortOrder=DESC&page=4"},
+            {title: "투포켓 데님 하프 셔츠_블랙", url: "https://milloarchive.com/product/detail.html?product_no=2281&cate_no=108&display_group=1"},
+            {title: "웨스턴 데님 하프 셔츠_더스트 인디고", url: "https://www.musinsa.com/products/5071838"},
+            {title: "체크 하프 셔츠_블랙", url: "https://product.29cm.co.kr/catalog/3226143?categoryLargeCode=272100100&categoryMediumCode=272103100&sort=RECOMMEND&defaultSort=RECOMMEND&sortOrder=DESC&page=1&categorySmallCode=272103105"},
+            {title: "핀턱 V넥 하프 블라우스_화이트", url: "https://product.29cm.co.kr/catalog/3241589?categoryLargeCode=268100100&categoryMediumCode=268103100&sort=RECOMMEND&defaultSort=RECOMMEND&sortOrder=DESC&page=5"},
+            {title: "버튼 카라 하프 블라우스_블랙", url: "https://product.29cm.co.kr/catalog/2624525?categoryLargeCode=268100100&categoryMediumCode=268103100&sort=RECOMMEND&defaultSort=RECOMMEND&sortOrder=DESC&page=7"},
+            {title: "버튼 포인트 하프 블라우스_민트", url: "https://product.29cm.co.kr/catalog/2035313?categoryLargeCode=268100100&categoryMediumCode=268103100&sort=RECOMMEND&defaultSort=RECOMMEND&sortOrder=DESC&page=7"},
+            {title: "반소매 카라 하프 셔츠_화이트", url: "https://www.musinsa.com/products/4722811"},
+            {title: "반소매 카라 하프 셔츠_블랙", url: "https://www.musinsa.com/products/4829056"},
+            {title: "카라 아노락 하프 티셔츠_네이비", url: "https://m.a-bly.com/goods/44958937"},
+            {title: "오버핏 반집업 반팔티셔츠_아이보리", url: "https://m.a-bly.com/goods/8630079"},
+            {title: "퍼프 소매 미니 원피스_화이트", url: "https://m.a-bly.com/goods/20626978"},
+            {title: "레이어드 리본 나시 원피스_카키", url: "https://m.a-bly.com/goods/21472462"},
+            {title: "더블 스트링 미니 원피스_차콜", url: "https://www.musinsa.com/products/5071152"}
+        ],
+        하의: [
+            {title: "카고 벌룬 팬츠_카키", url: "https://g-room.kr/product/detail.html?product_no=897&cate_no=27&display_group=1"},
+            {title: "스트링 카고 와이드 팬츠_베이지", url: "https://g-room.kr/product/detail.html?product_no=320&cate_no=27&display_group=1"},
+            {title: "투버클 카고 팬츠_차콜", url: "https://m.a-bly.com/goods/21272947"},
+            {title: "투버클 카고 와이드 팬츠_베이지", url: "https://m.a-bly.com/goods/23092269"},
+
+            {title: "와이드 데님 팬츠_흑청", url: "https://g-room.kr/product/detail.html?product_no=818&cate_no=27&display_group=1"},
+            {title: "그린페이드 워싱 데님 팬츠_블랙", url: "https://g-room.kr/product/detail.html?product_no=904&cate_no=27&display_group=1"},
+            {title: "와이드 데님 팬츠_연청", url: "https://g-room.kr/product/detail.html?product_no=901&cate_no=27&display_group=1"},
+            {title: "카펜더 데님 팬츠_연청", url: "https://g-room.kr/product/detail.html?product_no=335&cate_no=27&display_group=1"},
+            {title: "워싱 부츠컷 팬츠_흑청", url: "https://m.a-bly.com/goods/43523083"},
+            {title: "워싱 사이드 핀턱 와이트 팬츠_연청", url: "https://m.a-bly.com/goods/14468016"},
+            {title: "세미와이드 워싱 데님 팬츠_연청", url: "https://m.a-bly.com/goods/30484043"},
+            {title: "세미와이드 워싱 데님 팬츠_진청", url: "https://m.a-bly.com/goods/30484043"},
+
+            {title: "트랙 프론트 포켓 팬츠_블랙", url: "https://g-room.kr/product/detail.html?product_no=603&cate_no=60&display_group=1"},
+            {title: "원턱 와이드 스웨트 벌룬 팬츠_그레이", url: "https://www.musinsa.com/products/2896768"},
+            {title: "특양면 조거 팬츠_블랙", url: "https://www.musinsa.com/products/2877543"},
+            {title: "큐빅 투웨이 와이드 트레이닝 팬츠_블랙", url: "https://m.a-bly.com/goods/28676993"},
+            {title: "슬립핏 부츠컷 트레이닝 팬츠_그레이", url: "https://m.a-bly.com/goods/38060727"},
+            {title: "로 엣지 컨벡스 조거 팬츠_라이트카모", url: "https://www.musinsa.com/products/4896817"},
+
+            {title: "세미 와이드 코튼 치노 팬츠_아이보리", url: "https://www.musinsa.com/products/4810667"},
+            {title: "세미 와이드 코튼 치노 팬츠_베이지", url: "https://www.musinsa.com/products/4810660"},
+            {title: "와이드 코튼 핀턱 팬츠_화이트", url: "https://m.a-bly.com/goods/25648592"},
+            {title: "와이드 코튼 핀턱 팬츠_브라운", url: "https://m.a-bly.com/goods/25648592"},
+
+            {title: "와이드 슬랙스_블랙", url: "https://product.29cm.co.kr/catalog/2471525?keyword=%EC%8A%AC%EB%9E%99%EC%8A%A4&sort=RECOMMEND&defaultSort=RECOMMEND&sortOrder=DESC&page=1"},
+            {title: "스탠다드 슬랙스_올리브그린", url: "https://product.29cm.co.kr/catalog/2032580?source=item_pin&source_item_no=2032576&source_item_group_no=28901"},
+            {title: "부츠컷 슬랙스_블랙", url: "https://m.a-bly.com/goods/28600974"},
+            {title: "와이드 슬랙스_아이보리", url: "https://m.a-bly.com/goods/16884531"},
+
+            {title: "미디 스커트_차콜", url: "https://m.a-bly.com/goods/12161585"},
+            {title: "체크 미디 스커트_차콜", url: "https://m.a-bly.com/goods/33203573"},
+            {title: "벌룬 미니 스커트_블랙", url: "https://m.a-bly.com/goods/17881487"},
+            {title: "벌룬 미니 스커트_화이트", url: "https://m.a-bly.com/goods/17881487"},
+            {title: "포켓 미디 스커트_화이트", url: "https://product.29cm.co.kr/catalog/1449612?categoryLargeCode=268100100&categoryMediumCode=268107100&sort=RECOMMEND&defaultSort=RECOMMEND&sortOrder=DESC&page=1"},
+            {title: "미디 워싱 데님 스커트_블랙", url: "https://m.a-bly.com/goods/11160875"},
+            {title: "하이웨스트 린넨 롱 스커트_화이트", url: "https://m.a-bly.com/goods/4533037"},
+
+            {title: "애쉬 스케일 데님 버뮤다 팬츠_블랙", url: "https://g-room.kr/product/detail.html?product_no=923&cate_no=27&display_group=1"},
+            {title: "스웨이브 버뮤다 팬츠_그레이", url: "https://g-room.kr/product/detail.html?product_no=887&cate_no=27&display_group=2"},
+            {title: "프리무드 버뮤다 팬츠_블랙", url: "https://g-room.kr/product/detail.html?product_no=931&cate_no=27&display_group=1"},
+            {title: "사이드 스위프 데님 버뮤다 팬츠_연청", url: "https://g-room.kr/product/detail.html?product_no=726&cate_no=35&display_group=1"},
+            {title: "버뮤다 핀턱 와이드 트레이닝 팬츠_그레이", url: "https://m.a-bly.com/goods/40871845"},
+            {title: "핀턱 워싱 버뮤다 벌룬 데님 팬츠_중청", url: "https://m.a-bly.com/goods/43443422"},
+            {title: "하이웨스트 데님 숏팬츠_연청", url: "https://m.a-bly.com/goods/46271157"},
+            {title: "하이웨스트 데님 숏팬츠_블랙", url: "https://m.a-bly.com/goods/46271157"}
+        ],
+    };
+
+    return (
+        <div style={{padding: '2rem', fontFamily: 'sans-serif' }}>
+            <h1 style={{ fontSize: '2rem', marginBottom: '1.5rem' }}>📚 출처</h1>
+
+            {Object.entries(sources).map(([category, links]) => (
+                <div key={category} style={{ marginBottom: '2rem' }}>
+                    <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{category}</h2>
+                    <ul>
+                        {links.map((source, index) => (
+                            <li key={index} style={{ marginBottom: '0.5rem' }}>
+                                🔗 <a href={source.url} target="_blank" rel="noopener noreferrer">
+                                {source.title}
+                            </a>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            ))}
+        </div>
+    );
+}

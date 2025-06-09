@@ -1,0 +1,42 @@
+package com.weatherfit.backend.user.entity;
+
+import com.weatherfit.backend.common.enumtype.Gender;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+/**
+ * 사용자(User) 엔티티
+ */
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@Table(name = "users")
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+    /**
+     * 사용자 프로필 업데이트
+     */
+    public void updateProfile(String email, Gender gender) {
+        this.email = email;
+        this.gender = gender;
+    }
+}

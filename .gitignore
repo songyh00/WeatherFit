@@ -1,47 +1,46 @@
-# ✅ 공통적으로 필요 없는 파일들
-.DS_Store  # macOS에서 생성되는 시스템 파일
-Thumbs.db  # Windows에서 생성되는 시스템 파일
-*.log      # 로그 파일 제외
-logs/      # 로그 폴더 전체 제외
+# ✅ 시스템 파일 무시
+.DS_Store
+Thumbs.db
+__MACOSX/
+$RECYCLE.BIN/
 
-# ✅ Node.js 모듈 및 Vite 캐시 무시
+# ✅ 로그 파일 무시
+*.log
+logs/
+
+# ✅ Node.js / 프론트엔드 관련
 node_modules/
 WeatherFitFrontend/node_modules/
 WeatherFitFrontend/.vite/
+dist/
+WeatherFitFrontend/dist/
 
-# ✅ 빌드 관련 폴더 무시
-dist/       # 빌드된 결과물 (Vite 등)
-out/        # IntelliJ & Eclipse 빌드 폴더
-build/      # 공통 빌드 폴더 제외 (프론트엔드, 백엔드 포함)
+# ✅ 빌드 관련 (백엔드, 프론트엔드)
+out/
+build/
 WeatherFitBackend/build/
 
-# ✅ IntelliJ IDEA 관련 파일들
+# ✅ IntelliJ IDEA 관련
 .idea/
 *.iml
 *.iws
 
-# ✅ Eclipse 관련 파일들
+# ✅ Eclipse 관련
 .classpath
 .project
 .settings/
 
-# ✅ Java (Spring Boot) 관련
-target/  # Maven & Gradle 빌드 폴더
-*.jar  # 생성된 JAR 파일 제외
-*.war  # 생성된 WAR 파일 제외
+# ✅ Java(Spring Boot) 빌드 관련
+target/
+*.jar
+*.war
 
-# ✅ 환경 변수 파일 (보안상 제외)
+# ✅ 환경 파일 무시 (보안)
 .env
 *.env.local
-src/main/resources/application.properties
-src/main/resources/application.yml
+WeatherFitBackend/src/main/resources/application.properties
+WeatherFitBackend/src/main/resources/application.yml
 
-# ✅ OS별 불필요한 파일
-# macOS 관련
-__MACOSX/
-# Windows 관련
-$RECYCLE.BIN/
-
-# ✅ Gradle 캐시 파일 무시
+# ✅ Gradle 관련
 .gradle/
 WeatherFitBackend/.gradle/
